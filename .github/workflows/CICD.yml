@@ -24,6 +24,7 @@ jobs:
 
       - name: Install dependencies
         run: |
+          export PIPENV_PIPFILE=app/Pipfile
           pipenv install --dev
           pipenv install pytest pytest-cov flake8 black
       
@@ -38,7 +39,7 @@ jobs:
         run: |
           pipenv --venv
           pipenv graph
-          
+
       - name: Django check
         run: pipenv run python Docker/manage.py check --deploy
 
