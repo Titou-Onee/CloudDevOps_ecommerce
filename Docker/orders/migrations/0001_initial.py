@@ -11,33 +11,92 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('users', '0001_initial'),
-        ('products', '0001_initial'),
+        ("users", "0001_initial"),
+        ("products", "0001_initial"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Order',
+            name="Order",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('order_date', models.DateTimeField(auto_now_add=True)),
-                ('net_sale_amount', models.DecimalField(decimal_places=2, max_digits=10)),
-                ('shipping_amount', models.DecimalField(decimal_places=2, max_digits=10)),
-                ('total_paid', models.DecimalField(decimal_places=2, max_digits=10)),
-                ('order_status', models.IntegerField(choices=[(1, 'In queue'), (2, 'Approved'), (3, 'Preparing your order'), (4, 'Delivering to customer'), (5, 'Delivered')], default=1)),
-                ('destination_address', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, to='users.UserAddress')),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("order_date", models.DateTimeField(auto_now_add=True)),
+                (
+                    "net_sale_amount",
+                    models.DecimalField(decimal_places=2, max_digits=10),
+                ),
+                (
+                    "shipping_amount",
+                    models.DecimalField(decimal_places=2, max_digits=10),
+                ),
+                ("total_paid", models.DecimalField(decimal_places=2, max_digits=10)),
+                (
+                    "order_status",
+                    models.IntegerField(
+                        choices=[
+                            (1, "In queue"),
+                            (2, "Approved"),
+                            (3, "Preparing your order"),
+                            (4, "Delivering to customer"),
+                            (5, "Delivered"),
+                        ],
+                        default=1,
+                    ),
+                ),
+                (
+                    "destination_address",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        to="users.UserAddress",
+                    ),
+                ),
+                (
+                    "user",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='OrderItem',
+            name="OrderItem",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('count', models.PositiveIntegerField(default=1)),
-                ('unit_price', models.DecimalField(decimal_places=2, max_digits=10)),
-                ('total_price', models.DecimalField(decimal_places=2, max_digits=10)),
-                ('order', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='orders.Order')),
-                ('product', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='products.GeneralProduct')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("count", models.PositiveIntegerField(default=1)),
+                ("unit_price", models.DecimalField(decimal_places=2, max_digits=10)),
+                ("total_price", models.DecimalField(decimal_places=2, max_digits=10)),
+                (
+                    "order",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, to="orders.Order"
+                    ),
+                ),
+                (
+                    "product",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        to="products.GeneralProduct",
+                    ),
+                ),
             ],
         ),
     ]

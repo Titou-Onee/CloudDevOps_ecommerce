@@ -6,6 +6,7 @@ from products.models import GeneralProduct
 
 # Create your models here.
 
+
 class Review(models.Model):
     user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
     product = models.ForeignKey(GeneralProduct, on_delete=models.CASCADE)
@@ -20,4 +21,3 @@ class Review(models.Model):
 
     def __str__(self):
         return self.review_body[:50]
-    

@@ -8,69 +8,177 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='Brand',
+            name="Brand",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('brand_name', models.CharField(max_length=255)),
-                ('brand_logo', models.ImageField(blank=True, null=True, upload_to='brand_logo/')),
-                ('brand_website', models.CharField(blank=True, max_length=255, null=True)),
-                ('brand_description', models.CharField(blank=True, max_length=512, null=True)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("brand_name", models.CharField(max_length=255)),
+                (
+                    "brand_logo",
+                    models.ImageField(blank=True, null=True, upload_to="brand_logo/"),
+                ),
+                (
+                    "brand_website",
+                    models.CharField(blank=True, max_length=255, null=True),
+                ),
+                (
+                    "brand_description",
+                    models.CharField(blank=True, max_length=512, null=True),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='Category',
+            name="Category",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('category_name', models.CharField(max_length=100)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("category_name", models.CharField(max_length=100)),
             ],
         ),
         migrations.CreateModel(
-            name='GeneralProduct',
+            name="GeneralProduct",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('product_name', models.CharField(max_length=255)),
-                ('product_description', models.TextField(blank=True, null=True)),
-                ('price_per_unit', models.DecimalField(decimal_places=2, default=0, max_digits=10)),
-                ('total_available_in_stock', models.PositiveIntegerField(default=0)),
-                ('is_countable', models.BooleanField(default=1)),
-                ('product_img1', models.ImageField(blank=True, null=True, upload_to='products/')),
-                ('product_img2', models.ImageField(blank=True, null=True, upload_to='products/')),
-                ('brand', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, to='products.Brand')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("product_name", models.CharField(max_length=255)),
+                ("product_description", models.TextField(blank=True, null=True)),
+                (
+                    "price_per_unit",
+                    models.DecimalField(decimal_places=2, default=0, max_digits=10),
+                ),
+                ("total_available_in_stock", models.PositiveIntegerField(default=0)),
+                ("is_countable", models.BooleanField(default=1)),
+                (
+                    "product_img1",
+                    models.ImageField(blank=True, null=True, upload_to="products/"),
+                ),
+                (
+                    "product_img2",
+                    models.ImageField(blank=True, null=True, upload_to="products/"),
+                ),
+                (
+                    "brand",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        to="products.Brand",
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='UnCountableProduct',
+            name="UnCountableProduct",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('amount', models.DecimalField(decimal_places=2, max_digits=5)),
-                ('unit', models.CharField(choices=[('kg', 'kilograms'), ('gr', 'grams'), ('l', 'liter'), ('ml', 'mililiter')], default='kg', max_length=2)),
-                ('product', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='products.GeneralProduct')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("amount", models.DecimalField(decimal_places=2, max_digits=5)),
+                (
+                    "unit",
+                    models.CharField(
+                        choices=[
+                            ("kg", "kilograms"),
+                            ("gr", "grams"),
+                            ("l", "liter"),
+                            ("ml", "mililiter"),
+                        ],
+                        default="kg",
+                        max_length=2,
+                    ),
+                ),
+                (
+                    "product",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="products.GeneralProduct",
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='SubCategory',
+            name="SubCategory",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('subcategory_name', models.CharField(max_length=100)),
-                ('parent_category', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='products.Category')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("subcategory_name", models.CharField(max_length=100)),
+                (
+                    "parent_category",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="products.Category",
+                    ),
+                ),
             ],
         ),
         migrations.AddField(
-            model_name='generalproduct',
-            name='subcategory',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, to='products.SubCategory'),
+            model_name="generalproduct",
+            name="subcategory",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                to="products.SubCategory",
+            ),
         ),
         migrations.CreateModel(
-            name='CountableProduct',
+            name="CountableProduct",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('count', models.PositiveIntegerField()),
-                ('product', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='products.GeneralProduct')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("count", models.PositiveIntegerField()),
+                (
+                    "product",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="products.GeneralProduct",
+                    ),
+                ),
             ],
         ),
     ]

@@ -6,7 +6,8 @@ from .models import Cart, CartItem
 from .shipping_costs import ShippingCost
 from users.models import UserAddress
 
-CART_ID = 'CART-ID'
+CART_ID = "CART-ID"
+
 
 class _Cart:
     def __init__(self, request, address_id=None):
@@ -26,7 +27,7 @@ class _Cart:
     def new_cart(self):
         cart = Cart.objects.create(
             creation_date=datetime.now(),
-            expiration_date=datetime.now() + timedelta(days=20)
+            expiration_date=datetime.now() + timedelta(days=20),
         )
         self.request.session[CART_ID] = cart.id
         return cart
@@ -53,7 +54,9 @@ class _Cart:
             item.quantity = int(quantity)
             item.save()
         else:
-            CartItem.objects.create(cart=self.cart, product_id=product_pk, quantity=int(quantity))
+            CartItem.objects.create(
+                cart=self.cart, product_id=product_pk, quantity=int(quantity)
+            )
 
     def remove_item_from_cart(self, product_pk):
         item_set = self.get_items_list()
@@ -66,21 +69,20 @@ class _Cart:
     def sum_total(self):
         item_set = self.get_items_list()
         return item_set.aggregate(
-            total=Sum(F('quantity') * F('product__price_per_unit'),
-            output_field=DecimalField(
-                max_digits=10, decimal_places=0)
-        )).get('total', 0)
+            total=Sum(
+                F("quantity") * F("product__price_per_unit"),
+                output_field=DecimalField(max_digits=10, decimal_places=0),
+            )
+        ).get("total", 0)
 
     # get shipping cost
     def get_shipping_cost(self):
-        return self.ship_cost.get_city_cost(
-            self.cart.destination_address.city)
+        return self.ship_cost.get_city_cost(self.cart.destination_address.city)
 
     # get shopping + shipping costs
     def shopping_shipping_total_cost(self):
         shopping_cost = self.sum_total()
-        shipping_cost = self.ship_cost.get_city_cost(
-            self.cart.destination_address.city)
+        shipping_cost = self.ship_cost.get_city_cost(self.cart.destination_address.city)
         return shopping_cost + shipping_cost
 
     # get total costs in formatted for stipe
