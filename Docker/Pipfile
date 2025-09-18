@@ -9,6 +9,7 @@ jupyter = "*"
 notebook = "*"
 
 [packages]
+setuptools= "<69"
 django = "==2.2.7"
 psycopg2-binary = "==2.8.4"
 django-allauth = "==0.40.0"
@@ -18,6 +19,7 @@ matplotlib = "==3.2"
 numpy = "==1.18.1"
 zeep = "*"
 stripe = "==2.32.0"
+
 
 [requires]
 python_version = "3.8"
