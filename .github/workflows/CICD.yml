@@ -25,7 +25,7 @@ jobs:
       - name: Install dependencies
         run: |
           export PIPENV_PIPFILE=Docker/Pipfile
-          pipenv install --dev --ignore-pipfile
+          pipenv install --dev --skip-lock
           pipenv install pytest pytest-cov flake8 black
       
       - name: Code formatting check
