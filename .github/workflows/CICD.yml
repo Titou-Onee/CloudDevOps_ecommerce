@@ -25,13 +25,32 @@ jobs:
       - name: Install dependencies
         run: |
           pipenv install --dev
-          pipenv install pytest pytest-cov flake8 black safety bandit
-      
-      - name: Code formatting
-        run: pipenv run black --check .
-      
-      - name: Flake8 lint
-        run: |
-          pipenv run flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
-          pipenv run flake8 . --count --exit-zero --max-complexity=10 --max-line-length=88 --statistics
+
+      - name: Trivy scan
+        uses: aquasecurity/trivy-action@0.28.0
+        with :
+          scan-type: 'fs'
+          scan-ref: '.'
+          trivy-config: trivy.yaml
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+      - name: Scan result upload
+        uses: github/codeql-action/upload-sarif@v3
+        if: always()
+        with:
+          sarif_file: 'trivy-results.sarif'
         
+      - name: Trivy fail
+        uses: aquasecurity/trivy-action@0.28.0
+        with :
+          scan-type: 'fs'
+          scan-ref: '.'
+          trivy-config: trivy.yaml
+          exit-code: '1'
+          severity: 'HIGH,CRITICAL'
+
+      - name: Django tests
+        run: |
+          pipenv run python manage.py collectstatic --noinput
+          pipenv run pytest --cov=. --cov-report=xml --cov-report=html --junitxml=pytest.xml
+
