@@ -25,7 +25,8 @@ jobs:
       - name: Install dependencies
         run: |
           export PIPENV_PIPFILE=Docker/Pipfile
-          pipenv install --dev --skip-lock
+          pipenv run pip install "setuptools==57.5.0"
+          pipenv install --dev
           pipenv install pytest pytest-cov flake8 black
       
       - name: Code formatting check
