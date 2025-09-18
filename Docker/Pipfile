@@ -19,7 +19,7 @@ matplotlib = "==3.2"
 numpy = "==1.18.1"
 zeep = "*"
 stripe = "==2.32.0"
-setuptools= "<69"
+setuptools = "<69"
 
 [requires]
 python_version = "3.8"
