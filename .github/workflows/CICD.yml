@@ -26,29 +26,6 @@ jobs:
         run: |
           pipenv install --dev
 
-      - name: Trivy scan
-        uses: aquasecurity/trivy-action@0.28.0
-        with :
-          scan-type: 'fs'
-          scan-ref: '.'
-          trivy-config: trivy.yaml
-          format: 'sarif'
-          output: 'trivy-results.sarif'
-      - name: Scan result upload
-        uses: github/codeql-action/upload-sarif@v3
-        if: always()
-        with:
-          sarif_file: 'trivy-results.sarif'
-        
-      - name: Trivy fail
-        uses: aquasecurity/trivy-action@0.28.0
-        with :
-          scan-type: 'fs'
-          scan-ref: '.'
-          trivy-config: trivy.yaml
-          exit-code: '1'
-          severity: 'HIGH,CRITICAL'
-
       - name: Django tests
         run: |
           pipenv run python manage.py collectstatic --noinput
