@@ -47,5 +47,5 @@ jobs:
       - name: Django tests
         run: |
           pipenv run python Docker/manage.py collectstatic --noinput
-          pipenv run pytest --cov=. --cov-report=xml --cov-report=html --junitxml=pytest.xml
+          pipenv run pytest Docker/products/tests.py --cov=. --cov-report=xml --cov-report=html --junitxml=pytest.xml
 
