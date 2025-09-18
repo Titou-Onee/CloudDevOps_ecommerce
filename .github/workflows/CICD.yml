@@ -24,7 +24,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          export PIPENV_PIPFILE=app/Pipfile
+          export PIPENV_PIPFILE=Docker/Pipfile
           pipenv install --dev
           pipenv install pytest pytest-cov flake8 black
       
