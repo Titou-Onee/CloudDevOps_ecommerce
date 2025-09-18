@@ -4,14 +4,15 @@ from django.db import models
 from users.models import UserAddress
 from products.models import GeneralProduct
 
+
 # Create your models here.
 class Order(models.Model):
     ORDER_STATUS = [
-        (1, 'In queue'),
-        (2, 'Approved'),
-        (3, 'Preparing your order'),
-        (4, 'Delivering to customer'),
-        (5, 'Delivered')
+        (1, "In queue"),
+        (2, "Approved"),
+        (3, "Preparing your order"),
+        (4, "Delivering to customer"),
+        (5, "Delivered"),
     ]
 
     user = models.ForeignKey(get_user_model(), on_delete=models.PROTECT)
@@ -20,12 +21,13 @@ class Order(models.Model):
     shipping_amount = models.DecimalField(max_digits=10, decimal_places=2)
     total_paid = models.DecimalField(max_digits=10, decimal_places=2)
     destination_address = models.ForeignKey(
-        UserAddress, on_delete=models.SET_NULL, null=True, blank=True)
+        UserAddress, on_delete=models.SET_NULL, null=True, blank=True
+    )
     order_status = models.IntegerField(choices=ORDER_STATUS, default=1)
 
     def __str__(self):
         return str(self.pk)
-    
+
 
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE)

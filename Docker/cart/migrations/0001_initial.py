@@ -9,34 +9,69 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('users', '0001_initial'),
-        ('products', '0001_initial'),
+        ("users", "0001_initial"),
+        ("products", "0001_initial"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Cart',
+            name="Cart",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('creation_date', models.DateTimeField()),
-                ('expiration_date', models.DateTimeField()),
-                ('checked_out', models.BooleanField(default=False)),
-                ('destination_address', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='users.UserAddress')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("creation_date", models.DateTimeField()),
+                ("expiration_date", models.DateTimeField()),
+                ("checked_out", models.BooleanField(default=False)),
+                (
+                    "destination_address",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="users.UserAddress",
+                    ),
+                ),
             ],
             options={
-                'ordering': ('-creation_date',),
+                "ordering": ("-creation_date",),
             },
         ),
         migrations.CreateModel(
-            name='CartItem',
+            name="CartItem",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('quantity', models.PositiveIntegerField(default=0)),
-                ('cart', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='cart.Cart')),
-                ('product', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='products.GeneralProduct')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("quantity", models.PositiveIntegerField(default=0)),
+                (
+                    "cart",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, to="cart.Cart"
+                    ),
+                ),
+                (
+                    "product",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="products.GeneralProduct",
+                    ),
+                ),
             ],
             options={
-                'ordering': ('cart',),
+                "ordering": ("cart",),
             },
         ),
     ]
