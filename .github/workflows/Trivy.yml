@@ -27,7 +27,7 @@ jobs:
       - name: Docker image test
         run: |
           docker run --rm -d --name test-container \
-            -p 8000:8000 docker.io/titou-onee/clouddevops_ecommerce:${{ github.sha }} django-app:test
+            -p 8000:8000 docker.io/titou-onee/clouddevops_ecommerce:${{ github.sha }}
           sleep 10
           curl -f http://localhost:8000/health/ || exit 1
           docker stop test-container
