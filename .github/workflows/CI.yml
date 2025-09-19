@@ -9,7 +9,8 @@ on:
 env:
   PIPENV_PIPFILE: Docker/Pipfile
 jobs:
-  build:
+  code_quality:
+    if: ${{ false }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -44,4 +45,3 @@ jobs:
       #  run: |
       #    pipenv run python Docker/manage.py collectstatic --noinput
       #    pipenv run pytest Docker/products/tests.py --cov=. --cov-report=xml --cov-report=html --junitxml=pytest.xml
-

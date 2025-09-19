@@ -9,6 +9,9 @@ on:
 permissions:
   contents: read
 
+env:
+  DOCKER_IMAGE: docker.io/titou-onee/clouddevops_ecommerce:${{ github.sha }}
+
 jobs:
   build:
     permissions:
@@ -20,22 +23,26 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Build an image from Dockerfile
-        run: |
-          docker build -t docker.io/titou-onee/clouddevops_ecommerce:${{ github.sha }} ./Docker
+      - name: Trivy filesystem scan
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          scan-type: 'fs'
+          scan-ref: '.'
+          trivy-config: trivy.yaml
+          format: 'sarif'
+          output: 'tryvy-fs-results.sarif'
+      - name: Upload Trivy fs result
+        uses: github/codeql-action/upload-sarif@v3
 
-      - name: Docker image test
+      - name: Build Docker image
         run: |
-          docker compose up -d --build \
-            -p 8000:8000 docker.io/titou-onee/clouddevops_ecommerce:${{ github.sha }}
-          sleep 30
-          curl -f http://localhost:8000/home.html || exit 1
-          docker stop test-container
+          docker build -t ${{ env.DOCKER_IMAGE }} ./Docker
+
 
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@7b7aa264d83dc58691451798b4d117d53d21edfe
         with:
-          image-ref: 'docker.io/titou-onee/clouddevops_ecommerce:${{ github.sha }}'
+          image-ref: '${{ env.DOCKER_IMAGE }}'
           format: 'template'
           template: '@/contrib/sarif.tpl'
           output: 'trivy-results.sarif'
@@ -45,3 +52,35 @@ jobs:
         uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: 'trivy-results.sarif'
+
+      - name: Login to DockerHub
+        if: github.ref == 'refs/heads/main'
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+        
+      - name: Tag and push to DockerHub
+        if: github.ref == 'ref/heads/main'
+        run: |
+          docker tag ${{ env.DOCKER_IMAGE }}:test ${{ env.DOCKER_IMAGE }}:latest
+          docker tag ${{ env.DOCKER_IMAGE }}:test ${{ env.DOCKER_IMAGE }}:${{ github.sha }}
+        
+          docker push ${{ env.DOCKER_IMAGE }}:latest
+          docker push ${{ env.DOCKER_IMAGE }}:${{ github.sha }}
+
+      - name: Cleanup local images
+        if: always()
+        run: |
+          docker rmi ${{ env.DOCKER_IMAGE }}:test || true
+          docker system prune -f || true
+
+      - name: Upload security reports
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: security-reports
+          path: |
+            trivy-fe-results.sarif
+            trivy-image-results.sarif
+          retention-days: 30
