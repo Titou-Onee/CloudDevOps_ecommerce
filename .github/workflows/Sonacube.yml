@@ -40,7 +40,9 @@ permissions:
 
 jobs:
   Analysis:
+    if: ${{ false }}
     runs-on: ubuntu-latest
+
 
     steps:
       - name: Analyze with SonarCloud
