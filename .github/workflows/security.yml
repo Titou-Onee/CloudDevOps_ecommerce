@@ -1,0 +1,89 @@
+name: Security checks
+on:
+  push:
+      branches:
+        - dev
+  pull_request:
+        branches:
+          - dev
+env:
+  PIPENV_PIPFILE: Docker/Pipfile
+  DOCKER_IMAGE: titouonee/clouddevops_ecommerce
+
+jobs:
+  security_checks:
+    if: ${{ false }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.8'
+      
+      - name: install pipenv
+        run: |
+          python -m pip install --upgrade pip
+          pip install pipenv
+
+      - name: Install dependencies
+        run: |
+          pipenv run pip install "setuptools==57.5.0"
+          pipenv install --dev
+          pipenv install pytest pytest-cov flake8 black safety
+
+      - name: Analyze with SonarCloud
+        uses: SonarSource/sonarcloud-github-action@4006f663ecaf1f8093e8e4abb9227f6041f52216
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}   
+          with:
+          args:
+            -Dsonar.projectKey="Titou-Onee_CloudDevOps_ecommerce"
+            -Dsonar.organization="titou-onee"
+          projectBaseDir: .
+          
+      - name: Trivy filesystem scan
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          scan-type: 'fs'
+          scan-ref: '.'
+          trivy-config: trivy.yaml
+          format: 'sarif'
+          output: 'trivy-fs-results.sarif'
+          exit-code: '0'
+          ignore-unfixed: true
+          severity: 'CRITICAL,HIGH'
+
+      - name: Safety scan
+        run: |
+          pipenv run safety check --json > safety-report.json
+          pipenv run safety check --short-report
+        continue-on-error: true
+
+      - name: Upload report
+        uses: actions/upload-artifact@v4
+        with:
+          name: safety-report
+          path: safety-report.json
+
+      - name: Build Docker image
+        run: |
+          docker build -t ${{ env.DOCKER_IMAGE }}:test ./Docker
+
+
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@7b7aa264d83dc58691451798b4d117d53d21edfe
+        with:
+          image-ref: '${{ env.DOCKER_IMAGE }}:test'
+          format: 'template'
+          template: '@/contrib/sarif.tpl'
+          output: 'trivy-image-results.sarif'
+          severity: 'CRITICAL,HIGH'
+
+      - name: Upload Trivy scan results to GitHub Security tab
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: 'trivy-image-results.sarif'
+
