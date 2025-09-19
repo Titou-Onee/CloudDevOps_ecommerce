@@ -30,7 +30,7 @@ jobs:
           scan-ref: '.'
           trivy-config: trivy.yaml
           format: 'sarif'
-          output: 'tryvy-fs-results.sarif'
+          output: 'trivy-fs-results.sarif'
           exit-code: '0'
           ignore-unfixed: true
           severity: 'CRITICAL,HIGH'
