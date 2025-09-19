@@ -30,15 +30,11 @@ jobs:
           scan-ref: '.'
           trivy-config: trivy.yaml
           format: 'sarif'
-          output: 'trivy-fs-results.sarif'
+          output: 'results/trivy-fs-results.sarif'
           exit-code: '0'
           ignore-unfixed: true
           severity: 'CRITICAL,HIGH'
 
-      - name: Upload Trivy fs result
-        uses: github/codeql-action/upload-sarif@v3
-        with:
-          sarif_file: 'trivy-fs-results.sarif'
       - name: Build Docker image
         run: |
           docker build -t ${{ env.DOCKER_IMAGE }} ./Docker
@@ -50,13 +46,13 @@ jobs:
           image-ref: '${{ env.DOCKER_IMAGE }}'
           format: 'template'
           template: '@/contrib/sarif.tpl'
-          output: 'trivy-results.sarif'
+          output: 'results/trivy-results.sarif'
           severity: 'CRITICAL,HIGH'
 
       - name: Upload Trivy scan results to GitHub Security tab
         uses: github/codeql-action/upload-sarif@v3
         with:
-          sarif_file: 'trivy-results.sarif'
+          sarif_file: 'results'
 
       - name: Login to DockerHub
         if: github.ref == 'refs/heads/main'
