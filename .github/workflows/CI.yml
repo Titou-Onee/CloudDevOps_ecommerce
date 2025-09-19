@@ -34,8 +34,8 @@ jobs:
       
       - name: Safety scan
         run: |
-          pipenv run safety check --json --output safety-report.json || true
-          pipenv safety check --short-report
+          pipenv run safety check --json > safety-report.json
+          pipenv run safety check --short-report
         continue-on-error: true
 
       - name: Code formatting check
