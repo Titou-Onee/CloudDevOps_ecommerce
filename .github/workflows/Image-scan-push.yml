@@ -23,18 +23,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Trivy filesystem scan
-        uses: aquasecurity/trivy-action@0.28.0
-        with:
-          scan-type: 'fs'
-          scan-ref: '.'
-          trivy-config: trivy.yaml
-          format: 'sarif'
-          output: 'trivy-fs-results.sarif'
-          exit-code: '0'
-          ignore-unfixed: true
-          severity: 'CRITICAL,HIGH'
-
       - name: Build Docker image
         run: |
           docker build -t ${{ env.DOCKER_IMAGE }} ./Docker
@@ -52,7 +40,7 @@ jobs:
       - name: Upload Trivy scan results to GitHub Security tab
         uses: github/codeql-action/upload-sarif@v3
         with:
-          sarif_file: '*.sarif'
+          sarif_file: 'trivy-image-results.sarif'
             
 
       - name: Login to DockerHub
