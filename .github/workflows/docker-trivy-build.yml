@@ -26,7 +26,7 @@ jobs:
 
       - name: Docker image test
         run: |
-          docker-compose up -d --build --name test-container \
+          docker compose up -d --build --name test-container \
             -p 8000:8000 docker.io/titou-onee/clouddevops_ecommerce:${{ github.sha }}
           sleep 30
           curl -f http://localhost:8000/home.html || exit 1
