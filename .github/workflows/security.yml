@@ -37,7 +37,7 @@ jobs:
         uses: SonarSource/sonarcloud-github-action@4006f663ecaf1f8093e8e4abb9227f6041f52216
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}   
-          with:
+        with:
           args:
             -Dsonar.projectKey="Titou-Onee_CloudDevOps_ecommerce"
             -Dsonar.organization="titou-onee"
