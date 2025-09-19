@@ -53,8 +53,9 @@ jobs:
         uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: |
-            'trivy-image-results.sarif'
             'trivy-fs-results.sarif'
+            'trivy-image-results.sarif'
+            
 
       - name: Login to DockerHub
         if: github.ref == 'refs/heads/main'
