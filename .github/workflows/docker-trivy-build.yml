@@ -52,9 +52,7 @@ jobs:
       - name: Upload Trivy scan results to GitHub Security tab
         uses: github/codeql-action/upload-sarif@v3
         with:
-          sarif_file: |
-            'trivy-fs-results.sarif'
-            'trivy-image-results.sarif'
+          sarif_file: 'trivy-fs-results.sarif'
             
 
       - name: Login to DockerHub
