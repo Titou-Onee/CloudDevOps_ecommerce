@@ -1,4 +1,4 @@
-name: trivy
+name: Image scan and push
 
 on:
   push:
