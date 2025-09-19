@@ -51,8 +51,8 @@ jobs:
         
       - name: Tag and push to DockerHub
         run: |
-          docker tag ${{ env.DOCKER_IMAGE }}:test ${{ env.DOCKER_IMAGE }}:latest
-          docker tag ${{ env.DOCKER_IMAGE }}:test ${{ env.DOCKER_IMAGE }}:${{ github.sha }}
+          docker tag ${{ env.DOCKER_IMAGE }} ${{ env.DOCKER_IMAGE }}:latest
+          docker tag ${{ env.DOCKER_IMAGE }} ${{ env.DOCKER_IMAGE }}:${{ github.sha }}
         
           docker push ${{ env.DOCKER_IMAGE }}:latest
           docker push ${{ env.DOCKER_IMAGE }}:${{ github.sha }}
