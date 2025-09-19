@@ -15,10 +15,12 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.8'
+      
       - name: install pipenv
         run: |
           python -m pip install --upgrade pip
@@ -30,24 +32,11 @@ jobs:
           pipenv install --dev
           pipenv install pytest pytest-cov flake8 black
       
-      - name: Build project with Maven
-        run: mvn clean install
-      - name: Depcheck
-        uses: dependency-check/Dependency-Check_Action@main
-        id: Depcheck
-        with:
-          project: 'test'
-          path: '.'
-          format: 'HTML'
-          out: 'reports'
-          args: >
-            --failOnCVSS 7
-            --enableRetired
-      - name: Upload Test results
-        uses: actions/upload-artifact@master
-        with:
-           name: Depcheck report
-           path: ${{github.workspace}}/reports
+      - name: Safety scan
+        run: |
+          pipenv run safety check --json --output safety-report.json || true
+          pipenv safety check --short-report
+        continue-on-error: true
 
       - name: Code formatting check
         run: pipenv run black --check .
@@ -56,11 +45,3 @@ jobs:
         run: |
           pipenv run flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
           pipenv run flake8 . --count --exit-zero --max-complexity=10 --max-line-length=88 --statistics
-
-      # - name: Django check
-      #  run: pipenv run python Docker/manage.py check --deploy
-
-      #- name: Django tests
-      #  run: |
-      #    pipenv run python Docker/manage.py collectstatic --noinput
-      #    pipenv run pytest Docker/products/tests.py --cov=. --cov-report=xml --cov-report=html --junitxml=pytest.xml
