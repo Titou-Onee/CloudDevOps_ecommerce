@@ -30,7 +30,7 @@ jobs:
         run: |
           pipenv run pip install "setuptools==57.5.0"
           pipenv install --dev
-          pipenv install pytest pytest-cov flake8 black
+          pipenv install pytest pytest-cov flake8 black safety
       
       - name: Safety scan
         run: |
