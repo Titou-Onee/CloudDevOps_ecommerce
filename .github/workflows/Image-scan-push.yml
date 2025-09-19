@@ -10,7 +10,7 @@ permissions:
   contents: read
 
 env:
-  DOCKER_IMAGE: docker.io/titou-onee/clouddevops_ecommerce
+  DOCKER_IMAGE: titouonee/clouddevops_ecommerce
 
 jobs:
   build:
