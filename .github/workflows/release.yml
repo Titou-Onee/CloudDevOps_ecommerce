@@ -12,7 +12,6 @@ env:
 
 jobs:
   code_quality:
-    if: ${{ false }}  
     runs-on: ubuntu-latest
     steps:
        - name: Login to DockerHub
