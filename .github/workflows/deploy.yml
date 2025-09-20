@@ -1,0 +1,38 @@
+name: Dployment on AWS EKS
+on:
+  push:
+      branches:
+        - dev
+  pull_request:
+        branches:
+          - dev
+env:
+  PIPENV_PIPFILE: Docker/Pipfile
+  DOCKER_IMAGE: titouonee/clouddevops_ecommerce
+  GITHUB_REPOSITORY: Titou-Onee/clouddevops_ecommerce
+  GITHUB_BRANCH: dev
+
+jobs:
+  deployment:
+    name: deployment
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout manifest repository
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ secrets.GITHUB_REPOSITORY }}
+          token: ${{ secrets.GITOPS_TOKEN }}
+          path: ./k8s
+
+      - name : Update image tag
+        run: |
+          cd k8s
+          yq eval '.spec.template.spec.containers[0].image = "${{ needs.build.outputs.image }}"' -i k8s/overlays/production/deployment.yaml
+
+      - name: Commmit and push
+        run: |
+          cd k8s
+          git config --local user.email "${{ secrets.GITHUB_MAIL}}"
+          git config --local user.name "titou-onee" 
+          git commit -am "Update image to ${{ github.sha }}"
+          git push origin ${{ env.GITHUB_BRANCH}}
