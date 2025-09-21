@@ -1,0 +1,1 @@
+{"Modules":[{"Key":"","Source":"","Dir":"."},{"Key":"eks","Source":"./modules/eks","Dir":"modules/eks"},{"Key":"githubActions","Source":"./modules/githubActions","Dir":"modules/githubActions"},{"Key":"network","Source":"./modules/network","Dir":"modules/network"},{"Key":"server","Source":"./modules/server","Dir":"modules/server"}]}
