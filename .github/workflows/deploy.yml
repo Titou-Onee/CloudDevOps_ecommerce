@@ -22,17 +22,19 @@ jobs:
         with:
           repository: ${{ secrets.GITHUB_REPOSITORY }}
           token: ${{ secrets.GITOPS_TOKEN }}
-          path: ./k8s
+          path: ./kubernetes/manifests
 
       - name : Update image tag
         run: |
-          cd k8s
-          yq eval '.spec.template.spec.containers[0].image = "${{ needs.build.outputs.image }}"' -i k8s/overlays/production/deployment.yaml
-
+          cd kubernetes/manifests
+          NEW_TAG=$(echo "${{ needs.build.outputs.image-tag }}" | grep "latest" || echo "${{ needs.build.outputs.image-tag }}" | head -n1)
+          sed -i "s|image: .*/django-ecommerce:.*|image: $NEW_TAG|g" deployment.yml
+      
       - name: Commmit and push
         run: |
-          cd k8s
+          cd kubernetes/manifests
           git config --local user.email "${{ secrets.GITHUB_MAIL}}"
-          git config --local user.name "titou-onee" 
+          git config --local user.name "titou-onee"
+          git add deployment.yml
           git commit -am "Update image to ${{ github.sha }}"
           git push origin ${{ env.GITHUB_BRANCH}}
