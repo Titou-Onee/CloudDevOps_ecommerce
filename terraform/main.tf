@@ -10,7 +10,7 @@ module "network" {
 module "eks" {
   source           = "./modules/eks"
   cluster_name     = var.cluster_name
-  cluster_version  = "1.29"
+  cluster_version  = "1.33"
   subnet_ids       = module.network.public_subnet_ids
   instance_types   = ["t3.medium"]
   desired_size     = 2
