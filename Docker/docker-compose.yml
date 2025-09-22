@@ -10,12 +10,26 @@ services:
             - 8000:8000
         depends_on: 
             - db
+        environment:
+          - DB_NAME=postgres
+          - DB_USER=postgres
+          - DB_PASSWORD=
+          - DB_HOST=db
+          - DB_PORT=5432
+        networks:
+          - mynet
     db:
         image: postgres:11
         volumes: 
             - postgres_data:/var/lib/postgresql/data/
         environment:
             POSTGRES_HOST_AUTH_METHOD: trust
-    
+        ports:
+          - "5432:5432"
+        networks:
+          - mynet
+networks:
+  mynet:
+
 volumes: 
     postgres_data:
