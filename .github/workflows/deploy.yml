@@ -1,4 +1,4 @@
-name: Dployment on AWS EKS
+name: Deployment on AWS EKS
 on:
   push:
       branches:
@@ -11,6 +11,7 @@ env:
   DOCKER_IMAGE: titouonee/clouddevops_ecommerce
   GITHUB_REPOSITORY: Titou-Onee/clouddevops_ecommerce
   GITHUB_BRANCH: dev
+  K8S_CONFIG_REPO: ./kubernetes/manifests
 
 jobs:
   deployment:
@@ -20,8 +21,8 @@ jobs:
       - name: Checkout manifest repository
         uses: actions/checkout@v4
         with:
-          repository: ${{ secrets.GITHUB_REPOSITORY }}
-          token: ${{ secrets.GITOPS_TOKEN }}
+          repository: ${{ secrets.K8S_CONFIG_REPO }}
+          token: ${{ secrets.GITHUB_TOKEN }}
           path: ./kubernetes/manifests
 
       - name : Update image tag
@@ -36,5 +37,5 @@ jobs:
           git config --local user.email "${{ secrets.GITHUB_MAIL}}"
           git config --local user.name "titou-onee"
           git add deployment.yml
-          git commit -am "Update image to ${{ github.sha }}"
+          git commit -m "Update image to ${{ github.sha }}"
           git push origin ${{ env.GITHUB_BRANCH}}
