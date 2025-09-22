@@ -15,11 +15,11 @@ terraform {
       version = "~> 2.11"
     }
   }
-  backend "s3" {
-    bucket         = "terraform-bucket"  # À créer au préalable
-    key            = "eks/ecommerce/terraform.tfstate"
-    region         = "eu-west-3"
-    dynamodb_table = "terraform-state-lock"  # Pour le verrouillage
-    encrypt        = true
-}
+  #backend "s3" {
+   # bucket         = "terraform-bucket"  # À créer au préalable
+    #key            = "eks/ecommerce/terraform.tfstate"
+    #region         = "eu-west-3"
+    #dynamodb_table = "terraform-state-lock"  # Pour le verrouillage
+    #encrypt        = true
+#}
 }
