@@ -15,6 +15,7 @@ terraform {
       version = "~> 2.11"
     }
   }
+
   #backend "s3" {
    # bucket         = "terraform-bucket"  # À créer au préalable
     #key            = "eks/ecommerce/terraform.tfstate"
