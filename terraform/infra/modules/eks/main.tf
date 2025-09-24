@@ -5,7 +5,13 @@ resource "aws_eks_cluster" "main" {
 
     vpc_config {
       subnet_ids = var.subnet_ids
+      endpoint_private_access = true
+      endpoint_public_access = true
+      public_access_cidrs = ["0.0.0.0/0"]
     }
+    depends_on = [
+      aws_iam_role_policy_attachment.eks_cluster_role_policy,
+  ]
 }
 
 resource "aws_eks_node_group" "main" {
@@ -13,14 +19,17 @@ resource "aws_eks_node_group" "main" {
   node_group_name = "${var.cluster_name}-node-group"
   node_role_arn = aws_iam_role.eks_node_group_role.arn
   subnet_ids = var.subnet_ids
+  capacity_type = "SPOT"
+  instance_types = var.instance_types
 
   scaling_config {
     desired_size = var.desired_size
     min_size = var.min_size
     max_size = var.max_size
   }
-
-  instance_types = var.instance_types
+  update_config {
+    max_unavailable = 1
+  }
 }
 
 resource "aws_iam_role" "eks_cluster_role" {
