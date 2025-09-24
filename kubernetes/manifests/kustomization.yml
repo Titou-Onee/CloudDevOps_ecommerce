@@ -1,0 +1,18 @@
+apiVersion: kustomize.config.k8s.io/V1beta1
+kind: Kustomization
+
+resources:
+  - namespace.yml
+  - configmap.yml
+  - secret.yml
+  - postgres_volume.yml
+  - postgres_deployment.yml
+  - application_deployment.yml
+
+commonLabels:
+  app.kubernetes.io/name: ecommerce-app
+  app.kubernetes.io/managed-by: argocd
+
+images:
+  - name: titouonee/clouddevops_ecommerce
+    newTag: latest
