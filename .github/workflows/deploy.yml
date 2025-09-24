@@ -7,11 +7,8 @@ on:
         branches:
           - dev
 env:
-  PIPENV_PIPFILE: Docker/Pipfile
   DOCKER_IMAGE: titouonee/clouddevops_ecommerce
-  GITHUB_REPOSITORY: Titou-Onee/clouddevops_ecommerce
   GITHUB_BRANCH: dev
-  K8S_CONFIG_REPO: ./kubernetes/manifests
 
 jobs:
   deployment:
@@ -21,21 +18,17 @@ jobs:
       - name: Checkout manifest repository
         uses: actions/checkout@v4
         with:
-          repository: ${{ secrets.K8S_CONFIG_REPO }}
           token: ${{ secrets.GITHUB_TOKEN }}
-          path: ./kubernetes/manifests
 
       - name : Update image tag
         run: |
           cd kubernetes/manifests
-          NEW_TAG=$(echo "${{ needs.build.outputs.image-tag }}" | grep "latest" || echo "${{ needs.build.outputs.image-tag }}" | head -n1)
-          sed -i "s|image: .*/django-ecommerce:.*|image: $NEW_TAG|g" deployment.yml
-      
-      - name: Commmit and push
+          kustomize edit set image ${{ env.DOCKER_IMAGE }}:sha-${{ github.sha }}
+
+      - name: Commit and push changes
         run: |
-          cd kubernetes/manifests
-          git config --local user.email "${{ secrets.GITHUB_MAIL}}"
-          git config --local user.name "titou-onee"
-          git add deployment.yml
-          git commit -m "Update image to ${{ github.sha }}"
-          git push origin ${{ env.GITHUB_BRANCH}}
+          git config --local user.email " secrets.GITHUB_EMAIL"
+          git config --local user.name "titouonee"
+          git add kubernetes/manifests
+          git diff --staged --quiet || git commit -m "Update image tag: sha-${{ github.sha }}"
+          git push origin ${{ env.GITHUB_BRANCH }}
