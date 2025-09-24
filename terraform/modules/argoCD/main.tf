@@ -90,7 +90,7 @@ resource "kubernetes_manifest" "ecommerce-app" {
         path = "k8s/overlays/production"
       }
       destination = {
-        server = "https://kubernets.default.svc"
+        server = "https://kubernetes.default.svc"
         namespace = "ecommerce-app"
       }
       syncPolicy = {
