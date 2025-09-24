@@ -34,9 +34,12 @@ Il permet de rapidement et de manière automatiser, créer un cluster EKS avec l
 
 La première tâche est de définir précisément l'architecture du cluster.
 
-le projet se découpe simplement en 2 pods. Un pod appli
+le projet se découpe simplement en 2 pods. Un pod applicative et un pod postgres.
+2 services : un clusterIp pour la base de données et un LoadBalancer pour le pod applicatif
+1 Volume persistant pour la base de données postgress
+1 fichier secret pour stocker les mots de passes (solution non sécurisé mais adoptée pour sa simplicité)
 
-Une fois cette architecture définie, sont mis en place les manifests Kubernetes, découpés en 6 fichiers : 
+Une fois cette architecture définie, sont mis en place les manifests Kubernetes, découpés en 6 fichiers : namespace, configmap, secrets, service, postgress_volume et deployment
 
 ## Étape 5: Test des manifests sur le cluster EKS
 
