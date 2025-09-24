@@ -23,7 +23,7 @@ jobs:
       - name : Update image tag
         run: |
           cd kubernetes/manifests
-          kustomize edit set image ${{ env.DOCKER_IMAGE }}:sha-${{ github.sha }}
+          kustomize edit set image ${{ env.DOCKER_IMAGE }}:${{ github.sha }}
 
       - name: Commit and push changes
         run: |
