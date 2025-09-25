@@ -1,4 +1,4 @@
-name: CI Workflow
+name: Code Quality Check
 on:
   push:
       branches:
@@ -40,9 +40,3 @@ jobs:
         run: |
           pipenv run flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
           pipenv run flake8 . --count --exit-zero --max-complexity=10 --max-line-length=88 --statistics
-
-      - name: Step 2 trigger
-        uses: peter-evans/repository-dispatch@v3
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          event-type: step2-trigger

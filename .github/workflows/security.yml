@@ -1,8 +1,7 @@
 name: Security checks
 on:
   workflow_run: 
-    workflows:
-      - CI Workflow
+    workflows: ["Code Quality Check"]
     types: 
       - completed
 env:
