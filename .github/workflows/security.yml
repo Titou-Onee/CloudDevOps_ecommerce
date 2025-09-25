@@ -1,7 +1,7 @@
 name: Security checks
 on:
-  repository_dispatch:
-    types: [step2-trigger]
+  workflow_run: 
+    workflows: ["CI Workflow"]
 env:
   PIPENV_PIPFILE: Docker/Pipfile
   DOCKER_IMAGE: titouonee/clouddevops_ecommerce
