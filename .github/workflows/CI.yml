@@ -2,10 +2,10 @@ name: CI Workflow
 on:
   push:
       branches:
-        - dev
+        - master
   pull_request:
         branches:
-          - dev
+          - master
 env:
   PIPENV_PIPFILE: Docker/Pipfile
 
