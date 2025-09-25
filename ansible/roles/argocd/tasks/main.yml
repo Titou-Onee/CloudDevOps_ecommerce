@@ -1,0 +1,98 @@
+- name: Add ArgoCD Helm Repository
+  kubernetes.core.helm_repository:
+    name: argocd
+    repo_url: https://argoproj.github.io/argo_helm
+
+- name: Create ArgoCD namespace
+  kubernetes.core.k8s:
+    name: "{{ argocd.namespace }}"
+    api_version: v1
+    kind: namespace
+    state: present
+    kubeconfig: "{{ kubeconfig_path }}"
+    
+- name: Install ArgoCD with Helm
+  kubernets.core.helm:
+    name: argocd
+    chart_ref: argocd/argo-cd
+    release_namespace: "{{ argocd.namespace }}"
+    create_namespace: true
+    kubeconfig: "{{ kubeconfig_path }}"
+    values:
+      server:
+        service:
+          type: LoadBalancer
+        ingress:
+          enabled: true
+          ingressClassName: alb
+          hosts:
+            - "{{ argocd.domain }}"
+          annotations:
+            kubernetes.io/ingress.class: alb
+            alb.ingress.kubernetes.io/scheme: internet-facing
+            alb.ingress.kubernetes.io/target-type: ip
+            alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}, {"HTTPS": 443}]'
+            alb.ingress.kubernetes.io/certificate-arn: "{{ ssl_certificate_arn | default('') }}"
+      config:
+        secret:
+          argocd_serv_admin_pass: "{{ argocd.admin_password | password_hash('bcrypt') }}"
+        repositories: "{{ argocd_repositories_config }}"
+
+      controller:
+        metrics:
+          enabled: true
+          serviceMonitor:
+            enabled: true
+            namespace: "{{ prometheus.namespace }}"
+      serv:
+        metrics:
+          enabled: true
+          serviceMonitor:
+            enabled: true
+            namespace: "{{ prometheus.namespace }}"
+                       
+      repoServer:
+        metrics:
+          enabled: true
+          serviceMonitor:
+            enabled: true
+            namespace: "{{ prometheus.namespace }}"
+
+- name: Wait for ArgoCD Serv
+  kubernetes.core.k8s_info:
+    api_version: apps/v1
+    kind: Deployment
+    name: argocd-server
+    namespace: "{{ argocd.namespace }}"
+    kubeconfig: "{{ kubeconfig_path }}"
+    wait_condition:
+      type: Available
+      status: true
+    wait_timeout: 600
+
+- name: Create ArgoCD App
+  kubernetes.core.k8s:
+    definition:
+      apiVersion: argoproj.io/v1alpha1
+      kind: Application
+      metadata:
+        name: "{{ item.name }}"
+        namespace: "{{ argocd.namespace }}"
+      spec:
+        project: default
+        source:
+          repoURL: "{{ item.repo_url }}"
+          targetRevision: master
+          path: "{{ item.path }}"
+          kustomize: {}
+        destination:
+          server: https://kubernetes.default.svc
+          namespace: "{{ item.destination_namespace }}"
+        syncPolicy:
+          automated:
+            prune: true
+            selfHeal: true
+          syncOptions:
+            - CreateNamespace=true
+    kubeconfig: "{{ kubeconfig_path }}"
+  loop: "{{ argocd.applications }}"
