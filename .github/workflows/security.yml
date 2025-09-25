@@ -1,7 +1,8 @@
 name: Security checks
 on:
   workflow_run: 
-    workflows: ["CI Workflow"]
+    workflows:
+      - CI Workflow
     types: 
       - completed
 env:
