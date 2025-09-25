@@ -1,4 +1,4 @@
-name: Deployment on AWS EKS
+name: update of manifests
 on:
   push:
       branches:
