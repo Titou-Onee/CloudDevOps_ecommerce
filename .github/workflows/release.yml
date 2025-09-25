@@ -1,11 +1,9 @@
 name: push on DockerHub
 on:
-  push:
-      branches:
-        - dev
-  pull_request:
-        branches:
-          - dev
+  workflow_run: 
+    workflows: ["Security checks"]
+    types: 
+      - completed
 env:
   PIPENV_PIPFILE: Docker/Pipfile
   DOCKER_IMAGE: titouonee/clouddevops_ecommerce

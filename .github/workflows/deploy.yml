@@ -1,11 +1,9 @@
 name: update of manifests
 on:
-  push:
-      branches:
-        - dev
-  pull_request:
-        branches:
-          - dev
+  workflow_run: 
+    workflows: ["push on DockerHub"]
+    types: 
+      - completed
 env:
   DOCKER_IMAGE: titouonee/clouddevops_ecommerce
   GITHUB_BRANCH: dev
