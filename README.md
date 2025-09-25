@@ -46,3 +46,4 @@ Une fois cette architecture définie, sont mis en place les manifests Kubernetes
 ## Étape 6: Automatisation de la mise à jour du cluster à l'aide d'ArgoCD
 
 ## Étape 7: Ajout de la partie monitoring à l'aide de Prometheus et Grafana
+test
