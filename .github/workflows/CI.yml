@@ -10,8 +10,7 @@ env:
   PIPENV_PIPFILE: Docker/Pipfile
 
 jobs:
-  code_quality:
-    if: ${{ false }}  
+  code_quality: 
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
