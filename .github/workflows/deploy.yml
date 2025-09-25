@@ -6,7 +6,7 @@ on:
       - completed
 env:
   DOCKER_IMAGE: titouonee/clouddevops_ecommerce
-  GITHUB_BRANCH: dev
+  GITHUB_BRANCH: master
 
 jobs:
   deployment:
