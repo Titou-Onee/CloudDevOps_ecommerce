@@ -1,0 +1,58 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: {{ app.name }}
+  namespace: {{ argocd.namespace }}
+  labels:
+    app.kubernetes.io/name: {{ app.name }}
+    app.kubernetes.io/managed-by: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  # Projet ArgoCD (default par défaut)
+  project: default
+  
+  # Source: votre repository Git
+  source:
+    repoURL: {{ app.repo_url }}
+    targetRevision: HEAD
+    path: {{ app.path }}
+    
+    # Configuration Kustomize
+    kustomize:
+      images:
+        - titouonee/clouddevops_ecommerce
+  
+  # Destination: votre cluster Kubernetes
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: {{ app.destination_namespace }}
+  
+  # Politique de synchronisation
+  syncPolicy:
+    # Synchronisation automatique activée
+    automated:
+      prune: {{ app.auto_prune | default(true) }}
+      selfHeal: {{ app.self_heal | default(true) }}
+      allowEmpty: false
+    
+    # Options de synchronisation
+    syncOptions:
+      - CreateNamespace=true
+      - PrunePropagationPolicy=foreground
+      - PruneLast=true
+    
+    # Stratégie de retry en cas d'échec
+    retry:
+      limit: 5
+      backoff:
+        duration: 5s
+        factor: 2
+        maxDuration: 3m0s
+  
+  # Ignorer les différences sur les replicas (géré par HPA)
+  ignoreDifferences:
+    - group: apps
+      kind: Deployment
+      jsonPointers:
+        - /spec/replicas
