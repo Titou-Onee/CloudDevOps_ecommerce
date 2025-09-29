@@ -1,0 +1,34 @@
+# Fichiers Python
+*.pyc
+__pycache__/
+*.py[cod]
+*$py.class
+.Python
+env/
+venv/
+ENV/
+
+# Fichiers de configuration locaux
+*.local
+.env
+.env.local
+
+# Fichiers Kubernetes
+kubeconfig
+*.kubeconfig
+
+# Logs
+*.log
+
+# Fichiers temporaires
+*.tmp
+*.swp
+*.swo
+*~
+.DS_Store
+
+
+# Backups
+backup/
+*.backup
+*.bak

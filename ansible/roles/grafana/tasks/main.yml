@@ -1,0 +1,126 @@
+- name: Add Grafana repository from helm 
+  kubernetes.core.helm_repository:
+    name: grafana
+    repo_url: https://grafana.github.io/helm-charts
+    state: present
+
+- name: Install Grafana via Helm
+  kubernetes.core.helm:
+    name: grafana
+    chart_ref: grafana/grafana
+    release_namespace: "{{ grafana.namespace }}"
+    create_namespace: false
+    kubeconfig: "{{ kubeconfig_path }}"
+    wait: true
+    wait_timeout: 600
+    values:
+      adminUser: "{{ grafana.admin_user }}"
+      adminPassword: "{{ grafana.admin_password }}"
+      
+      service:
+        type: LoadBalancer
+      
+      persistence:
+        enabled: true
+        storageClassName: "{{ grafana.storage_class }}"
+        size: "{{ grafana.storage_size }}"
+        accessModes:
+          - ReadWriteOnce
+      
+      datasources:
+        datasources.yaml:
+          apiVersion: 1
+          datasources:
+            - name: Prometheus
+              type: prometheus
+              url: http://kube-prometheus-stack-prometheus.{{ prometheus.namespace }}.svc.cluster.local:9090
+              access: proxy
+              isDefault: true
+              jsonData:
+                timeInterval: "{{ prometheus.scrape_interval }}"
+            
+            - name: Alertmanager
+              type: alertmanager
+              url: http://kube-prometheus-stack-alertmanager.{{ prometheus.namespace }}.svc.cluster.local:9093
+              access: proxy
+      
+      dashboardProviders:
+        dashboardproviders.yaml:
+          apiVersion: 1
+          providers:
+            - name: 'default'
+              orgId: 1
+              folder: 'Kubernetes'
+              type: file
+              disableDeletion: false
+              editable: true
+              options:
+                path: /var/lib/grafana/dashboards/default
+            - name: 'argocd'
+              orgId: 1
+              folder: 'ArgoCD'
+              type: file
+              disableDeletion: false
+              editable: true
+              options:
+                path: /var/lib/grafana/dashboards/argocd
+      
+      dashboards:
+        default:
+          kubernetes-cluster:
+            gnetId: 315
+            revision: 3
+            datasource: Prometheus
+
+          kubernetes-pods:
+            gnetId: 6417
+            revision: 1
+            datasource: Prometheus
+          
+          node-exporter:
+            gnetId: 1860
+            revision: 31
+            datasource: Prometheus
+        
+        argocd:
+          argocd-dashboard:
+            gnetId: 14584
+            revision: 1
+            datasource: Prometheus
+      
+      sidecar:
+        dashboards:
+          enabled: true
+          label: grafana_dashboard
+        datasources:
+          enabled: true
+          label: grafana_datasource
+      
+      serviceMonitor:
+        enabled: true
+        labels:
+          release: kube-prometheus-stack
+      
+      plugins:
+        - grafana-piechart-panel
+        - grafana-clock-panel
+
+- name: Wait for Grafana
+  kubernetes.core.k8s_info:
+    api_version: apps/v1
+    kind: Deployment
+    name: grafana
+    namespace: "{{ grafana.namespace }}"
+    kubeconfig: "{{ kubeconfig_path }}"
+    wait: true
+    wait_condition:
+      type: Available
+      status: "True"
+    wait_timeout: 600
+
+- name: Print Grafana status
+  debug:
+    msg:
+      - "Grafana installé dans le namespace {{ grafana.namespace }}"
+      - "Datasource Prometheus configuré"
+      - "4 dashboards préconfigurés importés"
