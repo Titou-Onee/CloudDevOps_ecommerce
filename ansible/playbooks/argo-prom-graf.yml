@@ -3,16 +3,11 @@
   gather_facts: false
  
   pre_tasks:
-    - name:  Verify cluster connection
-      kubernetes.core.k8s_info:
-        apiVersion: v1
-        kind: Node
-        kubeconfig: "{{ kubeconfig_path }}"
-      register: nodes
-  
-    - name: Display cluster informations
-      debug:
-      msg: "Connected to cluster with {{ nodes.ressources | length }} nodes"
+
+    - name: cluster preparation
+      include_role:
+        name: prepare-cluster
+      tags: [configuration]
 
   tasks:
     - name: Install argocd
@@ -33,7 +28,7 @@
   post_tasks:
     - name: Print access informations
       debug:
-      msg: 
+        msg: 
           - "ArgoCD"
           - "  Namespace: {{ argocd.namespace }}"
           - "  Username: admin"

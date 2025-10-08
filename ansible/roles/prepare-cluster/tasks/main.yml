@@ -1,0 +1,82 @@
+
+- name: Vérifier la connexion au cluster
+  kubernetes.core.k8s_info:
+      api_version: v1
+      kind: Node
+      kubeconfig: "{{ kubeconfig_path }}"
+  register: nodes_info
+
+- name: Afficher les nœuds
+  debug:
+    msg: "Cluster avec {{ nodes_info.resources | length }} nœud(s): {{ nodes_info.resources | map(attribute='metadata.name') | list }}"
+ 
+
+- name: Vérifier si le driver CSI EBS existe
+  kubernetes.core.k8s_info:
+    api_version: storage.k8s.io/v1
+    kind: CSIDriver
+    name: ebs.csi.aws.com
+    kubeconfig: "{{ kubeconfig_path }}"
+  register: csi_driver
+  failed_when: false
+
+- name: Installer le driver EBS CSI via Helm
+  kubernetes.core.helm_repository:
+    name: aws-ebs-csi-driver
+    repo_url: https://kubernetes-sigs.github.io/aws-ebs-csi-driver
+    state: present
+  when: csi_driver.resources | length == 0
+
+- name: Installer le driver EBS CSI via Helm
+  kubernetes.core.helm:
+    name: aws-ebs-csi-driver
+    chart_ref: aws-ebs-csi-driver/aws-ebs-csi-driver
+    release_namespace: kube-system
+    create_namespace: false
+    kubeconfig: "{{ kubeconfig_path }}"
+    wait: true
+    values:
+      controller:
+        serviceAccount:
+          create: true
+          name: ebs-csi-controller-sa
+          annotations:
+            eks.amazonaws.com/role-arn: "arn:aws:iam::436567292667:role/eks-cluster-ebs-csi-driver"
+  when: csi_driver.resources | length == 0
+
+- name: Ensure gp3 StorageClass exists
+  kubernetes.core.k8s:
+    kubeconfig: "{{ kubeconfig_path }}"
+    state: present
+    definition:
+      apiVersion: storage.k8s.io/v1
+      kind: StorageClass
+      metadata:
+        name: gp3
+      provisioner: ebs.csi.aws.com
+      volumeBindingMode: WaitForFirstConsumer
+      reclaimPolicy: Delete
+      parameters:
+        type: gp3
+  register: gp3_storageclass
+
+- name: Vérifier les StorageClasses existantes
+  kubernetes.core.k8s_info:
+    api_version: storage.k8s.io/v1
+    kind: StorageClass
+    kubeconfig: "{{ kubeconfig_path }}"
+  register: storage_classes
+
+
+- name: Vérifier l'état final du cluster
+  kubernetes.core.k8s_info:
+    api_version: v1
+    kind: Node
+    kubeconfig: "{{ kubeconfig_path }}"
+  register: final_nodes
+
+- name: Afficher le résumé
+  debug:
+    msg:
+      - "Noeuds: {{ final_nodes.resources | length }}"
+      - "Noeuds Ready: {{ final_nodes.resources | selectattr('status.conditions', 'defined') | list | length }}"

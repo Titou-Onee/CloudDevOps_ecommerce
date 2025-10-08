@@ -3,19 +3,15 @@
     name: prometheus-community
     repo_url: https://prometheus-community.github.io/helm-charts
     state: present
+    force_update: true
 
-- name: Create monitoring namespace
-  kubernetes.core.k8s:
-    name: "{{ prometheus.namespace }}"
-    api_version: v1
-    kind: namespace
-    state: present
-    kubeconfig: "{{ kubeconfig_path }}"
+
 
 - name: Install kube-prometheus-stack via Helm
   kubernetes.core.helm:
     name: kube-prometheus-stack
     chart_ref: prometheus-community/kube-prometheus-stack
+    chart_version: "66.2.1"
     release_namespace: "{{ prometheus.namespace }}"
     create_namespace: false
     kubeconfig: "{{ kubeconfig_path }}"
@@ -34,18 +30,13 @@
                 resources:
                   requests:
                     storage: "{{ prometheus.storage_size }}"
-
-# ansible/roles/prometheus/tasks/main.yml
-# Tâches pour installer et configurer Prometheus
-
----
-- name: Ajouter le repository Helm Prometheus
+- name: Add Helm Prometheus repository
   kubernetes.core.helm_repository:
     name: prometheus-community
     repo_url: https://prometheus-community.github.io/helm-charts
     state: present
 
-- name: Créer le namespace monitoring
+- name: Create monitoring namespace
   kubernetes.core.k8s:
     name: "{{ prometheus.namespace }}"
     api_version: v1
@@ -53,7 +44,7 @@
     state: present
     kubeconfig: "{{ kubeconfig_path }}"
 
-- name: Installer kube-prometheus-stack via Helm
+- name: Install kube-prometheus-stack via Helm
   kubernetes.core.helm:
     name: kube-prometheus-stack
     chart_ref: prometheus-community/kube-prometheus-stack
@@ -61,7 +52,7 @@
     create_namespace: false
     kubeconfig: "{{ kubeconfig_path }}"
     wait: true
-    wait_timeout: 900
+    wait_timeout: 600s
     values:
       prometheus:
         prometheusSpec:
@@ -123,7 +114,7 @@
 - name: Create Prometheus rules for argoCD alerts
   kubernetes.core.k8s:
     definition:
-      apiVersion: monitoring.coreos.com/v1
+      api_version: monitoring.coreos.com/v1
       kind: PrometheusRule
       metadata:
         name: argocd-alerts
@@ -142,7 +133,7 @@
                   severity: warning
                 annotations:
                   summary: "Application ArgoCD non synchronisée"
-                  description: "L'application {{ $labels.name }} n'est pas synchronisée depuis 5 minutes."
+                  description: "L'application {{'{{'}} $labels.name {{'}}'}}  n'est pas synchronisée depuis 5 minutes."
               
               - alert: ArgoAppUnhealthy
                 expr: argocd_app_info{health_status!="Healthy"} == 1
@@ -151,22 +142,24 @@
                   severity: warning
                 annotations:
                   summary: "Application ArgoCD en mauvaise santé"
-                  description: "L'application {{ $labels.name }} n'est pas saine depuis 5 minutes."
+                  description: "L'application {{'{{'}} $labels.name {{'}}'}}  n'est pas saine depuis 5 minutes."
     kubeconfig: "{{ kubeconfig_path }}"
     state: present
 
-- name: Wait for prometheus
+- name: Wait for Prometheus pods to be ready
   kubernetes.core.k8s_info:
-    api_version: apps/v1
-    kind: StatefulSet
-    name: prometheus-kube-prometheus-stack-prometheus
+    api_version: v1
+    kind: Pod
     namespace: "{{ prometheus.namespace }}"
+    label_selectors:
+      - app.kubernetes.io/name=prometheus
     kubeconfig: "{{ kubeconfig_path }}"
     wait: true
     wait_condition:
       type: Ready
       status: "True"
     wait_timeout: 600
+
 
 - name: Print prometheus status
   debug:
