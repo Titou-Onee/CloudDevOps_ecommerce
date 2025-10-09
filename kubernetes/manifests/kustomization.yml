@@ -15,4 +15,5 @@ commonLabels:
 
 images:
 - name: titouonee/clouddevops_ecommerce
-  newTag: b1ab8b4ec949aed22037dc36b64749ce59f1e06d
+  newName: titouonee/clouddevops_ecommerce
+  newTag: 953039aedb34c10500bf63ed087a9f5d1e9ee439
