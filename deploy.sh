@@ -57,7 +57,7 @@ install_ansible_deps() {
 deploy_all() {
     log_info "Déploiement complet (ArgoCD + Monitoring)..."
     cd ansible
-    ansible-playbook playbooks/argo-prom-graf.yml
+    ansible-playbook -i inventory/hosts.yml playbooks/argo-prom-graf.yml 
     cd ..
     log_success "Déploiement terminé"
 }
