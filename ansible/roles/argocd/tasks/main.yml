@@ -1,7 +1,7 @@
 - name: Add ArgoCD Helm Repository
   kubernetes.core.helm_repository:
     name: argocd
-    repo_url: https://argoproj.github.io/argo_helm
+    repo_url: https://argoproj.github.io/argo-helm
     state: present
 
 - name: Create ArgoCD namespace
@@ -11,16 +11,38 @@
     kind: namespace
     state: present
     kubeconfig: "{{ kubeconfig_path }}"
+
+- name: Create monitoring namespace
+  kubernetes.core.k8s:
+    name: "{{ prometheus.namespace }}"
+    api_version: v1
+    kind: namespace
+    state: present
+    kubeconfig: "{{ kubeconfig_path }}"
+
+- name: Créer le secret Redis si nécessaire
+  kubernetes.core.k8s:
+    definition:
+      apiVersion: v1
+      kind: Secret
+      metadata:
+        name: argocd-redis
+        namespace: "{{ argocd.namespace }}"
+      type: Opaque
+      stringData:
+          auth: "unsecure_admin_password"
+    kubeconfig: "{{ kubeconfig_path }}"
+    state: present
     
 - name: Install ArgoCD with Helm
-  kubernets.core.helm:
+  kubernetes.core.helm:
     name: argocd
     chart_ref: argocd/argo-cd
     release_namespace: "{{ argocd.namespace }}"
     create_namespace: true
     kubeconfig: "{{ kubeconfig_path }}"
     wait: true
-    wait_timeout: 600
+    wait_timeout: 200s
     values:
       global:
         image:
@@ -28,7 +50,7 @@
       config:
         secret:
           argocd_serv_admin_pass: "{{ argocd.admin_password | password_hash('bcrypt') }}"
-        repositories: "{{ argocd_repositories_config }}"
+        repositories: "{{ argocd.repositories }}"
 
       controller:
         metrics:
@@ -57,7 +79,7 @@
 - name: Creation of repositories secrets
   kubernetes.core.k8s:
     definition:
-      apiVersion: v1
+      api_version: v1
       kind: Secret
       metadata:
         name: "{{ item.name }}-repo"

@@ -31,6 +31,21 @@ resource "aws_eks_node_group" "main" {
     max_unavailable = 1
   }
 }
+resource "aws_iam_openid_connect_provider" "eks" {
+  url             = aws_eks_cluster.main.identity[0].oidc[0].issuer
+  client_id_list  = ["sts.amazonaws.com"]
+  thumbprint_list = ["9e99a48a9960b14926bb7f3b02e22da0ecd4e4e3"]
+}
+
+
+data "aws_caller_identity" "current" {}
+
+
+locals {
+  oidc_url = replace(aws_eks_cluster.main.identity[0].oidc[0].issuer, "https://", "")
+}
+
+
 
 resource "aws_iam_role" "eks_cluster_role" {
   name = "eks-cluster-role"
@@ -70,6 +85,30 @@ resource "aws_iam_role" "eks_node_group_role" {
   })
 }
 
+resource "aws_iam_role" "ebs_csi_driver" {
+  name = "${var.cluster_name}-ebs-csi-driver"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Effect = "Allow",
+        Principal = {
+          Federated = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:oidc-provider/${local.oidc_url}"
+        },
+        Action = "sts:AssumeRoleWithWebIdentity",
+        Condition = {
+          StringEquals = {
+            "${local.oidc_url}:sub" = "system:serviceaccount:kube-system:ebs-csi-controller-sa"
+          }
+        }
+      }
+    ]
+  })
+}
+
+
+
 resource "aws_iam_role_policy_attachment" "eks_worker_node" {
   role       = aws_iam_role.eks_node_group_role.name
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy"
@@ -83,4 +122,11 @@ resource "aws_iam_role_policy_attachment" "eks_cni" {
 resource "aws_iam_role_policy_attachment" "ecr_readonly" {
   role       = aws_iam_role.eks_node_group_role.name
   policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
+
+}
+
+
+resource "aws_iam_role_policy_attachment" "ebs_csi_policy" {
+  role       = aws_iam_role.ebs_csi_driver.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy"
 }
