@@ -76,13 +76,10 @@
           additionalScrapeConfigs:
             - job_name: 'argocd-metrics'
               static_configs:
-                - targets: ['argocd-metrics.{{ argocd.namespace }}.svc.cluster.local:8082']
+                - targets: ['argocd-application-controller-metrics.{{ argocd.namespace }}.svc.cluster.local:8082']
             - job_name: 'argocd-server-metrics'
               static_configs:
-                - targets: ['argocd-server-metrics.{{ argocd.namespace }}.svc.cluster.local:8083']
-            - job_name: 'argocd-repo-server-metrics'
-              static_configs:
-                - targets: ['argocd-repo-server.{{ argocd.namespace }}.svc.cluster.local:8084']
+                - targets: ['argocd-repo-server-metrics.{{ argocd.namespace }}.svc.cluster.local:8084']
       
       alertmanager:
         alertmanagerSpec:
