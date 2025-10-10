@@ -1,7 +1,7 @@
-name: update of manifests
+name: Update of manifests
 on:
   workflow_run: 
-    workflows: ["push on DockerHub"]
+    workflows: ["Push to DockerHub"]
     types: 
       - completed
 env:

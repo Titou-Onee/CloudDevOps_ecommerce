@@ -1,4 +1,4 @@
-name: push on DockerHub
+name: Push to DockerHub
 on:
   workflow_run: 
     workflows: ["Security checks"]
