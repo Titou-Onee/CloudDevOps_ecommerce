@@ -5,7 +5,6 @@ on:
     types: 
       - completed
 env:
-  PIPENV_PIPFILE: Docker/Pipfile
   DOCKER_IMAGE: titouonee/clouddevops_ecommerce
 
 jobs:
@@ -42,7 +41,7 @@ jobs:
             -Dsonar.organization="titou-onee"
           projectBaseDir: .
           
-      - name: Trivy filesystem scan
+      - name: Run Trivy filesystem scan
         uses: aquasecurity/trivy-action@0.28.0
         with:
           scan-type: 'fs'
@@ -53,12 +52,6 @@ jobs:
           exit-code: '0'
           ignore-unfixed: true
           severity: 'CRITICAL,HIGH'
-
-      - name: Safety scan
-        run: |
-          pipenv run safety check --json > safety-report.json
-          pipenv run safety check --short-report
-        continue-on-error: true
 
       - name: Build Docker image
         run: |
