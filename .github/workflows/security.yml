@@ -1,7 +1,7 @@
 name: Security checks
 on:
   workflow_run: 
-    workflows: ["Code Quality Check"]
+    workflows: ["Format Lint Code"]
     types: 
       - completed
 env:
