@@ -5,7 +5,6 @@ on:
     types: 
       - completed
 env:
-  PIPENV_PIPFILE: Docker/Pipfile
   DOCKER_IMAGE: titouonee/clouddevops_ecommerce
 
 jobs:
@@ -32,12 +31,6 @@ jobs:
           
           docker push ${{ env.DOCKER_IMAGE }}:latest
           docker push ${{ env.DOCKER_IMAGE }}:${{ github.sha }}
-
-      - name: Cleanup local images
-        if: always()
-        run: |
-          docker rmi ${{ env.DOCKER_IMAGE }}:test || true
-          docker system prune -f || true
 
       - name: Upload security reports
         uses: actions/upload-artifact@v4
