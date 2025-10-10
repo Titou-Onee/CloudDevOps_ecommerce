@@ -10,9 +10,6 @@ output "kubectl_config_command" {
 output "cluster_endpoint" {
   value = module.eks.cluster_endpoint
 }
-output "cluster_certificate_authority_data" {
-  value = module.eks.cluster_certificate_authority_data
-}
 output "ebs_csi_driver_role_arn" {
-  value       = module.eks.ebs_csi_driver_role_arn
+  value = module.eks.ebs_csi_driver_role_arn
 }

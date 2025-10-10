@@ -1,3 +1,4 @@
+# Defination of the network for the EKS cluster
 resource "aws_vpc" "main" {
   cidr_block = var.vpc_cidr
   enable_dns_support = true
@@ -28,6 +29,7 @@ resource "aws_subnet" "public"{
     }
 }
 
+# Internet route table for nodes
 resource "aws_route_table" "public"{
     vpc_id = aws_vpc.main.id
 
@@ -47,6 +49,7 @@ resource "aws_route_table_association" "public" {
     count = length(var.public_subnet_cidrs) 
 }
 
+# Access list for the nodes
 resource "aws_network_acl" "main" {
   vpc_id = aws_vpc.main.id
   subnet_ids = aws_subnet.public[*].id

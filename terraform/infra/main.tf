@@ -10,11 +10,12 @@ module "network" {
 module "eks" {
   source          = "./modules/eks"
   cluster_name    = var.cluster_name
-  cluster_version = "1.33"
+  cluster_version = var.cluster_version
   subnet_ids      = module.network.public_subnet_ids
   instance_types  = ["t3.large"]
-  desired_size    = 2
-  min_size        = 1
-  max_size        = 3
+  desired_size    = var.desired_size
+  min_size        = var.min_size
+  max_size        = var.max_size
+  max_unavailable = var.max_unavailable
   depends_on      = [module.network]
 }
