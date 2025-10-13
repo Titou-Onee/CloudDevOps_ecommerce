@@ -35,4 +35,4 @@ backup/
 
 #terraform
 *.tfstate
-terraform/.terraform
+./terraform

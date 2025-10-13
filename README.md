@@ -67,6 +67,12 @@ Add Gif animation
 └── README.md              # Main documentation file
 ```
 
+## prerequises :
+- AWS account
+- S3 bucket for remote terraform state (encryption, versioning and no public access)
+- linux environment or wsl (for ansible installation)
+
+  
 ## Author
 
 **Titouann Mauchamp**

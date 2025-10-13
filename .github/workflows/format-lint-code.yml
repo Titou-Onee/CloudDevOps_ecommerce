@@ -29,7 +29,6 @@ jobs:
           pipenv run pip install "setuptools==57.5.0"
           pipenv install --dev
           pipenv install pytest pytest-cov flake8 black safety
-      
       - name: Code formatting check
         run: pipenv run black --check .
         continue-on-error: true
