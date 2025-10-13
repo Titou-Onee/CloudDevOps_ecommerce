@@ -57,7 +57,7 @@ A comprehensive end-to-end CI/CD infrastructure for containerized application. T
 
 ## Project Structure 
 
-'''bash
+```bash
 .
 ├── .github/workflows/               # GitHub Actions Workflows
 ├── Ansible/                # Ansible inventory playbooks and roles
@@ -65,7 +65,7 @@ A comprehensive end-to-end CI/CD infrastructure for containerized application. T
 ├── Terraform/             # Terraform modules and scripts
 ├── Kubernetes/            # Kubernetes deployment and service manifests
 └── README.md              # Main documentation file
-'''
+```
 
 ## Author
 
