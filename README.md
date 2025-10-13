@@ -4,7 +4,7 @@ A comprehensive end-to-end CI/CD infrastructure for containerized application. T
 
 ---
 # Project Architecture
-
+Add Gif
 ---
 ## Architecture Overview
 
@@ -59,8 +59,8 @@ A comprehensive end-to-end CI/CD infrastructure for containerized application. T
 
 ```bash
 .
-├── .github/workflows/               # GitHub Actions Workflows
-├── Ansible/                # Ansible inventory playbooks and roles
+├── .github/workflows/     # GitHub Actions Workflows
+├── Ansible/               # Ansible inventory playbooks and roles
 ├── Docker/                # Dockerfile and app source code
 ├── Terraform/             # Terraform modules and scripts
 ├── Kubernetes/            # Kubernetes deployment and service manifests
