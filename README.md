@@ -4,7 +4,7 @@ A comprehensive end-to-end CI/CD infrastructure for containerized application. T
 
 ---
 # Project Architecture
-Add Gif
+Add Gif animation
 ---
 ## Architecture Overview
 
