@@ -28,10 +28,10 @@ A comprehensive end-to-end CI/CD infrastructure for containerized application. T
     - creation of the ecommerce application on the cluster
 - **Prometheus** : 
     - Installation and configuration on the cluster
-    - Creation of alerts
+    - Creation of alerts on argocd state
 - **Grafana** :
     - Installation and configuration with Prometheus
-    - Creation and importation of dashboards
+    - Creation and importation of dashboards for full cluster data overview
 ---
 
 ### 3. Kubernetes Environment
@@ -43,13 +43,13 @@ A comprehensive end-to-end CI/CD infrastructure for containerized application. T
 
 
 ### 4. ArgoCD
--**GitOps Management of the application**
+- **GitOps Management of the application**
     - Automatic rollout of the application version
     - Automatic Heal and prune
 
 
 ## 5 GitHub Actions
-**4 workflows** :
+- **4 workflows** :
     - **format-lint-code**: black formatting and flake8 linting
     - **security**: Sonarqube, trivy fs and trivy image scan + reporting
     - **release**: build and push of the image on DockerHub
