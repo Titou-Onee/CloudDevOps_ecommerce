@@ -110,7 +110,6 @@
 - name: Creation of argocd app
   kubernetes.core.k8s:
     definition: "{{ lookup('template', 'ecommerce.yml.j2') }}"
-    definition: "{{ lookup('template', 'ecommerce.yml.j2') }}"
     kubeconfig: "{{ kubeconfig_path }}"
     state: present
   when: ecommerce_app is defined
