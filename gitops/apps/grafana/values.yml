@@ -1,0 +1,94 @@
+adminUser: admin
+adminPassword: unsecure_admin_password
+
+service:
+  type: LoadBalancer
+
+persistence:
+  enabled: true
+  storageClassName: gp3
+  size: 10Gi
+  accessModes:
+    - ReadWriteOnce
+
+datasources:
+  datasources.yaml:
+    api_version: 1
+    datasources:
+      - name: Prometheus
+        type: prometheus
+        url: http://kube-prometheus-stack-prometheus.monitoring.svc.cluster.local:9090
+        access: proxy
+        isDefault: true
+        jsonData:
+          timeInterval: 15s
+
+      - name: Alert manager
+        type: alertmanager
+        url: http://kube-prometheus-stack-alertmanager.monitoring.svc.cluster.local:9093
+        access: proxy
+
+dashboardProviders:
+  dashboardproviders.yaml:
+    apiVersion: 1
+    providers:
+      - name: 'default'
+        orgId: 1
+        folder: 'Kubernetes'
+        type: file
+        disableDeletion: false
+        editable: true
+        options:
+          path: /var/lib/grafana/dashboards/default
+      - name: 'argocd'
+        orgId: 1
+        folder: 'ArgoCD'
+        type: file
+        disableDeletion: false
+        editable: true
+        options:
+          path: /var/lib/grafana/dashboards/argocd
+
+dashboards:
+  default:
+    kubernetes-cluster:
+      gnetId: 315
+      revision: 3
+      datasource: Prometheus
+    kubernetes-pods:
+      gnetId: 6417
+      revision: 1
+      datasource: Prometheus
+    node-exporter:
+      gnetId: 1860
+      revision: 31
+      datasource: Prometheus
+
+  argocd:
+    argocd-dashboard:
+      gnetId: 14584
+      revision: 1
+      datasource: Prometheus
+   
+  security:
+    falco-dashboard:
+      gnetId: 11914
+      revision: 1
+      datasource: Prometheus
+
+sidecar:
+  dashboards:
+    enabled: true
+    label: grafana_dashboard
+  datasources:
+    enabled: true
+    label: grafana_datasource
+
+serviceMonitor:
+  enabled: true
+  labels:
+    release: kube-prometheus-stack
+
+plugins:
+  - grafana-piechart-panel
+  - grafana-clock-panel

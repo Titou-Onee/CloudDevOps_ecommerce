@@ -1,0 +1,107 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: all-applications
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "0"
+spec:
+  generators:
+    - list:
+        elements:
+          - name: security-psa
+            path: gitops/apps/psa
+            namespace: kube-system
+            wave: "0"
+            type: directory
+          
+          - name: security-gatekeeper
+            path: gitops/apps/opa-gatekeeper
+            namespace: gatekeeper
+            wave: "1"
+            type: helm
+            chart: opa/gatekeeper
+            chartVersion: "3.15.1"
+          
+          - name: security-falco
+            path: security/falco
+            namespace: falco
+            wave: "1"
+            type: helm
+            chart: falcosecurity/falco
+            chartVersion: "3.8.4"
+          
+          # ========================================
+          # MONITORING (Wave 2-3)
+          # ========================================
+          - name: monitoring-prometheus
+            path: monitoring/prometheus
+            namespace: monitoring
+            wave: "2"
+            type: helm
+            chart: prometheus-community/kube-prometheus-stack
+            chartVersion: "55.5.0"
+          
+          - name: monitoring-grafana
+            path: monitoring/grafana
+            namespace: monitoring
+            wave: "3"
+            type: helm
+            chart: grafana/grafana
+            chartVersion: "7.3.0"
+          
+          # ========================================
+          # APPLICATION (Wave 4)
+          # ========================================
+          - name: ecommerce-app
+            path: apps/ecommerce/manifests
+            namespace: ecommerce-app
+            wave: "4"
+            type: directory
+  
+  template:
+    metadata:
+      name: '{{name}}'
+      namespace: argocd
+      annotations:
+        argocd.argoproj.io/sync-wave: '{{wave}}'
+      labels:
+        app-type: '{{type}}'
+    
+    spec:
+      project: default
+      
+      source:
+        repoURL: https://github.com/votre-username/votre-repo.git
+        targetRevision: HEAD
+        path: '{{path}}'
+        
+        # Configuration dynamique selon le type
+        # Si type=helm, ArgoCD utilisera Helm
+        # Si type=directory, ArgoCD déploiera les YAML directs
+      
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: '{{namespace}}'
+      
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+          allowEmpty: false
+        syncOptions:
+          - CreateNamespace=true
+          - ServerSideApply=true
+        retry:
+          limit: 5
+          backoff:
+            duration: 5s
+            factor: 2
+            maxDuration: 3m
+      
+      # Ignorer certaines différences
+      ignoreDifferences:
+        - group: apps
+          kind: Deployment
+          jsonPointers:
+            - /spec/replicas  # Géré par HPA

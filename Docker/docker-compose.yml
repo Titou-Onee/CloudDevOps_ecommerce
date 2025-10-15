@@ -33,3 +33,5 @@ networks:
 
 volumes: 
     postgres_data:
+
+    # Ajouter un fichier d'environnement
