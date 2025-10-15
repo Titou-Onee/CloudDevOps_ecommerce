@@ -10,15 +10,37 @@ argocd:
   repositories:
     - url: https://github.com/Titou-Onee/CloudDevOps_ecommerce.git
       name: ecommerce-repo
-
   applications:
-    - name: ecommerce-app
+    - name : ecommerce-app
       repo_url: https://github.com/Titou-Onee/CloudDevOps_ecommerce.git
       path: kubernetes/manifests
       destination_namespace:  ecommerce
       auto-sync: true
       auto-prune: true
       self_heal: true
+
+    - name: opa-gatekeeper
+      repo_url: https://open-policy-agent.github.io/gatekeeper/charts
+      chart: gatekeeper
+      namespace: gatekeeper
+      revision: 3.16.0
+
+    - name: prometheus
+      namespace: monitoring
+      retention: 1d
+      storage_size: 25Gi
+      scrape_interval: 30s
+      storage_class: gp3
+
+    - name: grafana
+      namespace: monitoring
+      admin_user: admin
+      admin_password: unsecure_admin_password
+      domain: grafana.ecommerce.com
+      storage_size: 10Gi
+      storage_class: gp3
+
+      
 
 prometheus:
   namespace: monitoring

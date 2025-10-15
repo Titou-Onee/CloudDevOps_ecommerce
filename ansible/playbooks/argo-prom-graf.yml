@@ -1,4 +1,4 @@
-- name: Deploy argocd prometheus and grafana
+- name: Deploy Argocd and apps
   hosts: kubernetes
   gather_facts: false
  
@@ -14,18 +14,16 @@
       include_role:
         name: argocd
       tags: [argocd]
-
-    - name: Install prometheus
-      include_role:
-        name: prometheus
-      tags: [prometheus, monitoring]
-
-    - name: Install grafana
-      include_role:
-        name: grafana
-      tags: [grafana, monitoring]
-
+    
   post_tasks:
+    - name: Vérifier les applications ArgoCD créées
+      kubernetes.core.k8s_info:
+        api_version: argoproj.io/v1alpha1
+        kind: Application
+        namespace: "{{ argocd.namespace }}"
+        kubeconfig: "{{ kubeconfig_path }}"
+      register: argocd_apps
+
     - name: Print access informations
       debug:
         msg: 
