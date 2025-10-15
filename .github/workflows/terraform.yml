@@ -1,0 +1,45 @@
+name: Push to DockerHub
+on:
+  push:
+    branches:
+        - main
+    paths:
+        - '**.tf'
+        - '**.tfvars'
+
+jobs:
+  terraform:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+            terraform_version: 1.11
+
+      - name: Setup directory
+        run: cd terraform
+
+      - name: Terraform init
+        run: terraform init -backend=false
+
+      - name: Terraform format
+        run: terraform fmt --check -recursive
+
+      - name: Terraform validation
+        run: terraform validate
+
+      - name: TFLint
+        uses: terraform-linters/setup-tflint@v3
+      - run: tflint --init && tflint
+
+      - name: TFsec
+        uses: aquasecurity/tfsec-action@v1.0.0
+
+      - name: Checkov
+        uses: bridgecrewio/checkov-action@master
+        with:
+            directory: terraform
