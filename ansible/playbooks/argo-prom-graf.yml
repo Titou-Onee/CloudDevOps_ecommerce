@@ -1,0 +1,49 @@
+- name: Deploy Argocd and apps
+  hosts: kubernetes
+  gather_facts: false
+ 
+  pre_tasks:
+
+    - name: cluster preparation
+      include_role:
+        name: prepare-cluster
+      tags: [configuration]
+
+  tasks:
+    - name: Install argocd
+      include_role:
+        name: argocd
+      tags: [argocd]
+    
+  post_tasks:
+    - name: Vérifier les applications ArgoCD créées
+      kubernetes.core.k8s_info:
+        api_version: argoproj.io/v1alpha1
+        kind: Application
+        namespace: "{{ argocd.namespace }}"
+        kubeconfig: "{{ kubeconfig_path }}"
+      register: argocd_apps
+
+    - name: Print access informations
+      debug:
+        msg: 
+          - "ArgoCD"
+          - "  Namespace: {{ argocd.namespace }}"
+          - "  Username: admin"
+          - "  Password: {{ argocd.admin_password }}"
+          - "  Port-forward: kubectl port-forward svc/argocd-server -n {{ argocd.namespace }} 8080:443"
+          - "  URL: https://localhost:8080"
+          - ""
+          - "Grafana"
+          - "  Namespace: {{ grafana.namespace }}"
+          - "  Username: {{ grafana.admin_user }}"
+          - "  Password: {{ grafana.admin_password }}"
+          - "  Port-forward: kubectl port-forward svc/grafana -n {{ grafana.namespace }} 3000:80"
+          - "  URL: http://localhost:3000"
+          - ""
+          - "Prometheus"
+          - "  Namespace: {{ prometheus.namespace }}"
+          - "  Port-forward: kubectl port-forward svc/kube-prometheus-stack-prometheus -n {{ prometheus.namespace }} 9090:9090"
+          - "  URL: http://localhost:9090"
+
+    

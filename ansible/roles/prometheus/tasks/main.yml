@@ -1,0 +1,167 @@
+- name: Add Helm Prometheus repository
+  kubernetes.core.helm_repository:
+    name: prometheus-community
+    repo_url: https://prometheus-community.github.io/helm-charts
+    state: present
+    force_update: true
+
+
+
+- name: Install kube-prometheus-stack via Helm
+  kubernetes.core.helm:
+    name: kube-prometheus-stack
+    chart_ref: prometheus-community/kube-prometheus-stack
+    chart_version: "66.2.1"
+    release_namespace: "{{ prometheus.namespace }}"
+    create_namespace: false
+    kubeconfig: "{{ kubeconfig_path }}"
+    wait: true
+    values:
+      prometheus:
+        prometheusSpec:
+          retention: "{{ prometheus.retention }}"
+          scrapeInterval: "{{ prometheus.scrape_interval }}"
+          storageSpec:
+            volumeClaimTemplate:
+              spec:
+                storageClassName: "{{ prometheus.storage_class }}"
+                accessModes:
+                  - ReadWriteOnce
+                resources:
+                  requests:
+                    storage: "{{ prometheus.storage_size }}"
+- name: Add Helm Prometheus repository
+  kubernetes.core.helm_repository:
+    name: prometheus-community
+    repo_url: https://prometheus-community.github.io/helm-charts
+    state: present
+
+- name: Create monitoring namespace
+  kubernetes.core.k8s:
+    name: "{{ prometheus.namespace }}"
+    api_version: v1
+    kind: Namespace
+    state: present
+    kubeconfig: "{{ kubeconfig_path }}"
+
+- name: Install kube-prometheus-stack via Helm
+  kubernetes.core.helm:
+    name: kube-prometheus-stack
+    chart_ref: prometheus-community/kube-prometheus-stack
+    release_namespace: "{{ prometheus.namespace }}"
+    create_namespace: false
+    kubeconfig: "{{ kubeconfig_path }}"
+    wait: true
+    wait_timeout: 600s
+    values:
+      prometheus:
+        prometheusSpec:
+          retention: "{{ prometheus.retention }}"
+          scrapeInterval: "{{ prometheus.scrape_interval }}"
+          storageSpec:
+            volumeClaimTemplate:
+              spec:
+                storageClassName: "{{ prometheus.storage_class }}"
+                accessModes:
+                  - ReadWriteOnce
+                resources:
+                  requests:
+                    storage: "{{ prometheus.storage_size }}"
+          
+          serviceMonitorSelectorNilUsesHelmValues: false
+          serviceMonitorSelector: {}
+          ruleSelector: {}
+          ruleSelectorNilUsesHelmValues: false
+          
+          additionalScrapeConfigs:
+            - job_name: 'argocd-metrics'
+              static_configs:
+                - targets: ['argocd-application-controller-metrics.{{ argocd.namespace }}.svc.cluster.local:8082']
+            - job_name: 'argocd-server-metrics'
+              static_configs:
+                - targets: ['argocd-repo-server-metrics.{{ argocd.namespace }}.svc.cluster.local:8084']
+      
+      alertmanager:
+        alertmanagerSpec:
+          storage:
+            volumeClaimTemplate:
+              spec:
+                storageClassName: "{{ prometheus.storage_class }}"
+                accessModes:
+                  - ReadWriteOnce
+                resources:
+                  requests:
+                    storage: 10Gi
+      
+      grafana:
+        enabled: false
+
+      kubeEtcd:
+        enabled: false
+      kubeControllerManager:
+        enabled: false
+      kubeScheduler:
+        enabled: false
+      
+      nodeExporter:
+        enabled: true
+      kube-state-metrics:
+        enabled: true
+
+- name: Create Prometheus rules for argoCD alerts
+  kubernetes.core.k8s:
+    definition:
+      api_version: monitoring.coreos.com/v1
+      kind: PrometheusRule
+      metadata:
+        name: argocd-alerts
+        namespace: "{{ prometheus.namespace }}"
+        labels:
+          app.kubernetes.io/name: argocd-alerts
+          release: kube-prometheus-stack
+      spec:
+        groups:
+          - name: argocd.rules
+            rules:
+              - alert: ArgoAppNotSynced
+                expr: argocd_app_info{sync_status!="Synced"} == 1
+                for: 5m
+                labels:
+                  severity: warning
+                annotations:
+                  summary: "Application ArgoCD non synchronisée"
+                  description: "L'application {{'{{'}} $labels.name {{'}}'}}  n'est pas synchronisée depuis 5 minutes."
+              
+              - alert: ArgoAppUnhealthy
+                expr: argocd_app_info{health_status!="Healthy"} == 1
+                for: 5m
+                labels:
+                  severity: warning
+                annotations:
+                  summary: "Application ArgoCD en mauvaise santé"
+                  description: "L'application {{'{{'}} $labels.name {{'}}'}}  n'est pas saine depuis 5 minutes."
+    kubeconfig: "{{ kubeconfig_path }}"
+    state: present
+
+- name: Wait for Prometheus pods to be ready
+  kubernetes.core.k8s_info:
+    api_version: v1
+    kind: Pod
+    namespace: "{{ prometheus.namespace }}"
+    label_selectors:
+      - app.kubernetes.io/name=prometheus
+    kubeconfig: "{{ kubeconfig_path }}"
+    wait: true
+    wait_condition:
+      type: Ready
+      status: "True"
+    wait_timeout: 600
+
+
+- name: Print prometheus status
+  debug:
+    msg:
+      - "Prometheus installé dans le namespace {{ prometheus.namespace }}"
+      - "Rétention: {{ prometheus.retention }}"
+      - "Stockage: {{ prometheus.storage_size }}"
+          
