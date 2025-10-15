@@ -14,7 +14,7 @@
 
 - name: Create monitoring namespace
   kubernetes.core.k8s:
-    name: "{{ prometheus.namespace }}"
+    name: "{{ applications.monitoring.prometheus.namespace }}"
     api_version: v1
     kind: namespace
     state: present
@@ -50,27 +50,26 @@
       config:
         secret:
           argocd_serv_admin_pass: "{{ argocd.admin_password | password_hash('bcrypt') }}"
-        repositories: "{{ argocd.repositories }}"
 
       controller:
         metrics:
           enabled: true
           serviceMonitor:
             enabled: true
-            namespace: "{{ prometheus.namespace }}"
+            namespace: "{{ applications.monitoring.prometheus.namespace }}"
       serv:
         metrics:
           enabled: true
           serviceMonitor:
             enabled: true
-            namespace: "{{ prometheus.namespace }}"
+            namespace: "{{ applications.monitoring.prometheus.namespace }}"
                        
       repoServer:
         metrics:
           enabled: true
           serviceMonitor:
             enabled: true
-            namespace: "{{ prometheus.namespace }}"
+            namespace: "{{ applications.monitoring.prometheus.namespace }}"
 
       cm:
         application.instanceLabelKey: argocd.argoproj.io/instance 
@@ -110,10 +109,83 @@
 
 - name: Creation of argocd app
   kubernetes.core.k8s:
-    definition: "{{ lookup('template', 'application.yml.j2') }}"
+    definition: "{{ lookup('template', 'ecommerce.yml.j2') }}"
     kubeconfig: "{{ kubeconfig_path }}"
     state: present
-  loop: "{{ argocd.applications }}"
-  loop_control:
-    loop_var: app
-  when: argocd.applications is defined
+  when: ecommerce_app is defined
+  
+- name: Créer l'application Bootstrap (App of Apps)
+  kubernetes.core.k8s:
+    definition:
+      apiVersion: argoproj.io/v1alpha1
+      kind: Application
+      metadata:
+        name: "{{ argocd.bootstrap.name }}"
+        namespace: "{{ argocd.namespace }}"
+        finalizers:
+          - resources-finalizer.argocd.argoproj.io
+      spec:
+        project: default
+        source:
+          repoURL: "{{ argocd.git_repo.url }}"
+          targetRevision: HEAD
+          path: "{{ argocd.bootstrap.path }}"
+        destination:
+          server: https://kubernetes.default.svc
+          namespace: "{{ argocd.namespace }}"
+        syncPolicy:
+          automated:
+            prune: "{{ argocd.bootstrap.auto_sync }}"
+            selfHeal: "{{ argocd.bootstrap.self_heal }}"
+            allowEmpty: false
+          syncOptions:
+            - CreateNamespace=true
+          retry:
+            limit: 5
+            backoff:
+              duration: 5s
+              factor: 2
+              maxDuration: 3m
+    kubeconfig: "{{ kubeconfig_path }}"
+    state: present
+  when: argocd.bootstrap.enabled
+
+- name: Attendre que l'application Bootstrap soit créée
+  kubernetes.core.k8s_info:
+    api_version: argoproj.io/v1alpha1
+    kind: Application
+    name: "{{ argocd.bootstrap.name }}"
+    namespace: "{{ argocd.namespace }}"
+    kubeconfig: "{{ kubeconfig_path }}"
+    wait: true
+    wait_timeout: 60
+  when: argocd.bootstrap.enabled
+
+- name: Afficher les informations de succès
+  debug:
+    msg:
+      - "╔════════════════════════════════════════════════════════════╗"
+      - "║  ✅ ArgoCD installé et configuré avec succès!              ║"
+      - "╚════════════════════════════════════════════════════════════╝"
+      - ""
+      - "🔑 Accès ArgoCD:"
+      - "  Port-forward: kubectl port-forward svc/argocd-server -n {{ argocd.namespace }} 8080:443"
+      - "  URL: https://localhost:8080"
+      - "  Username: admin"
+      - "  Password: {{ argocd.admin_password }}"
+      - ""
+      - "📦 Application Bootstrap créée!"
+      - "  ArgoCD déploie maintenant automatiquement toutes les applications"
+      - ""
+      - "🔍 Suivre le déploiement:"
+      - "  kubectl get applications -n {{ argocd.namespace }} -w"
+      - "  kubectl get pods --all-namespaces -w"
+      - ""
+      - "⏱️  Temps estimé de déploiement complet: 10-15 minutes"
+      - ""
+      - "📊 Applications qui seront déployées:"
+      - "  Wave 0: PSA (Pod Security Admission)"
+      - "  Wave 1: Gatekeeper + Falco"
+      - "  Wave 2: Prometheus"
+      - "  Wave 3: Grafana"
+      - "  Wave 4: E-commerce App"

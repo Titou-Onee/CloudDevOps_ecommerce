@@ -1,36 +1,78 @@
+# Configuration Kubernetes
 kubernetes:
   cluster_name: eks-cluster
   kubeconfig: ~/.kube/config
 
+# Configuration ArgoCD (seul composant installé par Ansible)
 argocd:
+  # Namespace ArgoCD
   namespace: argocd
+  
+  # Version ArgoCD
   version: v2.9.3
+  
+  # Domaine (optionnel si vous avez un Ingress)
+  domain: argocd.example.com
+  
+  # Mot de passe admin
   admin_password: unsecure_admin_password
+  
+  # Repository Git principal
+  git_repo:
+    url: https://github.com/Titou-Onee/CloudDevOps_ecommerce.git
+    name: gitops-main-repo
+  
+  # Application Bootstrap (App of Apps)
+  bootstrap:
+    enabled: true
+    name: bootstrap
+    path: gitops/apps  # Dossier contenant app-of-apps.yaml
+    auto_sync: true
+    self_heal: true
 
-  repositories:
-    - url: https://github.com/Titou-Onee/CloudDevOps_ecommerce.git
-      name: ecommerce-repo
 
-  applications:
-    - name: ecommerce-app
-      repo_url: https://github.com/Titou-Onee/CloudDevOps_ecommerce.git
-      path: kubernetes/manifests
-      destination_namespace:  ecommerce
-      auto-sync: true
-      auto-prune: true
-      self_heal: true
-
-prometheus:
-  namespace: monitoring
-  retention: 1d
-  storage_size: 25Gi
-  scrape_interval: 30s
-  storage_class: gp3
-
-grafana:
-  namespace: monitoring
-  admin_user: admin
-  admin_password: unsecure_admin_password
-  domain: grafana.ecommerce.com
-  storage_size: 10Gi
-  storage_class: gp3
+applications:
+  # Application e-commerce
+  ecommerce:
+    name: ecommerce-app
+    namespace: ecommerce-app
+    path: apps/ecommerce/manifests
+    wave: "3"
+  
+  # Sécurité
+  security:
+    psa:
+      name: security-psa
+      namespace: kube-system
+      path: security/psa
+      wave: "0"
+    
+    gatekeeper:
+      name: security-gatekeeper
+      namespace: gatekeeper-system
+      path: security/gatekeeper
+      wave: "1"
+      chart_version: "3.15.1"
+    
+    falco:
+      name: security-falco
+      namespace: falco
+      path: security/falco
+      wave: "1"
+      chart_version: "3.8.4"
+  
+  # Monitoring
+  monitoring:
+    prometheus:
+      name: monitoring-prometheus
+      namespace: monitoring
+      path: monitoring/prometheus
+      wave: "2"
+      chart_version: "55.5.0"
+    
+    grafana:
+      name: monitoring-grafana
+      namespace: monitoring
+      path: monitoring/grafana
+      wave: "3"
+      chart_version: "7.3.0"
