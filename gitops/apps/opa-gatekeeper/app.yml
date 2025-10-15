@@ -1,0 +1,24 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: opa-gatekeeper
+  namespace: argocd
+spec:
+  project: default
+
+  source:
+    repoURL: https://github.com/Titou-Onee/CloudDevOps_ecommerce.git
+    targetRevision: HEAD    # correspond au dossier décrit ci-dessus
+    directory:
+      recurse: true
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: gatekeeper
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

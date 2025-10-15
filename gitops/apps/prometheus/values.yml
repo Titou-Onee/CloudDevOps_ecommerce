@@ -1,0 +1,66 @@
+prometheus:
+  prometheusSpec:
+    retention: 15d
+    scrapeInterval: 30s
+    evaluationInterval: 30s
+
+    storageSpec:
+      volumeClaimTemplate:
+        spec:
+          storageClassName: gp3
+          accessModes:
+            - ReadWriteOnce
+          resources:
+            requests:
+              storage: 10Gi
+    resources:
+      requests:
+        memory: 2Gi
+        cpu: 1
+      limits:
+        memory: 4Gi
+        cpu: 2
+
+    serviceMonitorSelectorNilUsesHelmValues: false
+    serviceMonitorSelector: {}
+    ruleSelector: {}
+    ruleSelectorNilUsesHelmValues: false
+
+    additionalScrapeConfigs:
+      - job_name: 'argocd-metrics'
+        static_configs:
+          - targets: ['argocd-application-controller-metrics.argocd.svc.cluster.local:8082']
+      - job_name: 'argocd-server-metrics'
+        static_configs:
+          - targets: ['argocd-repo-server-metrics.argocd.svc.cluster.local:8084']
+      - job_name: 'falco'
+        static_configs:
+          - targets: ['falco.falco.svc.cluster.local:8765']
+
+
+alertmanager:
+  alertmanagerSpec:
+    storage:
+      volumeClaimTemplate:
+        spec:
+          storageClassName: gp3
+          accessModes:
+            - ReadWriteOnce
+          resources:
+            requests:
+              storage: 10Gi
+
+grafana:
+  enabled: false
+
+kubeEtcd:
+  enabled: false
+kubeControllerManager:
+  enabled: false
+kubeScheduler:
+  enabled: false
+
+nodeExporter:
+  enabled: true
+kube-state-metrics:
+  enabled: true

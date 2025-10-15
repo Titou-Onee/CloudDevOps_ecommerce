@@ -1,0 +1,17 @@
+falco:
+  jsonOutput: true
+  logLevel: info
+
+customRules:
+  create: true
+  rules_files:
+    custom-sec-rules.yaml: |
+      - rule: Suspicious File Created in /etc
+        desc: Detects file creation in /etc
+        condition: evt.type = creat and fd.name startswith /etc
+        output: >
+          File created in /etc (user=%user.name file=%fd.name command=%proc.cmdline)
+        priority: WARNING
+        tags: [filesystem, etc]
+
+tty: true
