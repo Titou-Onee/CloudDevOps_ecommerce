@@ -2,6 +2,11 @@ falco:
   jsonOutput: true
   logLevel: info
 
+driver:
+  kind: ebpf
+  ebpf:
+    probe: /root/.falco/falco-bpf.o
+    
 customRules:
   custom-sec-rules.yaml: |
     - rule: Suspicious File Created in /etc

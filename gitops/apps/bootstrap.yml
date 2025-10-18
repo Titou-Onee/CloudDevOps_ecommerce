@@ -14,7 +14,7 @@ spec:
             chart: gatekeeper
             chartVersion: "3.15.1"
             valuesFile: gitops/apps/opa-gatekeeper/values.yaml
-            additionalPath: security/gatekeeper/policies
+            additionalPath: ""
           
           - name: security-falco
             namespace: falco
