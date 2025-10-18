@@ -22,7 +22,7 @@ spec:
             helmRepo: https://falcosecurity.github.io/charts
             chart: falco
             chartVersion: "3.8.4"
-            valuesFile: security/falco/values.yaml
+            valuesFile: gitops/apps/falco/values.yml
             additionalPath: ""
           
           - name: monitoring-prometheus
@@ -31,7 +31,7 @@ spec:
             helmRepo: https://prometheus-community.github.io/helm-charts
             chart: kube-prometheus-stack
             chartVersion: "55.5.0"
-            valuesFile: monitoring/prometheus/values.yaml
+            valuesFile: gitops/apps/prometheus/values.yml
             additionalPath: ""
           
           - name: monitoring-grafana
@@ -40,7 +40,7 @@ spec:
             helmRepo: https://grafana.github.io/helm-charts
             chart: grafana
             chartVersion: "7.3.0"
-            valuesFile: monitoring/grafana/values.yaml
+            valuesFile: gitops/apps/grafana/values.yml
             additionalPath: ""
   
   template:
@@ -67,7 +67,7 @@ spec:
               - $values/{{valuesFile}}
         
         # Source 2: Values depuis Git
-        - repoURL: https://github.com/votre-username/votre-repo.git
+        - repoURL: https://github.com/Titou-Onee/CloudDevOps_ecommerce.git
           targetRevision: HEAD
           ref: values
       
@@ -102,13 +102,13 @@ spec:
           - name: security-psa
             namespace: kube-system
             wave: "0"
-            path: security/psa
+            path: gitops/apps/psa
             prune: "false"
           
           - name: ecommerce-app
-            namespace: ecommerce-app
+            namespace: ecommerce
             wave: "4"
-            path: apps/ecommerce/manifests
+            path: gitops/apps/ecommerce
             prune: "true"
   
   template:
@@ -125,7 +125,7 @@ spec:
       project: default
       
       source:
-        repoURL: https://github.com/votre-username/votre-repo.git
+        repoURL: https://github.com/Titou-Onee/CloudDevOps_ecommerce.git
         targetRevision: HEAD
         path: '{{path}}'
         directory:

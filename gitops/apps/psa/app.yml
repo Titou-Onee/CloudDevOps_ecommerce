@@ -1,0 +1,4 @@
+apiVersion: v2
+name: psa
+description: "Applique des labels Pod Security Admission aux namespaces"
+version: 0.1.0
