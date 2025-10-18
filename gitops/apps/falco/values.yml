@@ -18,6 +18,7 @@ falco:
 
 driver:
   enabled: false
+  kind: modern_ebpf
 
 customRules:
   custom-sec-rules.yaml: |
