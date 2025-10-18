@@ -33,6 +33,15 @@ backup/
 *.backup
 *.bak
 
-#terraform
+# Terraform
+.terraform/
 *.tfstate
-./terraform
+*.tfstate.*
+.crash
+*.tfvars
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+.terraformrc
+terraform.rc
