@@ -2,10 +2,10 @@ falco:
   jsonOutput: true
   logLevel: info
 
-  modern_bpf:
-    enabled: true
-  syscall_event_source:
-    enabled: true
+  config:
+    enabled_event_sources:
+      - syscall
+      - k8s_audit
 
   rulesFile:
     - /etc/falco/falco_rules.yaml
@@ -15,7 +15,7 @@ falco:
 driver:
   enabled: false
   kind: modern_ebpf
-
+  
 customRules:
   custom-sec-rules.yaml: |
     - rule: Suspicious File Created in /etc
