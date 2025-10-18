@@ -24,7 +24,7 @@ spec:
             chartVersion: "3.15.1"
           
           - name: security-falco
-            path: security/falco
+            path: gitops/apps/falco
             namespace: falco
             wave: "1"
             type: helm
@@ -35,7 +35,7 @@ spec:
           # MONITORING (Wave 2-3)
           # ========================================
           - name: monitoring-prometheus
-            path: monitoring/prometheus
+            path: gitops/apps/prometheus
             namespace: monitoring
             wave: "2"
             type: helm
@@ -43,7 +43,7 @@ spec:
             chartVersion: "55.5.0"
           
           - name: monitoring-grafana
-            path: monitoring/grafana
+            path: gitops/apps/grafana
             namespace: monitoring
             wave: "3"
             type: helm
@@ -54,7 +54,7 @@ spec:
           # APPLICATION (Wave 4)
           # ========================================
           - name: ecommerce-app
-            path: apps/ecommerce/manifests
+            path: gitops/apps/ecommerce
             namespace: ecommerce-app
             wave: "4"
             type: directory
