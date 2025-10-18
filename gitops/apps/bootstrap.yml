@@ -13,7 +13,7 @@ spec:
             helmRepo: https://open-policy-agent.github.io/gatekeeper/charts
             chart: gatekeeper
             chartVersion: "3.15.1"
-            valuesFile: security/gatekeeper/values.yaml
+            valuesFile: gitops/apps/opa-gatekeeper/values.yaml
             additionalPath: security/gatekeeper/policies
           
           - name: security-falco
@@ -64,7 +64,7 @@ spec:
           helm:
             releaseName: '{{name}}'
             valueFiles:
-              - {{valuesFile}}
+              - $values/{{valuesFile}}
         
         # Source 2: Values depuis Git
         - repoURL: https://github.com/Titou-Onee/CloudDevOps_ecommerce.git

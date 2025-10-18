@@ -3,7 +3,6 @@ falco:
   logLevel: info
 
 customRules:
-  create: true
   rules_files:
     custom-sec-rules.yaml: |
       - rule: Suspicious File Created in /etc
