@@ -55,7 +55,7 @@ spec:
           # ========================================
           - name: ecommerce-app
             path: gitops/apps/ecommerce
-            namespace: ecommerce-app
+            namespace: ecommerce
             wave: "4"
             type: directory
   
