@@ -1,8 +1,12 @@
+<<<<<<< HEAD
 # Configuration Kubernetes
+=======
+>>>>>>> 6587c0908bb7ccaf4e731bd3bcd55f0d9b0c23c7
 kubernetes:
   cluster_name: eks-cluster
   kubeconfig: ~/.kube/config
 
+<<<<<<< HEAD
 # Configuration ArgoCD (seul composant installé par Ansible)
 argocd:
   # Namespace ArgoCD
@@ -76,3 +80,59 @@ applications:
       path: monitoring/grafana
       wave: "3"
       chart_version: "7.3.0"
+=======
+argocd:
+  namespace: argocd
+  version: v2.9.3
+  admin_password: unsecure_admin_password
+
+  repositories:
+    - url: https://github.com/Titou-Onee/CloudDevOps_ecommerce.git
+      name: ecommerce-repo
+  applications:
+    - name : ecommerce-app
+      repo_url: https://github.com/Titou-Onee/CloudDevOps_ecommerce.git
+      path: kubernetes/manifests
+      destination_namespace:  ecommerce
+      auto-sync: true
+      auto-prune: true
+      self_heal: true
+
+    - name: opa-gatekeeper
+      repo_url: https://open-policy-agent.github.io/gatekeeper/charts
+      chart: gatekeeper
+      namespace: gatekeeper
+      revision: 3.16.0
+
+    - name: prometheus
+      namespace: monitoring
+      retention: 1d
+      storage_size: 25Gi
+      scrape_interval: 30s
+      storage_class: gp3
+
+    - name: grafana
+      namespace: monitoring
+      admin_user: admin
+      admin_password: unsecure_admin_password
+      domain: grafana.ecommerce.com
+      storage_size: 10Gi
+      storage_class: gp3
+
+      
+
+prometheus:
+  namespace: monitoring
+  retention: 1d
+  storage_size: 25Gi
+  scrape_interval: 30s
+  storage_class: gp3
+
+grafana:
+  namespace: monitoring
+  admin_user: admin
+  admin_password: unsecure_admin_password
+  domain: grafana.ecommerce.com
+  storage_size: 10Gi
+  storage_class: gp3
+>>>>>>> 6587c0908bb7ccaf4e731bd3bcd55f0d9b0c23c7
