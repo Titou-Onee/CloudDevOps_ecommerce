@@ -268,7 +268,7 @@ check_git_config() {
 bootstrap_gitops() {
     log_info "Bootstrap GitOps avec Ansible..."
     cd ansible
-    ansible-playbook playbooks/bootstrap.yml
+    ansible-playbook playbooks/argocd_bootstrap.yml
     cd ..
     log_success "Bootstrap terminé"
 }
