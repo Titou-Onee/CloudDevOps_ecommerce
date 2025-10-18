@@ -1,12 +1,30 @@
 falco:
   jsonOutput: true
   logLevel: info
+  loadPlugins: []
+  plugins:
+    - name: json
+      library_path: libjson.so
+      init_config: ""
+  config:
+    modern_bpf:
+      enabled: true
+    syscall_event_source:
+      enabled: true
+  rulesFile:
+    - /etc/falco/falco_rules.yaml
+    - /etc/falco/falco_rules.local.yaml
+    - /etc/falco/rules.d
 
 driver:
   enabled: false
-  kind: ebpf
-  ebpf:
-    probe: /root/.falco/falco-bpf.o
+  kind: modern_ebpf
+  bpf:
+    enabled: true
+    path: /root/.falco/falco-bpf.o
+    download:
+      enabled: true
+      url: https://download.falco.org/driver
 
 customRules:
   custom-sec-rules.yaml: |
@@ -17,5 +35,3 @@ customRules:
         File created in /etc (user=%user.name file=%fd.name command=%proc.cmdline)
       priority: WARNING
       tags: [filesystem, etc]
-
-tty: true

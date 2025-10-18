@@ -48,6 +48,14 @@ dashboardProviders:
         editable: true
         options:
           path: /var/lib/grafana/dashboards/argocd
+      - name: 'security'
+        orgId: 1
+        folder: 'Security'
+        type: file
+        disableDeletion: false
+        editable: true
+        options:
+          path: /var/lib/grafana/dashboards/security
 
 dashboards:
   default:

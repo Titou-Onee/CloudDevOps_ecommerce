@@ -13,7 +13,7 @@ spec:
             helmRepo: https://open-policy-agent.github.io/gatekeeper/charts
             chart: gatekeeper
             chartVersion: "3.15.1"
-            valuesFile: gitops/apps/opa-gatekeeper/values.yaml
+            valuesFile: gitops/apps/opa-gatekeeper/values.yml
             additionalPath: ""
           
           - name: security-falco
