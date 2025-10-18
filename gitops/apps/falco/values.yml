@@ -2,11 +2,10 @@ falco:
   jsonOutput: true
   logLevel: info
 
-  config:
-    modern_bpf:
-      enabled: true
-    syscall_event_source:
-      enabled: true
+  modern_bpf:
+    enabled: true
+  syscall_event_source:
+    enabled: true
 
   rulesFile:
     - /etc/falco/falco_rules.yaml
