@@ -9,22 +9,13 @@ falco:
   config:
     modern_bpf:
       enabled: true
-    syscall_event_source:
-      enabled: true
   rulesFile:
     - /etc/falco/falco_rules.yaml
     - /etc/falco/falco_rules.local.yaml
     - /etc/falco/rules.d
 
 driver:
-  enabled: true
-  kind: modern_ebpf
-  bpf:
-    enabled: true
-    path: /root/.falco/falco-bpf.o
-    download:
-      enabled: true
-      url: https://download.falco.org/driver
+  enabled: false
 
 customRules:
   custom-sec-rules.yaml: |
