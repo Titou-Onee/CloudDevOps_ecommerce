@@ -1,24 +1,23 @@
 falco:
   jsonOutput: true
   logLevel: info
-  loadPlugins: []
-  plugins:
-    - name: json
-      library_path: libjson.so
-      init_config: ""
-  config:
-    modern_bpf:
-      enabled: true
-    syscall_event_source:
-      enabled: true
-  rulesFile:
-    - /etc/falco/falco_rules.yaml
-    - /etc/falco/falco_rules.local.yaml
-    - /etc/falco/rules.d
+
+  # On active explicitement la source eBPF
+  modern_bpf:
+    enabled: true
+
+  # On désactive le syscall_event_source (inutile avec modern_bpf)
+  syscall_event_source:
+    enabled: false
 
 driver:
-  enabled: true
-  kind: modern_ebpf
+  enabled: false  # désactive totalement le falco-driver-loader
+
+# Désactive les plugins si inutiles
+plugins:
+  - name: json
+    library_path: libjson.so
+    init_config: ""
 
 customRules:
   custom-sec-rules.yaml: |
