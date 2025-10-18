@@ -64,7 +64,7 @@ spec:
           helm:
             releaseName: '{{name}}'
             valueFiles:
-              - $values/{{valuesFile}}
+              - {{valuesFile}}
         
         # Source 2: Values depuis Git
         - repoURL: https://github.com/Titou-Onee/CloudDevOps_ecommerce.git
@@ -103,13 +103,13 @@ spec:
             namespace: kube-system
             wave: "0"
             path: gitops/apps/psa
-            prune: "false"
+            prune: false
           
           - name: ecommerce-app
             namespace: ecommerce
             wave: "4"
             path: gitops/apps/ecommerce
-            prune: "true"
+            prune: true
   
   template:
     metadata:
