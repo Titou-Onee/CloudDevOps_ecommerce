@@ -17,7 +17,7 @@ falco:
     - /etc/falco/rules.d
 
 driver:
-  enabled: false
+  enabled: true
   kind: modern_ebpf
   bpf:
     enabled: true
