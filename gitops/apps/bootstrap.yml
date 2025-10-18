@@ -21,7 +21,7 @@ spec:
             wave: "1"
             helmRepo: https://falcosecurity.github.io/charts
             chart: falco
-            chartVersion: "3.8.4"
+            chartVersion: "3.9.1"
             valuesFile: gitops/apps/falco/values.yml
             additionalPath: ""
           
