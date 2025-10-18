@@ -1,243 +1,148 @@
 apiVersion: argoproj.io/v1alpha1
-kind: Application
+kind: ApplicationSet
 metadata:
-  name: security-psa
+  name: helm-applications
   namespace: argocd
-  annotations:
-    argocd.argoproj.io/sync-wave: "0"
 spec:
-  project: default
-  source:
-    repoURL: https://github.com/votre-username/votre-repo.git
-    targetRevision: HEAD
-    path: security/psa
-    directory:
-      recurse: false
-  destination:
-    server: https://kubernetes.default.svc
-    namespace: kube-system
-  syncPolicy:
-    automated:
-      prune: false  # Ne pas supprimer les namespaces
-      selfHeal: true
-    syncOptions:
-      - CreateNamespace=false
-    retry:
-      limit: 5
-      backoff:
-        duration: 5s
-        maxDuration: 3m
+  generators:
+    - list:
+        elements:
+          - name: security-gatekeeper
+            namespace: gatekeeper-system
+            wave: "1"
+            helmRepo: https://open-policy-agent.github.io/gatekeeper/charts
+            chart: gatekeeper
+            chartVersion: "3.15.1"
+            valuesFile: security/gatekeeper/values.yaml
+            additionalPath: security/gatekeeper/policies
+          
+          - name: security-falco
+            namespace: falco
+            wave: "1"
+            helmRepo: https://falcosecurity.github.io/charts
+            chart: falco
+            chartVersion: "3.8.4"
+            valuesFile: security/falco/values.yaml
+            additionalPath: ""
+          
+          - name: monitoring-prometheus
+            namespace: monitoring
+            wave: "2"
+            helmRepo: https://prometheus-community.github.io/helm-charts
+            chart: kube-prometheus-stack
+            chartVersion: "55.5.0"
+            valuesFile: monitoring/prometheus/values.yaml
+            additionalPath: ""
+          
+          - name: monitoring-grafana
+            namespace: monitoring
+            wave: "3"
+            helmRepo: https://grafana.github.io/helm-charts
+            chart: grafana
+            chartVersion: "7.3.0"
+            valuesFile: monitoring/grafana/values.yaml
+            additionalPath: ""
+  
+  template:
+    metadata:
+      name: '{{name}}'
+      namespace: argocd
+      annotations:
+        argocd.argoproj.io/sync-wave: '{{wave}}'
+      labels:
+        app-type: helm
+        app-wave: '{{wave}}'
+    
+    spec:
+      project: default
+      
+      sources:
+        # Source 1: Helm chart
+        - repoURL: '{{helmRepo}}'
+          chart: '{{chart}}'
+          targetRevision: '{{chartVersion}}'
+          helm:
+            releaseName: '{{name}}'
+            valueFiles:
+              - $values/{{valuesFile}}
+        
+        # Source 2: Values depuis Git
+        - repoURL: https://github.com/votre-username/votre-repo.git
+          targetRevision: HEAD
+          ref: values
+      
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: '{{namespace}}'
+      
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=true
+          - ServerSideApply=true
+        retry:
+          limit: 5
+          backoff:
+            duration: 5s
+            maxDuration: 3m
 
 ---
-# Security: Gatekeeper (Helm)
+# ApplicationSet pour les applications Directory
 apiVersion: argoproj.io/v1alpha1
-kind: Application
+kind: ApplicationSet
 metadata:
-  name: security-gatekeeper
+  name: directory-applications
   namespace: argocd
-  annotations:
-    argocd.argoproj.io/sync-wave: "1"
 spec:
-  project: default
-  sources:
-    # Helm chart
-    - repoURL: https://open-policy-agent.github.io/gatekeeper/charts
-      chart: gatekeeper
-      targetRevision: 3.15.1
-      helm:
-        releaseName: gatekeeper
-        valueFiles:
-          - $values/security/gatekeeper/values.yaml
+  generators:
+    - list:
+        elements:
+          - name: security-psa
+            namespace: kube-system
+            wave: "0"
+            path: security/psa
+            prune: "false"
+          
+          - name: ecommerce-app
+            namespace: ecommerce-app
+            wave: "4"
+            path: apps/ecommerce/manifests
+            prune: "true"
+  
+  template:
+    metadata:
+      name: '{{name}}'
+      namespace: argocd
+      annotations:
+        argocd.argoproj.io/sync-wave: '{{wave}}'
+      labels:
+        app-type: directory
+        app-wave: '{{wave}}'
     
-    # Values depuis Git
-    - repoURL: https://github.com/votre-username/votre-repo.git
-      targetRevision: HEAD
-      ref: values
-    
-    # Politiques depuis Git
-    - repoURL: https://github.com/votre-username/votre-repo.git
-      targetRevision: HEAD
-      path: security/gatekeeper/policies
-  
-  destination:
-    server: https://kubernetes.default.svc
-    namespace: gatekeeper-system
-  
-  syncPolicy:
-    automated:
-      prune: true
-      selfHeal: true
-    syncOptions:
-      - CreateNamespace=true
-    retry:
-      limit: 5
-      backoff:
-        duration: 5s
-        maxDuration: 3m
-
----
-# Security: Falco (Helm)
-apiVersion: argoproj.io/v1alpha1
-kind: Application
-metadata:
-  name: security-falco
-  namespace: argocd
-  annotations:
-    argocd.argoproj.io/sync-wave: "1"
-spec:
-  project: default
-  sources:
-    # Helm chart
-    - repoURL: https://falcosecurity.github.io/charts
-      chart: falco
-      targetRevision: 3.8.4
-      helm:
-        releaseName: falco
-        valueFiles:
-          - $values/security/falco/values.yaml
-    
-    # Values depuis Git
-    - repoURL: https://github.com/votre-username/votre-repo.git
-      targetRevision: HEAD
-      ref: values
-  
-  destination:
-    server: https://kubernetes.default.svc
-    namespace: falco
-  
-  syncPolicy:
-    automated:
-      prune: true
-      selfHeal: true
-    syncOptions:
-      - CreateNamespace=true
-    retry:
-      limit: 5
-      backoff:
-        duration: 5s
-        maxDuration: 3m
-
----
-# Monitoring: Prometheus (Helm)
-apiVersion: argoproj.io/v1alpha1
-kind: Application
-metadata:
-  name: monitoring-prometheus
-  namespace: argocd
-  annotations:
-    argocd.argoproj.io/sync-wave: "2"
-spec:
-  project: default
-  sources:
-    # Helm chart
-    - repoURL: https://prometheus-community.github.io/helm-charts
-      chart: kube-prometheus-stack
-      targetRevision: 55.5.0
-      helm:
-        releaseName: kube-prometheus-stack
-        valueFiles:
-          - $values/monitoring/prometheus/values.yaml
-    
-    # Values depuis Git
-    - repoURL: https://github.com/votre-username/votre-repo.git
-      targetRevision: HEAD
-      ref: values
-  
-  destination:
-    server: https://kubernetes.default.svc
-    namespace: monitoring
-  
-  syncPolicy:
-    automated:
-      prune: true
-      selfHeal: true
-    syncOptions:
-      - CreateNamespace=true
-      - ServerSideApply=true
-    retry:
-      limit: 5
-      backoff:
-        duration: 5s
-        maxDuration: 3m
-
----
-# Monitoring: Grafana (Helm)
-apiVersion: argoproj.io/v1alpha1
-kind: Application
-metadata:
-  name: monitoring-grafana
-  namespace: argocd
-  annotations:
-    argocd.argoproj.io/sync-wave: "3"
-spec:
-  project: default
-  sources:
-    # Helm chart
-    - repoURL: https://grafana.github.io/helm-charts
-      chart: grafana
-      targetRevision: 7.3.0
-      helm:
-        releaseName: grafana
-        valueFiles:
-          - $values/monitoring/grafana/values.yaml
-    
-    # Values depuis Git
-    - repoURL: https://github.com/votre-username/votre-repo.git
-      targetRevision: HEAD
-      ref: values
-  
-  destination:
-    server: https://kubernetes.default.svc
-    namespace: monitoring
-  
-  syncPolicy:
-    automated:
-      prune: true
-      selfHeal: true
-    syncOptions:
-      - CreateNamespace=true
-    retry:
-      limit: 5
-      backoff:
-        duration: 5s
-        maxDuration: 3m
-
----
-# Application: E-commerce (Directory)
-apiVersion: argoproj.io/v1alpha1
-kind: Application
-metadata:
-  name: ecommerce-app
-  namespace: argocd
-  annotations:
-    argocd.argoproj.io/sync-wave: "4"
-spec:
-  project: default
-  source:
-    repoURL: https://github.com/votre-username/votre-repo.git
-    targetRevision: HEAD
-    path: apps/ecommerce/manifests
-    directory:
-      recurse: false
-  
-  destination:
-    server: https://kubernetes.default.svc
-    namespace: ecommerce-app
-  
-  syncPolicy:
-    automated:
-      prune: true
-      selfHeal: true
-    syncOptions:
-      - CreateNamespace=true
-    retry:
-      limit: 5
-      backoff:
-        duration: 5s
-        maxDuration: 3m
-  
-  ignoreDifferences:
-    - group: apps
-      kind: Deployment
-      jsonPointers:
-        - /spec/replicas  # Géré par HPA
+    spec:
+      project: default
+      
+      source:
+        repoURL: https://github.com/votre-username/votre-repo.git
+        targetRevision: HEAD
+        path: '{{path}}'
+        directory:
+          recurse: false
+      
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: '{{namespace}}'
+      
+      syncPolicy:
+        automated:
+          prune: '{{prune}}'
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=true
+        retry:
+          limit: 5
+          backoff:
+            duration: 5s
+            maxDuration: 3m
