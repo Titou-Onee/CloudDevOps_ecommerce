@@ -13,7 +13,7 @@ spec:
             helmRepo: https://open-policy-agent.github.io/gatekeeper/charts
             chart: gatekeeper
             chartVersion: "3.15.1"
-            valuesFile: gitops/apps/opa-gatekeeper/values.yml
+            valuesFile: gitops/apps/helm/opa-gatekeeper/values.yml
             additionalPath: ""
           
           - name: security-falco
@@ -22,7 +22,7 @@ spec:
             helmRepo: https://falcosecurity.github.io/charts
             chart: falco
             chartVersion: "6.0.0"
-            valuesFile: gitops/apps/falco/values.yml
+            valuesFile: gitops/apps/helm/falco/values.yml
             additionalPath: ""
           
           - name: monitoring-prometheus
@@ -31,7 +31,7 @@ spec:
             helmRepo: https://prometheus-community.github.io/helm-charts
             chart: kube-prometheus-stack
             chartVersion: "55.5.0"
-            valuesFile: gitops/apps/prometheus/values.yml
+            valuesFile: gitops/apps/helm/prometheus/values.yml
             additionalPath: ""
           
           - name: monitoring-grafana
@@ -40,7 +40,7 @@ spec:
             helmRepo: https://grafana.github.io/helm-charts
             chart: grafana
             chartVersion: "7.3.0"
-            valuesFile: gitops/apps/grafana/values.yml
+            valuesFile: gitops/apps/helm/grafana/values.yml
             additionalPath: ""
   
   template:
@@ -70,6 +70,9 @@ spec:
         - repoURL: https://github.com/Titou-Onee/CloudDevOps_ecommerce.git
           targetRevision: HEAD
           ref: values
+          exclude:
+            - path: gitops/apps/directory/*
+
       
       destination:
         server: https://kubernetes.default.svc
