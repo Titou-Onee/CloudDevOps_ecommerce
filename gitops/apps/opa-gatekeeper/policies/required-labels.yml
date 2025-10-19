@@ -49,3 +49,8 @@ spec:
     labels:
       - app
       - environment
+
+# description
+# metrics vers prometheus
+# ajouter templates
+# application security gatekeeper policies dédié

@@ -12,18 +12,16 @@ spec:
   project: default
   
   sources:
-    # Chart Helm Falco
     - repoURL: https://falcosecurity.github.io/charts
       chart: falco
-      targetRevision: 3.8.4
+      targetRevision: 6.0.0
       helm:
         releaseName: falco
         valueFiles:
           - $values/security/falco/values.yaml
     
-    # Values depuis Git
     - repoURL: https://github.com/Titou-Onee/CloudDevOps_ecommerce.git
-      targetRevision: HEAD
+      targetRevision: master
       ref: values
   
   destination:
@@ -42,3 +40,5 @@ spec:
         duration: 5s
         factor: 2
         maxDuration: 3m
+
+        #ajouter falco sidekick

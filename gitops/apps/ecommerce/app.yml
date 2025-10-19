@@ -13,15 +13,12 @@ spec:
   
   source:
     repoURL: https://github.com/Titou-Onee/CloudDevOps_ecommerce.git
-    targetRevision: HEAD
+    targetRevision: master
     path: kubernetes/manifests
 
     kustomize:
       images:
         - titouonee/clouddevops_ecommerce
-
-    directory:
-      recurse: false
 
   destination:
     server: https://kubernetes.default.svc

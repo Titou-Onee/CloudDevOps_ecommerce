@@ -64,3 +64,7 @@ nodeExporter:
   enabled: true
 kube-state-metrics:
   enabled: true
+
+# ajouter des metrics pour ecommerce
+# exporter falco
+# ajouter des alertes

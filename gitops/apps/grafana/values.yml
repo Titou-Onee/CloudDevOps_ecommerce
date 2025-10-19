@@ -98,3 +98,8 @@ serviceMonitor:
 plugins:
   - grafana-piechart-panel
   - grafana-clock-panel
+
+# sécuriser mot de passe administrateur
+# accès https
+# export alertes falco
+# id OIDC

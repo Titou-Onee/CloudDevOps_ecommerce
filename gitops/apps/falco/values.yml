@@ -1,6 +1,7 @@
 falco:
   jsonOutput: true
   logLevel: info
+  stdoutOutput: true
 
   config:
     enabled_event_sources:
@@ -25,3 +26,7 @@ customRules:
         File created in /etc (user=%user.name file=%fd.name command=%proc.cmdline)
       priority: WARNING
       tags: [filesystem, etc]
+
+# niveau d'alerte à ajouter
+# ajouter d'autres alertes
+# faire le lien avec prometheus

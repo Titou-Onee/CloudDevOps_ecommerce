@@ -23,7 +23,7 @@ spec:
     
     # Values depuis Git
     - repoURL: https://github.com/Titou-Onee/CloudDevOps_ecommerce.git
-      targetRevision: HEAD
+      targetRevision: master
       ref: values
   
   destination:

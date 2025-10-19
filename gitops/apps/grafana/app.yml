@@ -3,20 +3,33 @@ kind: Application
 metadata:
   name: grafana
   namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "3"
 spec:
   project: default
 
   source:
-    - repoURL: https://grafana.github.io/helm-charts
-      chart: grafana
-      targetRevision: 7.3.0
-      helm:
-        valueFiles:
-          - values.yaml
+    repoURL: https://grafana.github.io/helm-charts
+    chart: grafana
+    targetRevision: 7.3.0
+    helm:
+      valueFiles:
+        - values.yaml
 
   destination:
     server: https://kubernetes.default.svc
     namespace: monitoring
+
+datasources:
+  datasources.yaml:
+    apiVersion: 1
+    datasources:
+      - name: Prometheus
+        type: prometheus
+        access: proxy
+        url: http://kube-prometheus-stack-prometheus.monitoring.svc.cluster.local:9090
+        isDefault: true
+
   syncPolicy:
     automated:
       selfHeal: true
@@ -28,3 +41,9 @@ spec:
       backoff:
         duration: 5s
         maxDuration: 3m
+
+# ajouter l'accès 
+#adminUser: admin
+#adminPassword: changeme
+#service:
+#  type: LoadBalancer

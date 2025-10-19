@@ -12,11 +12,11 @@ spec:
   project: default
   
   source:
-    repoURL: https://github.com/votre-username/votre-repo.git
+    repoURL: https://github.com/Titou-Onee/CloudDevOps_ecommerce.git
     targetRevision: HEAD
-    path: security/psa
+    path: gitops/apps/psa
     directory:
-      recurse: false
+      recurse: true
   
   destination:
     server: https://kubernetes.default.svc
@@ -34,3 +34,5 @@ spec:
         duration: 5s
         factor: 2
         maxDuration: 3m
+
+# créer un projet "security" pour les apps de sécurité
