@@ -120,7 +120,7 @@
       apiVersion: argoproj.io/v1alpha1
       kind: Application
       metadata:
-        name: "{{ argocd.bootstrap_helm.name }}"
+        name: "{{ argocd.bootstrap.name }}"
         namespace: "{{ argocd.namespace }}"
         finalizers:
           - resources-finalizer.argocd.argoproj.io
@@ -129,14 +129,14 @@
         source:
           repoURL: "{{ argocd.git_repo.url }}"
           targetRevision: HEAD
-          path: "{{ argocd.bootstrap_helm.path }}"
+          path: "{{ argocd.bootstrap.path }}"
         destination:
           server: https://kubernetes.default.svc
           namespace: "{{ argocd.namespace }}"
         syncPolicy:
           automated:
-            prune: "{{ argocd.bootstrap_helm.auto_sync }}"
-            selfHeal: "{{ argocd.bootstrap_helm.self_heal }}"
+            prune: "{{ argocd.bootstrap.auto_sync }}"
+            selfHeal: "{{ argocd.bootstrap.self_heal }}"
             allowEmpty: false
           syncOptions:
             - CreateNamespace=true
@@ -148,66 +148,18 @@
               maxDuration: 3m
     kubeconfig: "{{ kubeconfig_path }}"
     state: present
-  when: argocd.bootstrap_helm.enabled
+  when: argocd.bootstrap.enabled
 
 - name: Attendre que l'application Bootstrap soit créée
   kubernetes.core.k8s_info:
     api_version: argoproj.io/v1alpha1
     kind: Application
-    name: "{{ argocd.bootstrap_helm.name }}"
+    name: "{{ argocd.bootstrap.name }}"
     namespace: "{{ argocd.namespace }}"
     kubeconfig: "{{ kubeconfig_path }}"
     wait: true
     wait_timeout: 60
-  when: argocd.bootstrap_helm.enabled
-
-- name: Créer l'application Bootstrap (App of Apps)
-  kubernetes.core.k8s:
-    definition:
-      apiVersion: argoproj.io/v1alpha1
-      kind: Application
-      metadata:
-        name: "{{ argocd.bootstrap_dir.name }}"
-        namespace: "{{ argocd.namespace }}"
-        finalizers:
-          - resources-finalizer.argocd.argoproj.io
-      spec:
-        project: default
-        source:
-          repoURL: "{{ argocd.git_repo.url }}"
-          targetRevision: HEAD
-          path: "{{ argocd.bootstrap_dir.path }}"
-        destination:
-          server: https://kubernetes.default.svc
-          namespace: "{{ argocd.namespace }}"
-        syncPolicy:
-          automated:
-            prune: "{{ argocd.bootstrap_dir.auto_sync }}"
-            selfHeal: "{{ argocd.bootstrap_dir.self_heal }}"
-            allowEmpty: false
-          syncOptions:
-            - CreateNamespace=true
-          retry:
-            limit: 5
-            backoff:
-              duration: 5s
-              factor: 2
-              maxDuration: 3m
-    kubeconfig: "{{ kubeconfig_path }}"
-    state: present
-  when: argocd.bootstrap_dir.enabled  
-
-- name: Attendre que l'application Bootstrap soit créée
-  kubernetes.core.k8s_info:
-    api_version: argoproj.io/v1alpha1
-    kind: Application
-    name: "{{ argocd.bootstrap_dir.name }}"
-    namespace: "{{ argocd.namespace }}"
-    kubeconfig: "{{ kubeconfig_path }}"
-    wait: true
-    wait_timeout: 60
-  when: argocd.bootstrap_dir.enabled
-
+  when: argocd.bootstrap.enabled
 
 - name: Afficher les informations de succès
   debug:
