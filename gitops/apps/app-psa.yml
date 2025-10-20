@@ -12,11 +12,16 @@ spec:
   project: default
   
   source:
-    repoURL: https://github.com/Titou-Onee/CloudDevOps_ecommerce.git
-    targetRevision: HEAD
-    path: gitops/apps/psa
-    directory:
-      recurse: true
+    - repoURL: https://github.com/Titou-Onee/CloudDevOps_ecommerce.git
+      targetRevision: HEAD
+      path: gitops/apps
+      directory:
+        recurse: true
+
+    - repoURL: https://github.com/Titou-Onee/CloudDevOps_ecommerce.git
+      targetRevision: master
+      ref: values
+  
   
   destination:
     server: https://kubernetes.default.svc
