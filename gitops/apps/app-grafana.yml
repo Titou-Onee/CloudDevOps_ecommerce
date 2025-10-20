@@ -9,13 +9,17 @@ spec:
   project: default
 
   source:
-    repoURL: https://grafana.github.io/helm-charts
-    chart: grafana
-    targetRevision: 7.3.0
-    helm:
-      valueFiles:
-        - values.yaml
-
+    - repoURL: https://grafana.github.io/helm-charts
+      chart: grafana
+      targetRevision: 7.3.0
+      helm:
+        valueFiles:
+          - $values/gitops/values/values-grafana.yml
+   
+    - repoURL: https://github.com/Titou-Onee/CloudDevOps_ecommerce.git
+      targetRevision: master
+      ref: values
+  
   destination:
     server: https://kubernetes.default.svc
     namespace: monitoring

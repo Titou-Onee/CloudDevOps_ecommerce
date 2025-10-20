@@ -1,3 +1,0 @@
-controllerManager:
-  podAnnotations:
-    sidecar.istio.io/inject: "false"

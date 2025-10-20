@@ -12,16 +12,14 @@ spec:
   project: default
   
   sources:
-    # Chart Helm kube-prometheus-stack
     - repoURL: https://prometheus-community.github.io/helm-charts
       chart: kube-prometheus-stack
       targetRevision: 55.5.0
       helm:
         releaseName: kube-prometheus-stack
         valueFiles:
-          - $values/gitops/apps/prometheus/values.yml
-    
-    # Values depuis Git
+          - $values/gitops/values/values-prometheus.yml
+  
     - repoURL: https://github.com/Titou-Onee/CloudDevOps_ecommerce.git
       targetRevision: master
       ref: values
@@ -49,3 +47,5 @@ spec:
       kind: StatefulSet
       jsonPointers:
         - /spec/persistentVolumeClaimRetentionPolicy
+
+# ajouter description

@@ -1,34 +1,32 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: security-gatekeeper
+  name: security-falco
   namespace: argocd
   annotations:
     argocd.argoproj.io/sync-wave: "1"
   labels:
-    app.kubernetes.io/name: security-gatekeeper
+    app.kubernetes.io/name: security-falco
     app.kubernetes.io/component: security
 spec:
   project: default
   
   sources:
-    # Chart Helm Gatekeeper
-    - repoURL: https://open-policy-agent.github.io/gatekeeper/charts
-      chart: gatekeeper
-      targetRevision: 3.15.1
+    - repoURL: https://falcosecurity.github.io/charts
+      chart: falco
+      targetRevision: 6.0.0
       helm:
-        releaseName: gatekeeper
+        releaseName: falco
         valueFiles:
-          - $values/security/gatekeeper/values.yaml
+          - $values/gitops/values/values-falco.yml
     
-    # Values depuis Git
     - repoURL: https://github.com/Titou-Onee/CloudDevOps_ecommerce.git
-      targetRevision: HEAD
+      targetRevision: master
       ref: values
   
   destination:
     server: https://kubernetes.default.svc
-    namespace: gatekeeper-system
+    namespace: falco
   
   syncPolicy:
     automated:
@@ -36,8 +34,6 @@ spec:
       selfHeal: true
     syncOptions:
       - CreateNamespace=true
-      - ServerSideApply=true
-      - RespectIgnoreDifferences=true
     retry:
       limit: 5
       backoff:
@@ -45,5 +41,4 @@ spec:
         factor: 2
         maxDuration: 3m
 
-# metrics dans prometheus
-# ajouter ignoreDifferences
+        #ajouter falco sidekick
