@@ -10,6 +10,12 @@ metadata:
     app.kubernetes.io/component: security
 spec:
   project: default
+  ignoreDifferences:
+    - group: argoproj.io
+      kind: Application
+      jsonPointers:
+        - /metadata
+        - /status 
   
   sources:
     - repoURL: https://github.com/Titou-Onee/CloudDevOps_ecommerce.git
