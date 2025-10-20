@@ -16,10 +16,6 @@ spec:
     targetRevision: master
     path: kubernetes/manifests
 
-    kustomize:
-      images:
-        - titouonee/clouddevops_ecommerce
-
   destination:
     server: https://kubernetes.default.svc
     namespace: ecommerce
