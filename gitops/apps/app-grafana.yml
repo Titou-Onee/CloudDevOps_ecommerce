@@ -27,6 +27,22 @@ spec:
     server: https://kubernetes.default.svc
     namespace: monitoring
 
+
+  syncPolicy:
+    automated:
+      selfHeal: true
+      prune: true
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true
+      - RespectIgnoreDifferences=true
+    retry:
+      limit: 5
+      backoff:
+        duration: 5s
+        maxDuration: 3m
+
+
 datasources:
   datasources.yaml:
     apiVersion: 1
@@ -36,19 +52,6 @@ datasources:
         access: proxy
         url: http://kube-prometheus-stack-prometheus.monitoring.svc.cluster.local:9090
         isDefault: true
-
-  syncPolicy:
-    automated:
-      selfHeal: true
-      prune: true
-    syncOptions:
-      - CreateNamespace=true
-    retry:
-      limit: 5
-      backoff:
-        duration: 5s
-        maxDuration: 3m
-
 # ajouter l'accès 
 #adminUser: admin
 #adminPassword: changeme
