@@ -5,10 +5,13 @@ metadata:
   namespace: argocd
   annotations:
     argocd.argoproj.io/sync-wave: "3"
+  labels:
+    app.kubernetes.io/name: grafana
+    app.kubernetes.io/component: monitoring
 spec:
   project: default
 
-  source:
+  sources:
     - repoURL: https://grafana.github.io/helm-charts
       chart: grafana
       targetRevision: 7.3.0
