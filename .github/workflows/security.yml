@@ -65,7 +65,7 @@ jobs:
 
       - name: Sign with Cosign
         run: |
-          cosign sign-blob image.tar > image.tar.sig
+          cosign sign-blob --key-env env://COSIGN_PRIVATE_KEY image.tar > image.tar.sig
         env:
           COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
           COSIGN_PRIVATE_KEY: ${{ secrets.COSIGN_PRIVATE_KEY }}
