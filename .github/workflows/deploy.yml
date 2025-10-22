@@ -17,8 +17,9 @@ jobs:
 
       - name: Install Kustomize and checkov
         run: |
-          curl -sL https://git.io/install-kustomize | bash
-          sudo mv kustomize /usr/local/bin/
+          curl -sL "https://github.com/kubernetes-sigs/kustomize/releases/download/${KUSTOMIZE_VERSION}/kustomize_${KUSTOMIZE_VERSION#v}_linux_amd64.tar.gz" \
+                | tar xz
+          sudo mv kustomize /usr/local/bin/kustomize
           pip install checkov
 
       - name: Update image tag
@@ -36,7 +37,7 @@ jobs:
         uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: checkov-manifests-results.sarif
-          
+
       - name: Commit and push changes
         run: |
           git config --local user.email " secrets.GITHUB_EMAIL"
