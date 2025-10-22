@@ -65,8 +65,9 @@ jobs:
 
       - name: Sign with Cosign
         run: |
-          cosign sign-blob --key env://COSIGN_PRIVATE_KEY image.tar > image.tar.sig
+          cosign sign-blob image.tar > image.tar.sig
         env:
+          COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
           COSIGN_PRIVATE_KEY: ${{ secrets.COSIGN_PRIVATE_KEY }}
 
       - name: Upload image as Artifacts
@@ -86,4 +87,5 @@ jobs:
             safety-report.json
             trivy-image-results.sarif
             trivy-fs-results.sarif
+          retention-days: 1
 
