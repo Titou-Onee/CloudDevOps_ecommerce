@@ -20,7 +20,7 @@ jobs:
         with:
           name: signed-docker-image
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          run-id: ${{ github.event.worflow_run.id }}
+          run-id: ${{ github.event.workflow_run.id }}
           path: .
 
       - name: Install Cosign
