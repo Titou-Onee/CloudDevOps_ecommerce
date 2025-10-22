@@ -9,28 +9,18 @@ env:
 
 jobs:
   security_checks:
-  
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - name : Restore Pipenv environment
+        uses: actions/cache@v4
         with:
-          python-version: '3.8'
-      
-      - name: install pipenv
-        run: |
-          python -m pip install --upgrade pip
-          pip install pipenv
-
-      - name: Install dependencies
-        run: |
-          pipenv run pip install "setuptools==57.5.0"
-          pipenv install --dev
-          pipenv install pytest pytest-cov flake8 black safety
-
+          path: ~/.local/share/virtualenvs
+          key: ${{ runner.os }}-pipenv-${{ hashFiles('**/Pipfile.lock') }}
+ 
       - name: Analyze with SonarCloud
         uses: SonarSource/sonarcloud-github-action@4006f663ecaf1f8093e8e4abb9227f6041f52216
         env:
@@ -55,7 +45,7 @@ jobs:
 
       - name: Build Docker image
         run: |
-          docker build -t ${{ env.DOCKER_IMAGE }}:test ./Docker
+          docker build -t ${{ env.DOCKER_IMAGE }}:ci-signed ./Docker
 
 
       - name: Run Trivy vulnerability scanner
@@ -66,6 +56,27 @@ jobs:
           template: '@/contrib/sarif.tpl'
           output: 'trivy-image-results.sarif'
           severity: 'CRITICAL,HIGH'
+      
+      - name: Save Docker image
+        run: docker save ${{ env.DOCKER_IMAGE }}:ci-signed -o image.tar
+
+      - name: Install Cosign
+        uses: sigstore/cosign-installer@v3
+
+      - name: Sign with Cosign
+        run: |
+          cosign sign-blob --key env://COSIGN_PRIVATE_KEY image.tar > image.tar.sig
+        env:
+          COSIGN_PRIVATE_KEY: ${{ secrets.COSIGN_PRIVATE_KEY }}
+
+      - name: Upload image as Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: signed-docker-image
+          path: |
+            image.tar
+            image.tar.sig
+          retention-days: 1
 
       - name: Upload report
         uses: actions/upload-artifact@v4
