@@ -38,6 +38,7 @@ jobs:
         with:
           sarif_file: checkov-manifests-results.sarif
 
+      # no use of pull request for learning simplicity
       - name: Commit and push changes
         run: |
           git config --local user.email " secrets.GITHUB_EMAIL"
@@ -45,3 +46,13 @@ jobs:
           git add kubernetes/manifests
           git diff --staged --quiet || git commit -m "Update image tag: sha-${{ github.sha }}"
           git push origin master
+
+#      - name: Create Pull Request for Manifests
+#        uses: peter-evans/create-pull-request@v6
+#        with:
+#          token: ${{ secrets.GITHUB_TOKEN }}
+#          commit-message: 'feat(deployment): Update K8s image tag to sha-${{ github.sha }}'
+#          title: 'CI/CD: New Image Tag ${{ github.sha }} Ready for Review'
+#          body: 'Automatic manifest update triggered by successful image push. Please review.'
+#          branch: 'ci-update-k8s-manifest-${{ github.sha }}'
+#          base: 'master'

@@ -3,9 +3,9 @@ on:
   push:
       branches:
         - master
+        - dev
   pull_request:
-        branches:
-          - master
+
 
 jobs:
   code_quality: 
@@ -41,6 +41,7 @@ jobs:
 
       - name: Code formatting check
         run: pipenv run black --check .
+        # In  the context of this project, we can accept to continue on error 
         continue-on-error: true
 
       - name: Flake lint

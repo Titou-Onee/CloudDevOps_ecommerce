@@ -15,12 +15,18 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name : Restore Pipenv environment
+      - name: Restore Pipenv environment
         uses: actions/cache@v4
         with:
           path: ~/.local/share/virtualenvs
           key: ${{ runner.os }}-pipenv-${{ hashFiles('**/Pipfile.lock') }}
  
+      - name: Run Gitleaks (Secret Scanning)
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        continue-on-error: true # Bloquant par défaut si un secret est trouvé
+  
       - name: Analyze with SonarCloud
         uses: SonarSource/sonarcloud-github-action@4006f663ecaf1f8093e8e4abb9227f6041f52216
         env:
@@ -39,6 +45,7 @@ jobs:
           trivy-config: trivy.yaml
           format: 'sarif'
           output: 'trivy-fs-results.sarif'
+          # In  the context of this project, we can accept to continue on error 
           exit-code: '0'
           ignore-unfixed: true
           severity: 'CRITICAL,HIGH'
@@ -71,6 +78,7 @@ jobs:
           COSIGN_PRIVATE_KEY: ${{ secrets.COSIGN_PRIVATE_KEY }}
           COSIGN_EXPERIMENTAL: "true"
 
+      # Use of Artifacts for learning purpose
       - name: Upload image as Artifacts
         uses: actions/upload-artifact@v4
         with:

@@ -10,6 +10,9 @@ on:
 jobs:
   terraform:
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
     defaults:
       run:
         working-directory: terraform/infra
@@ -18,13 +21,22 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Configure AWS Credentials with OIDC
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          # REMPLACER l'ARN du rôle par la valeur réelle après terraform apply
+          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/GitHubOIDC-TF-Infracost-Role
+          aws-region: eu-west-3
+
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
         with:
             terraform_version: 1.7
 
       - name: Terraform init
-        run: terraform init -backend=false
+        run: terraform init
+        env:
+           TF_VAR_aws_region: eu-west-3
 
       - name: Terraform format
         run: terraform fmt --check -recursive
@@ -32,30 +44,20 @@ jobs:
       - name: Terraform validation
         run: terraform validate
 
-      - name: Setup InfraCost
-        uses: infracost/setup-action@v2
+      - name: Setup Infracost
+        uses: infracost/actions/setup@v3
         with:
           api-key: ${{ secrets.INFRACOST_API_KEY }}
-          cli-version: 0.10.22
-
-      - name: Reporting with infracost
-        id: infracost
-        run: |
-          terraform plan -out tfplan.binary
-          infracost breakdown --path . --format json --out-file infracost-base.json
-          infracost diff --path . --format json --out--file infracost-diff.json --plan-file tfplan.binary
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          version: latest
 
       - name: TFLint
         uses: terraform-linters/setup-tflint@v3
       - run: tflint --recursive
 
       - name: TFsec
-        uses: aquasecurity/tfsec-action@v2.0.0
+        uses: aquasecurity/tfsec-action@v1.0.0
 
       - name: Checkov
-        uses: bridgecrewio/checkov-action@master
+        uses: bridgecrewio/checkov-action@v3
         with:
             directory: terraform
