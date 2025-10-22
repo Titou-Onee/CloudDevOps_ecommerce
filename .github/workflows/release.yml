@@ -6,6 +6,9 @@ on:
       - completed
 env:
   DOCKER_IMAGE: titouonee/clouddevops_ecommerce
+permissions:
+  actions: read
+  contents: read
 
 jobs:
   push_image:
@@ -16,6 +19,8 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: signed-docker-image
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: ${{ github.event.worflow_run.id }}
           path: .
 
       - name: Install Cosign
