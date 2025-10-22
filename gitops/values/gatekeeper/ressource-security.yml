@@ -1,0 +1,42 @@
+apiVersion: templates.gatekeeper.sh/v1
+kind: ConstraintTemplate
+metadata:
+  name: k8sresourcepolicy
+spec:
+  crd:
+    spec:
+      names:
+        kind: K8sResourcePolicy
+  targets:
+    - target: admission.k8s.gatekeeper.sh
+      rego: |
+        package k8sresourcepolicy
+
+        violation[{"msg": msg}] {
+          input.review.kind.kind == "Pod"
+          some c
+          not input.review.object.spec.containers[c].resources.requests
+          msg := sprintf("The container %q must define resource.requests", [input.review.object.spec.containers[c].name])
+        }
+        violation[{"msg": msg}] {
+          input.review.kind.kind == "Pod"
+          some c
+          not input.review.object.spec.containers[c].resources.limits
+          msg := sprintf("The container %q must define resource.limits", [input.review.object.spec.containers[c].name])
+        }
+
+---
+apiVersion: constraints.gatekeeper.sh/v1beta1
+kind: K8sResourcePolicy
+metadata:
+  name: resource-policy
+spec:
+  enforcementAction : dryrun
+  match:
+    kinds:
+      - apiGroups: [""]
+        kinds: ["Pod"]
+    excludedNamespaces:
+      - kube-system
+#      - monitoring
+#      - security

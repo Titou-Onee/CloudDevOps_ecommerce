@@ -1,0 +1,42 @@
+apiVersion: templates.gatekeeper.sh/v1
+kind: ConstraintTemplate
+metadata:
+  name: k8simagepolicy
+spec:
+  crd:
+    spec:
+      names:
+        kind: K8sImagePolicy
+  targets:
+    - target: admission.k8s.gatekeeper.sh
+      rego: |
+        package k8simagepolicy
+
+        violation[{"msg": msg}] {
+          input.review.kind.kind == "Pod"
+          some c
+          image := input.review.object.spec.containers[c].image
+          not startswith(image, "titouonee/")
+          msg := sprintf("The image %q doesn't come from a certified registry ", [image])
+        }
+
+        violation[{"msg": msg}] {
+          input.review.kind.kind == "Pod"
+          some c
+          input.review.object.spec.containers[c].imagePullPolicy != "Always"
+          msg := sprintf("The container %q must have imagePullPolicy=Always", [input.review.object.spec.containers[c].name])
+        }
+---
+apiVersion: constraints.gatekeeper.sh/v1beta1
+kind: K8sImagePolicy
+metadata:
+  name: image-policy
+spec:
+  enforcementAction : dryrun
+  match:
+    kinds:
+      - apiGroups: [""]
+        kinds: ["Pod"]
+    excludedNamespaces:
+      - kube-system
+#      - security

@@ -2,6 +2,16 @@ falco:
   jsonOutput: true
   logLevel: info
   stdoutOutput: true
+  jsonIncludeOutputProperty: true
+
+  httpOutput:
+    enabled: true
+    url: http://localhost:2801
+
+  grpc:
+   enabled: true
+   bind_address: unix:///var/run/falco/falco.sock
+   threadiness: 2
 
   config:
     enabled_event_sources:
@@ -12,11 +22,26 @@ falco:
     - /etc/falco/falco_rules.yaml
     - /etc/falco/falco_rules.local.yaml
     - /etc/falco/rules.d
+    - /etc/falco/rules.d/custom-sec-rules.yaml
 
 driver:
   enabled: true
   kind: modern_ebpf
-  
+
+falcosidekick:
+  enabled: true
+  listenPort: 2801
+  config:
+    debug: false
+    prometheus:
+      enabled: true
+    loki:
+      hostport: http://loki.monitoring.svc.cluster.local:3100
+      endpoint: /loki/api/v1/push
+      minimumpriority: warning    
+
+
+
 customRules:
   custom-sec-rules.yaml: |
     - rule: Suspicious File Created in /etc
@@ -26,6 +51,36 @@ customRules:
         File created in /etc (user=%user.name file=%fd.name command=%proc.cmdline)
       priority: WARNING
       tags: [filesystem, etc]
+
+    - rule: New User Account Created
+      desc: Detects when a new user is added to the system
+      condition: >
+        evt.type in (execve, execveat) and proc.name = "useradd"
+      output: >
+        New user added (user=%user.name command=%proc.cmdline)
+      priority: NOTICE
+      tags: [users, system]
+
+    - rule: K8s Secret Read
+    desc: Detects when a Kubernetes Secret is read
+    condition: >
+      ka.verb=get and ka.target.resource=secrets
+    output: >
+      Kubernetes Secret accessed (user=%ka.user.name resource=%ka.target.name)
+    priority: WARNING
+    tags: [k8s, secrets]
+
+    - rule: Shell Spawned in Container
+    desc: Detects when a shell (bash/sh) is spawned inside a container
+    condition: >
+      container and proc.name in (bash, sh, zsh)
+    output: >
+      Shell spawned in container (container_id=%container.id image=%container.image.repository)
+    priority: CRITICAL
+    tags: [container, shell]
+
+
+
 
 # niveau d'alerte à ajouter
 # ajouter d'autres alertes

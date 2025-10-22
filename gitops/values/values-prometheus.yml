@@ -35,8 +35,7 @@ prometheus:
           - targets: ['argocd-repo-server-metrics.argocd.svc.cluster.local:8084']
       - job_name: 'falco'
         static_configs:
-          - targets: ['falco.falco.svc.cluster.local:8765']
-
+          - targets: ['http://falco-exporter.monitoring.svc.cluster.local:9376/metrics']
 
 alertmanager:
   alertmanagerSpec:
