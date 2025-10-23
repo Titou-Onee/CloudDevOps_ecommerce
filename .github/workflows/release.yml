@@ -14,6 +14,10 @@ on:
         description: 'path of the docker image'
         type: string
         required: true
+      RUN_ID:
+        description: "run ID of the upload of the artifact"
+        type: string
+        required: true
     secrets:
       COSIGN_PUBLIC_KEY:
         required: true
@@ -35,7 +39,7 @@ jobs:
         with:
           name: signed-docker-image
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          run-id: ${{ github.event.workflow_run.id }}
+          run-id: inputs
           path: .
 
       - name: Install Cosign

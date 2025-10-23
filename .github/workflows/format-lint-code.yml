@@ -72,6 +72,7 @@ jobs:
       RELEASE_TAG: latest
       DEFAULT_SHA:  ${{ github.sha }}
       DOCKER_IMAGE: titouonee/clouddevops_ecommerce
+      RUN_ID: ${{ needs.call_security_checks.outputs.run_id }}
     secrets:
       DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
       DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
