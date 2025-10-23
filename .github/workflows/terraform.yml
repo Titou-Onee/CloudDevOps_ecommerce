@@ -25,7 +25,7 @@ jobs:
         uses: aws-actions/configure-aws-credentials@v4
         with:
           # REMPLACER l'ARN du rôle par la valeur réelle après terraform apply
-          role-to-assume: arn:aws:iam::${{ secrets.AWS_ARN }}:role/GitHubOIDC-TF-Infracost-Role
+          role-to-assume: ${{ secrets.AWS_ARN }}
           aws-region: eu-west-3
 
       - name: Setup Terraform
