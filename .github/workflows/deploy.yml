@@ -26,17 +26,20 @@ jobs:
         run: | 
           cd kubernetes/manifests
           kustomize edit set image ${{ inputs.DOCKER_IMAGE }}:${{ inputs.DEPLOY_TAG }}
-     
-      - name: Scan with checkov
-        run: |
-          checkov --directory kubernetes/manifests gitops/ \
-                  --framework kubernetes \
-                  --output sarif --output-file checkov-results.sarif
+ 
+      - name: Scan Kubernetes manifests with Checkov
+        uses: bridgecrewio/checkov-action@v12
+        with:
+          directory: kubernetes/manifests,gitops
+          framework: kubernetes
+          output_format: sarif
+          output_file_path: checkov-results.sarif
+
 
       - name: Upload checkov report
         uses: github/codeql-action/upload-sarif@v3
         with:
-          sarif_file: checkov-manifests-results.sarif
+          sarif_file: checkov-results.sarif
 
       # no use of pull request for learning simplicity
       - name: Commit and push changes
