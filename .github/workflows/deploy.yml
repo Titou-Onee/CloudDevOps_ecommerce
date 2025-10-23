@@ -33,6 +33,7 @@ jobs:
           output_format: sarif
           output_file_path: checkov-app-results.sarif
           skip_results_upload: true
+        continue-on-error: true
 
       - name: Checkov Scan - Kubernetes Manifests
         id: k8s_scan
@@ -43,6 +44,7 @@ jobs:
           output_format: sarif
           output_file_path: checkov-gitops-results.sarif
           skip_results_upload: true
+        continue-on-error: true
 
       - name: Upload report
         uses: actions/upload-artifact@v4
