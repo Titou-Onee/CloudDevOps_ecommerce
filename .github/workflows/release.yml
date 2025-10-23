@@ -39,7 +39,7 @@ jobs:
         with:
           name: signed-docker-image
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          run-id: inputs
+          run-id: ${{ inputs.RUN_ID }}
           path: .
 
       - name: Install Cosign
@@ -64,7 +64,7 @@ jobs:
           docker tag ${{ inputs.DOCKER_IMAGE }}:ci-signed ${{ inputs.DOCKER_IMAGE }}:${{ inputs.image_tag }}
           docker tag ${{ inputs.DOCKER_IMAGE }}:ci-signed ${{ inputs.DOCKER_IMAGE }}:${{ inputs.sha }}
           
-          docker push ${{ inputs.DOCKER_IMAGE }}:${{ inputs.image_tag }}
-          docker push ${{ inputs.DOCKER_IMAGE }}:${{ inputs.sha }}
+          docker push ${{ inputs.DOCKER_IMAGE }}:${{ inputs.RELEASE_TAG }}
+          docker push ${{ inputs.DOCKER_IMAGE }}:${{ inputs.DEFAULT_SHA }}
 
 
