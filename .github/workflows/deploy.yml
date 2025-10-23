@@ -2,30 +2,13 @@ name: Update of manifests
 on:
   workflow_call:
     inputs:
-      image_tag:
-        description: 'Tag of the docker image'
-        type: string
-        required: true
-      sha:
-        description: 'sha of the commit'
+      DEPLOY_TAG:
+        description: 'tag of the deployed image'
         type: string
         required: true
       DOCKER_IMAGE:
         description: 'path of the docker image'
         type: string
-        required: true
-    secrets:
-      SONAR_TOKEN:
-        required: true
-      COSIGN_PRIVATE_KEY:
-        required: true
-      COSIGN_PUBLIC_KEY:
-        required: true
-      COSIGN_PASSWORD:
-        required: true
-      DOCKERHUB_USERNAME:
-        required: true
-      DOCKERHUB_TOKEN:
         required: true
 
 jobs:

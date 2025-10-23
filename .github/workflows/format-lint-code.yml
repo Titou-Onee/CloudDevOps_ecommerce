@@ -6,6 +6,11 @@ on:
         - dev
   pull_request:
 
+env:
+  DOCKER_IMAGE: titouonee/clouddevops_ecommerce
+  RELEASE_TAG: latest
+  DEFAULT_SHA: ${{ github.sha }}
+  DEPLOY_TAG: ${{ github.sha }}
 
 jobs:
   code_quality: 
@@ -53,13 +58,28 @@ jobs:
     needs: code_quality
     uses: titou-onee/clouddevops_ecommerce/.github/workflows/security.yml@master
     with:
-      image_tag: ci-signed
-      sha: ${{ github.sha }}
-      DOCKER_IMAGE: titouonee/clouddevops_ecommerce
+      DOCKER_IMAGE: ${{ env.DOCKER_IMAGE }}
     secrets:
       SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
+      COSIGN_PRIVATE_KEY: ${{ secrets.COSIGN_PTIVATE_KEY}} 
+
+
+  call_release:
+    needs: call_security_checks
+    uses: titou-onee/clouddevops_ecommerce/.github/workflows/release.yml@master
+    with:
+      RELEASE_TAG: ${{ env.DEFAULT_TAG }}
+      DEFAULT_SHA: ${{ env.RELEASE_SHA }}
+      DOCKER_IMAGE: ${{ env.DOCKER_IMAGE }}
+    secrets:
       DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
       DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
-      COSIGN_PRIVATE_KEY: ${{ secrets.COSIGN_PRIVATE_KEY }}
-      COSIGN_PUBLIC_KEY: ${{ secrets.COSIGN_PUBLIC_KEY }}
-      COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
+      COSIGN_PUBLIC_KEY: ${{ secrets.COSIGN_PUBLIC_KEY}}
+
+  call_deploy:
+    needs: call_release
+    uses: titou-onee/clouddevops_ecommerce/.github/workflows/deploy.yml@master
+    with: 
+      DEFAULT_SHA: ${{ env.DEFAULT_SHA }}
+      DOCKER_IMAGE: ${{ env.DOCKER_IMAGE }}
