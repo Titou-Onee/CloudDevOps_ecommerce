@@ -48,3 +48,18 @@ jobs:
         run: |
           pipenv run flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
           pipenv run flake8 . --count --exit-zero --max-complexity=10 --max-line-length=88 --statistics
+
+  call_security_checks:
+    needs: code_quality
+    uses: titou-onee/clouddevops_ecommerce/.github/workflows/security.yml@master
+    with:
+      image_tag: ci-signed
+      sha: ${{ github.sha }}
+      DOCKER_IMAGE: titouonee/clouddevops_ecommerce
+    secrets:
+      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+      DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+      COSIGN_PRIVATE_KEY: ${{ secrets.COSIGN_PRIVATE_KEY }}
+      COSIGN_PUBLIC_KEY: ${{ secrets.COSIGN_PUBLIC_KEY }}
+      COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}

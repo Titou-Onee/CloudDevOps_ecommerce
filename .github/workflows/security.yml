@@ -1,11 +1,32 @@
 name: Security checks
 on:
-  workflow_run: 
-    workflows: ["Format Lint Code"]
-    types: 
-      - completed
-env:
-  DOCKER_IMAGE: titouonee/clouddevops_ecommerce
+  workflow_call:
+    inputs:
+      image_tag:
+        description: 'Tag of the docker image'
+        type: string
+        required: true
+      sha:
+        description: 'sha of the commit'
+        type: string
+        required: true
+      DOCKER_IMAGE:
+        description: 'path of the docker image'
+        type: string
+        required: true
+    secrets:
+      SONAR_TOKEN:
+        required: true
+      COSIGN_PRIVATE_KEY:
+        required: true
+      COSIGN_PUBLIC_KEY:
+        required: true
+      COSIGN_PASSWORD:
+        required: true
+      DOCKER_USERNAME:
+        required: true
+      DOCKERHUB_TOKEN:
+        required: true
 
 jobs:
   security_checks:
@@ -52,20 +73,20 @@ jobs:
 
       - name: Build Docker image
         run: |
-          docker build -t ${{ env.DOCKER_IMAGE }}:ci-signed ./Docker
+          docker build -t ${{ inputs.DOCKER_IMAGE }}:ci-signed ./Docker
 
 
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@7b7aa264d83dc58691451798b4d117d53d21edfe
         with:
-          image-ref: '${{ env.DOCKER_IMAGE }}:ci-signed'
+          image-ref: '${{ inputs.DOCKER_IMAGE }}:ci-signed'
           format: 'template'
           template: '@/contrib/sarif.tpl'
           output: 'trivy-image-results.sarif'
           severity: 'CRITICAL,HIGH'
       
       - name: Save Docker image
-        run: docker save ${{ env.DOCKER_IMAGE }}:ci-signed -o image.tar
+        run: docker save ${{ inputs.DOCKER_IMAGE }}:ci-signed -o image.tar
 
       - name: Install Cosign
         uses: sigstore/cosign-installer@v3
@@ -97,4 +118,20 @@ jobs:
             trivy-image-results.sarif
             trivy-fs-results.sarif
           retention-days: 1
-
+  
+  
+  call_release:
+    needs: security_checks
+    uses: titou-onee/clouddevops_ecommerce/.github/workflows/release.yml@master
+    with:
+      image_tag: ${{ inputs.sha }}
+      sha: ${{ inputs.sha }}
+      DOCKER_IMAGE: ${{ inputs.DOCKER_IMAGE }}
+    secrets:
+      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+      DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+      COSIGN_PRIVATE_KEY: ${{ secrets.COSIGN_PRIVATE_KEY }}
+      COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
+      COSIGN_PUBLIC_KEY: ${{ secrets.COSIGN_PUBLIC_KEY}}
+      

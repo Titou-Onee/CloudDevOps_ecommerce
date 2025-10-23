@@ -1,11 +1,30 @@
 name: Update of manifests
 on:
-  workflow_run: 
-    workflows: ["Push to DockerHub"]
-    types: 
-      - completed
-env:
-  DOCKER_IMAGE: titouonee/clouddevops_ecommerce
+  workflow_call:
+    inputs:
+      image_tag:
+        description: 'Tag of the docker image'
+        type: string
+        required: true
+      sha:
+        description: 'sha of the commit'
+        type: string
+        required: true
+      DOCKER_IMAGE:
+        description: 'path of the docker image'
+        type: string
+        required: true
+    secrets:
+      SONAR_TOKEN:
+        required: true
+      COSIGN_PRIVATE_KEY:
+        required: true
+      COSIGN_PASSWORD:
+        required: true
+      DOCKER_USERNAME:
+        required: true
+      DOCKERHUB_TOKEN:
+        required: true
 
 jobs:
   deployment:
@@ -15,17 +34,13 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Install Kustomize and checkov
-        run: |
-          curl -sL "https://github.com/kubernetes-sigs/kustomize/releases/download/${KUSTOMIZE_VERSION}/kustomize_${KUSTOMIZE_VERSION#v}_linux_amd64.tar.gz" \
-                | tar xz
-          sudo mv kustomize /usr/local/bin/kustomize
-          pip install checkov
+      - name: Install checkov
+        run: pip install checkov
 
       - name: Update image tag
         run: | 
           cd kubernetes/manifests
-          kustomize edit set image ${{ env.DOCKER_IMAGE }}:${{ github.sha }}
+          kustomize edit set image ${{ inputs.DOCKER_IMAGE }}:${{ inputs.sha }}
      
       - name: Scan with checkov
         run: |
@@ -44,15 +59,15 @@ jobs:
           git config --local user.email " secrets.GITHUB_EMAIL"
           git config --local user.name "titouonee"
           git add kubernetes/manifests
-          git diff --staged --quiet || git commit -m "Update image tag: sha-${{ github.sha }}"
+          git diff --staged --quiet || git commit -m "Update image tag: sha-${{ inputs.sha }}"
           git push origin master
 
 #      - name: Create Pull Request for Manifests
 #        uses: peter-evans/create-pull-request@v6
 #        with:
 #          token: ${{ secrets.GITHUB_TOKEN }}
-#          commit-message: 'feat(deployment): Update K8s image tag to sha-${{ github.sha }}'
-#          title: 'CI/CD: New Image Tag ${{ github.sha }} Ready for Review'
+#          commit-message: 'feat(deployment): Update K8s image tag to sha-${{ inputs.sha }}'
+#          title: 'CI/CD: New Image Tag ${{ inputs.sha }} Ready for Review'
 #          body: 'Automatic manifest update triggered by successful image push. Please review.'
-#          branch: 'ci-update-k8s-manifest-${{ github.sha }}'
+#          branch: 'ci-update-k8s-manifest-${{ inputs.sha }}'
 #          base: 'master'
