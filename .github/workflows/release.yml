@@ -21,7 +21,7 @@ on:
         required: true
       COSIGN_PASSWORD:
         required: true
-      DOCKER_USERNAME:
+      DOCKERHUB_USERNAME:
         required: true
       DOCKERHUB_TOKEN:
         required: true
@@ -63,10 +63,10 @@ jobs:
       - name: Tag and push to DockerHub
         run: |
           docker tag ${{ inputs.DOCKER_IMAGE }}:ci-signed ${{ inputs.DOCKER_IMAGE }}:latest
-          docker tag ${{ inputs.DOCKER_IMAGE }}:ci-signed ${{ inputs.DOCKER_IMAGE }}:${{ github.sha }}
+          docker tag ${{ inputs.DOCKER_IMAGE }}:ci-signed ${{ inputs.DOCKER_IMAGE }}:${{ inputs.sha }}
           
           docker push ${{ inputs.DOCKER_IMAGE }}:latest
-          docker push ${{ inputs.DOCKER_IMAGE }}:${{ github.sha }}
+          docker push ${{ inputs.DOCKER_IMAGE }}:${{ inputs.sha }}
 
   call_deploy:
     needs: push_image

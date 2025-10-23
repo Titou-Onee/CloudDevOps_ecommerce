@@ -23,7 +23,7 @@ on:
         required: true
       COSIGN_PASSWORD:
         required: true
-      DOCKER_USERNAME:
+      DOCKERHUB_USERNAME:
         required: true
       DOCKERHUB_TOKEN:
         required: true
