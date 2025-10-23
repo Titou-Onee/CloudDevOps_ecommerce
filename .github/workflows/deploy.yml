@@ -25,7 +25,7 @@ jobs:
       - name: Update image tag
         run: | 
           cd kubernetes/manifests
-          kustomize edit set image ${{ inputs.DOCKER_IMAGE }}:${{ inputs.sha }}
+          kustomize edit set image ${{ inputs.DOCKER_IMAGE }}:${{ inputs.DEPLOY_TAG }}
      
       - name: Scan with checkov
         run: |
@@ -44,15 +44,15 @@ jobs:
           git config --local user.email " secrets.GITHUB_EMAIL"
           git config --local user.name "titouonee"
           git add kubernetes/manifests
-          git diff --staged --quiet || git commit -m "Update image tag: sha-${{ inputs.sha }}"
+          git diff --staged --quiet || git commit -m "Update image tag: sha-${{ inputs.DEPLOY_TAG }}"
           git push origin master
 
 #      - name: Create Pull Request for Manifests
 #        uses: peter-evans/create-pull-request@v6
 #        with:
 #          token: ${{ secrets.GITHUB_TOKEN }}
-#          commit-message: 'feat(deployment): Update K8s image tag to sha-${{ inputs.sha }}'
-#          title: 'CI/CD: New Image Tag ${{ inputs.sha }} Ready for Review'
+#          commit-message: 'feat(deployment): Update K8s image tag to sha-${{ inputs.DEPLOY_TAG }}'
+#          title: 'CI/CD: New Image Tag ${{ inputs.DEPLOY_TAG }} Ready for Review'
 #          body: 'Automatic manifest update triggered by successful image push. Please review.'
-#          branch: 'ci-update-k8s-manifest-${{ inputs.sha }}'
+#          branch: 'ci-update-k8s-manifest-${{ inputs.DEPLOY_TAG }}'
 #          base: 'master'
