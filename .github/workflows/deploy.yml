@@ -29,16 +29,29 @@ jobs:
         with:
           directory: |
             kubernetes/manifests
-            gitops
           framework: kubernetes
           output_format: sarif
-          output_file_path: checkov-results.sarif
+          output_file_path: checkov-app-results.sarif
+          skip_results_upload: true
 
-
-      - name: Upload checkov report
-        uses: github/codeql-action/upload-sarif@v3
+      - name: Checkov Scan - Kubernetes Manifests
+        id: k8s_scan
+        uses: bridgecrewio/checkov-action@v12
         with:
-          sarif_file: checkov-results.sarif
+          directory: gitops
+          framework: kubernetes
+          output_format: sarif
+          output_file_path: checkov-gitops-results.sarif
+          skip_results_upload: true
+
+      - name: Upload report
+        uses: actions/upload-artifact@v4
+        with:
+          name: checkov-report
+          path: |
+            checkov-gitops-results.sarif
+            checkov-app-results.sarif
+          retention-days: 1
 
       # no use of pull request for learning simplicity
       - name: Commit and push changes
