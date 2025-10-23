@@ -61,8 +61,8 @@ jobs:
         
       - name: Tag and push to DockerHub
         run: |
-          docker tag ${{ inputs.DOCKER_IMAGE }}:ci-signed ${{ inputs.DOCKER_IMAGE }}:${{ inputs.image_tag }}
-          docker tag ${{ inputs.DOCKER_IMAGE }}:ci-signed ${{ inputs.DOCKER_IMAGE }}:${{ inputs.sha }}
+          docker tag ${{ inputs.DOCKER_IMAGE }}:ci-signed ${{ inputs.DOCKER_IMAGE }}:${{ inputs.RELEASE_TAG }}
+          docker tag ${{ inputs.DOCKER_IMAGE }}:ci-signed ${{ inputs.DOCKER_IMAGE }}:${{ inputs.DEFAULT_SHA }}
           
           docker push ${{ inputs.DOCKER_IMAGE }}:${{ inputs.RELEASE_TAG }}
           docker push ${{ inputs.DOCKER_IMAGE }}:${{ inputs.DEFAULT_SHA }}
