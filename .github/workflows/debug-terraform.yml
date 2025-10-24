@@ -1,0 +1,38 @@
+name: Debug OIDC Connection
+on:
+  push:
+    branches: [master]
+
+jobs:
+  debug:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Debug OIDC Token
+      uses: actions/github-script@v6
+      id: oidc-debug
+      with:
+        script: |
+          const token = await core.getIDToken()
+          const payload = JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString())
+          console.log('🎯 OIDC Token Audience:', payload.aud)
+          console.log('👤 OIDC Token Subject:', payload.sub)
+          console.log('🏷️ OIDC Token Claims:', JSON.stringify(payload, null, 2))
+
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        role-to-assume: ${{ secrets.AWS_ARN }}
+        aws-region: eu-west-3
+        mask-aws-account-id: false
+
+    - name: Verify AWS Identity
+      run: |
+        echo "🎉 OIDC Success! Current identity:"
+        aws sts get-caller-identity
