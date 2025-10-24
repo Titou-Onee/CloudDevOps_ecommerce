@@ -21,13 +21,13 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Configure AWS Credentials with OIDC
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          role-to-assume: ${{ secrets.AWS_ARN }}
-          aws-region: eu-west-3
-          audience: sts.amazonaws.com
-          mask-aws-account-id: false
+#      - name: Configure AWS Credentials with OIDC
+#        uses: aws-actions/configure-aws-credentials@v4
+#        with:
+#          role-to-assume: ${{ secrets.AWS_ARN }}
+#          aws-region: eu-west-3
+#          audience: sts.amazonaws.com
+#          mask-aws-account-id: false
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
@@ -45,11 +45,11 @@ jobs:
       - name: Terraform validation
         run: terraform validate
 
-      - name: Setup Infracost
-        uses: infracost/actions/setup@v3
-        with:
-          api-key: ${{ secrets.INFRACOST_API_KEY }}
-          version: latest
+#      - name: Setup Infracost
+#        uses: infracost/actions/setup@v3
+#        with:
+#          api-key: ${{ secrets.INFRACOST_API_KEY }}
+#          version: latest
 
       - name: TFLint
         uses: terraform-linters/setup-tflint@v3
