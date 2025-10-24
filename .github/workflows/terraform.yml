@@ -27,6 +27,7 @@ jobs:
           # REMPLACER l'ARN du rôle par la valeur réelle après terraform apply
           role-to-assume: ${{ secrets.AWS_ARN }}
           aws-region: eu-west-3
+          mask-aws-account-id: false
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
@@ -59,5 +60,3 @@ jobs:
 
       - name: Checkov
         uses: bridgecrewio/checkov-action@v3
-        with:
-            directory: terraform
