@@ -30,6 +30,7 @@ jobs:
       with:
         role-to-assume: ${{ secrets.AWS_ARN }}
         aws-region: eu-west-3
+        audience: sts.amazonaws.com
         mask-aws-account-id: false
 
     - name: Verify AWS Identity
