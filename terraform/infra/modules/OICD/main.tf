@@ -25,13 +25,13 @@ data "aws_iam_policy_document" "github_assume_role" {
     condition {
       test     = "StringEquals"
       variable = "token.actions.githubusercontent.com:aud"
-      values   = ["sts.amazonaws.com", "https://github.com/${ var.git_orga_name }"]
+      values   = ["sts.amazonaws.com", "https://github.com/Titou-Onee"]
     }
 
     condition {
       test     = "StringLike"
       variable = "token.actions.githubusercontent.com:sub"
-      values   = ["repo:titou-onee/clouddevops_ecommerce:*", "repo:${var.github_repo}:ref:refs/heads/master", "repo:${var.github_repo}:pull_request/*"] 
+      values   = ["repo:Titou-Onee/CloudDevops_ecommerce:*", "repo:${var.github_repo}:ref:refs/heads/master", "repo:${var.github_repo}:pull_request/*"] 
     }
   }
 }
