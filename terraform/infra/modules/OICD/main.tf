@@ -1,7 +1,11 @@
+data "tls_certificate" "github" {
+  url = "https://token.actions.githubusercontent.com"
+}
+
 resource "aws_iam_openid_connect_provider" "github_infracost" {
   url             = "https://token.actions.githubusercontent.com"
   client_id_list  = ["sts.amazonaws.com"]
-  thumbprint_list = ["6938fd4d98bab03faadb97b34396831e37805106"]
+  thumbprint_list = [data.tls_certificate.github.certificates[0].sha1_fingerprint]
 
   tags = {
     Name = "github-actions-oidc-provider"
@@ -21,13 +25,13 @@ data "aws_iam_policy_document" "github_assume_role" {
     condition {
       test     = "StringEquals"
       variable = "token.actions.githubusercontent.com:aud"
-      values   = ["sts.amazonaws.com"]
+      values   = ["sts.amazonaws.com", "https://github.com/Titou-Onee"]
     }
 
     condition {
       test     = "StringLike"
       variable = "token.actions.githubusercontent.com:sub"
-      values   = ["repo:${var.github_repo}:ref:refs/heads/master", "repo:${var.github_repo}:pull_request"] 
+      values   = ["repo:Titou-Onee/CloudDevops_ecommerce:*", "repo:${var.github_repo}:ref:refs/heads/master", "repo:${var.github_repo}:pull_request/*"] 
     }
   }
 }
