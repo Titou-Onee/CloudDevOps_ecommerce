@@ -6,12 +6,6 @@ on:
         - dev
   pull_request:
 
-env:
-  DOCKER_IMAGE: titouonee/clouddevops_ecommerce
-  RELEASE_TAG: latest
-  DEFAULT_SHA: ${{ github.sha }}
-  DEPLOY_TAG: ${{ github.sha }}
-
 jobs:
   code_quality: 
     runs-on: ubuntu-latest

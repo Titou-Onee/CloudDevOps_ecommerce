@@ -39,7 +39,7 @@
     name: argocd
     chart_ref: argocd/argo-cd
     release_namespace: "{{ argocd.namespace }}"
-    create_namespace: true
+    create_namespace: false
     kubeconfig: "{{ kubeconfig_path }}"
     wait: true
     wait_timeout: 200s
@@ -125,7 +125,7 @@
         finalizers:
           - resources-finalizer.argocd.argoproj.io
       spec:
-        project: default
+        project: system-project
         source:
           repoURL: "{{ argocd.git_repo.url }}"
           targetRevision: HEAD

@@ -4,10 +4,18 @@ kind: Kustomization
 resources:
 - namespace.yml
 - configmap.yml
+- ressource_quota.yml
+
 - secrets.yml
-- postgress_volume.yml
+- service_accounts.yml
+- ecommerce-role.yml
+- network_policy.yml
+
+- postgress_pvc.yml
 - postgres_deployment.yml
+
 - application_deployment.yml
+- ingress.yml
 
 commonLabels:
   app.kubernetes.io/managed-by: argocd

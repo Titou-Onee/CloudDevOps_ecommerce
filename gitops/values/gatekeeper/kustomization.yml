@@ -1,0 +1,16 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+- config.yml
+- access-roles-policy.yml
+- argocd-applications-policy.yml
+- image-security-policy.yml
+- namespace-label-policy.yml
+- pod-security-policy.yml
+- ressource-security-policy.yml
+
+commonLabels:
+  app.kubernetes.io/managed-by: gatekeeper
+  app.kubernetes.io/name: gatekeeper-policy
+

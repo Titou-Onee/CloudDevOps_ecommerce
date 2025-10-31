@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: ecommerce-resource-quota
+  namespace: ecommerce
+spec:
+  hard:
+    # Quotas totaux pour le Namespace 'ecommerce'
+    requests.cpu: "4"         # Max 4 CPU cores de requests
+    requests.memory: 8Gi      # Max 8 GiB de requests
+    limits.cpu: "8"           # Max 8 CPU cores de limits
+    limits.memory: 16Gi       # Max 16 GiB de limits
+    pods: 50                  # Max 50 Pods
+    services: 10              # Max 10 Services
+    deployments.apps: "5"     # Max 5 Deployments
+    # ... on pourrait ajouter des quotas pour les PVC, LoadBalancers, etc.

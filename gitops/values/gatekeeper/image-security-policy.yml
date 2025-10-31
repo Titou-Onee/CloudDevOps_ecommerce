@@ -12,18 +12,35 @@ spec:
       rego: |
         package k8simagepolicy
 
+        all_containers[container] {
+            some c
+            container := input.review.object.spec.containers[c]
+        }
+        all_containers[container] {
+            some c
+            container := input.review.object.spec.initContainers[c]
+        }
+        all_containers[container] {
+            some c
+            container := input.review.object.spec.ephemeralContainers[c]
+        }
+
         violation[{"msg": msg}] {
           input.review.kind.kind == "Pod"
-          some c
-          image := input.review.object.spec.containers[c].image
+          container := all_containers[_]
           not startswith(image, "titouonee/")
           msg := sprintf("The image %q doesn't come from a certified registry ", [image])
         }
 
         violation[{"msg": msg}] {
           input.review.kind.kind == "Pod"
-          some c
-          input.review.object.spec.containers[c].imagePullPolicy != "Always"
+          container := all_containers[_]
+          
+          image_policy := container.imagePullPolicy
+          image_tag := split(container.image, ":")[1]
+
+          image_tag != "latest"
+          image_policy == "Always"
           msg := sprintf("The container %q must have imagePullPolicy=Always", [input.review.object.spec.containers[c].name])
         }
 ---
@@ -37,6 +54,8 @@ spec:
     kinds:
       - apiGroups: [""]
         kinds: ["Pod"]
+      - apiGroups: ["apps"]
+        kinds: ["Deployment", "StatefulSet"]
     excludedNamespaces:
       - kube-system
 #      - security

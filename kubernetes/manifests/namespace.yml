@@ -3,5 +3,56 @@ kind: Namespace
 metadata:
   name: ecommerce
   labels:
-    name: ecommerce
+    app.kubernetes.io/name: ecommerce
+    app.kubernetes.io/instance: ecommerce-prod
+    app.kubernetes.io/managed-by: argocd
+  annotations: 
+    kubernetes.io/enforce-policy: restricted
+---
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: ecommerce-quota
+  namespace: ecommerce
+spec:
+  hard:
+    limits.cpu: "4"
+    limits.memory: 8Gi
+    requests.cpu: "2"
+    requests.memory: 4Gi
+
+    pods: "20"
+    services: "10"
+    replicationcontrollers: "5"
+    deployments.apps: "5"
+    
+    requests.storage: 20Gi
+---
+apiVersion: v1
+kind: LimitRange
+metadata:
+  name: ecommerce-limit-range
+  namespace: ecommerce
+spec:
+  limits:
+    - default:
+        cpu: 200m
+        memory: 512Mi
+      defaultRequest:
+        cpu: 100m
+        memory: 256Mi
+      type: Container
+
+    - max:
+        cpu: 1000m
+        memory: 2Gi
+      min:
+        cpu: 50m
+        memory: 128Mi
+      type: Container
+
+    - default:
+        cpu: 500m
+        memory: 1Gi
+      type: Pod
 

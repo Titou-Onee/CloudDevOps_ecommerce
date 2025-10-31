@@ -6,7 +6,25 @@ metadata:
 spec:
   sync:
     syncOnly:
-      # Core Resources (used in your constraints)
+      # 1. RBAC
+      - group: "rbac.authorization.k8s.io"
+        version: "v1"
+        kind: "Role"
+      - group: "rbac.authorization.k8s.io"
+        version: "v1"
+        kind: "ClusterRole"
+      
+      # 2. Network Objects
+      - group: "networking.k8s.io"
+        version: "v1"
+        kind: "Ingress"
+        
+      # 3.GitOps Object
+      - group: "argoproj.io"
+        version: "v1alpha1"
+        kind: "Application"
+        
+      # Core Resources
       - group: ""
         version: "v1"
         kind: "Pod"
@@ -25,9 +43,7 @@ spec:
       - group: "storage.k8s.io"
         version: "v1"
         kind: "StorageClass"
-      - group: ""
-        version: "v1"
-        kind: "PersistentVolume"
+      
       # Apps Workloads
       - group: "apps"
         version: "v1"
@@ -38,10 +54,7 @@ spec:
       - group: "apps"
         version: "v1"
         kind: "DaemonSet"
-      - group: "apps"
-        version: "v1"
-        kind: "ReplicaSet"
-      
+        
       # Batch Jobs
       - group: "batch"
         version: "v1"

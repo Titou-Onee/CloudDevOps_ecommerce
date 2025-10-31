@@ -1,5 +1,7 @@
-adminUser: admin
-adminPassword: unsecure_admin_password
+admin:
+  existingSecret: grafana-admin-credentials
+    usernameKey: admin-user-grafana
+    passwordKey: admin-pass-grafana
 
 service:
   type: LoadBalancer
@@ -27,6 +29,15 @@ datasources:
         type: alertmanager
         url: http://kube-prometheus-stack-alertmanager.monitoring.svc.cluster.local:9093
         access: proxy
+      
+      - name : loki
+        type: loki
+        access: proxy
+        url: http://loki.monitoring.svc.cluster.local:3100
+        isDefault: false
+        version: 1
+        jsonData:
+          maxLines: 1000
 
 dashboardProviders:
   dashboardproviders.yaml:
@@ -83,6 +94,66 @@ dashboards:
       gnetId: 11914
       revision: 1
       datasource: Prometheus
+      falco-loki-alerts:
+      folder: Security
+      json: |
+        {
+          "annotations": {
+            "list": [
+              {
+                "builtIn": 1,
+                "datasource": {
+                  "type": "datasource",
+                  "uid": "Loki" 
+                },
+                "enable": true,
+                "hide": true,
+                "iconColor": "rgba(0, 211, 255, 1)",
+                "name": "Annotations & Alerts",
+                "target": {
+                  "limit": 100,
+                  "matchAny": false,
+                  "tags": [],
+                  "type": "query"
+                },
+                "type": "dashboard"
+              }
+            ]
+          },
+          "panels": [
+            {
+              "datasource": "Loki",
+              "gridPos": {
+                "h": 14,
+                "w": 24,
+                "x": 0,
+                "y": 0
+              },
+              "id": 1,
+              "options": {
+                "wrapLogMessage": true
+              },
+              "targets": [
+                {
+                  "datasource": "Loki",
+                  "editorMode": "builder",
+                  "expr": "{job=\"falco\"} | json | line_format \"{{.time}} [{{.priority}}] {{.rule}} by {{.container_name}}\"",
+                  "labelFilters": [
+                    {
+                      "label": "job",
+                      "op": "=",
+                      "value": "falco"
+                    }
+                  ],
+                  "refId": "A"
+                }
+              ],
+              "title": "Alertes Falco Brutes (Loki)",
+              "type": "logs"
+            }
+          ],
+          "title": "Falco - Alertes Brutes (Loki)"
+        }
 
 sidecar:
   dashboards:
@@ -98,8 +169,3 @@ serviceMonitor:
 plugins:
   - grafana-piechart-panel
   - grafana-clock-panel
-
-# sécuriser mot de passe administrateur
-# accès https
-# export alertes falco
-# id OIDC

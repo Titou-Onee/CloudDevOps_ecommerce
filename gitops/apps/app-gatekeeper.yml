@@ -9,7 +9,7 @@ metadata:
     app.kubernetes.io/name: security-gatekeeper
     app.kubernetes.io/component: security
 spec:
-  project: default
+  project: security-project
   ignoreDifferences:
     - group: argoproj.io
       kind: Application

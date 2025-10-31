@@ -9,7 +9,7 @@ metadata:
     app.kubernetes.io/name: monitoring-prometheus
     app.kubernetes.io/component: monitoring
 spec:
-  project: default
+  project: monitoring-project
   ignoreDifferences:
     - group: argoproj.io
       kind: Application

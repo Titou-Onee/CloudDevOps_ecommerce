@@ -21,7 +21,7 @@ prometheus:
         memory: 4Gi
         cpu: 2
 
-    serviceMonitorSelectorNilUsesHelmValues: false
+    serviceMonitorSelectorNilUsesHelmValues: true
     serviceMonitorSelector: {}
     ruleSelector: {}
     ruleSelectorNilUsesHelmValues: false
@@ -33,9 +33,15 @@ prometheus:
       - job_name: 'argocd-server-metrics'
         static_configs:
           - targets: ['argocd-repo-server-metrics.argocd.svc.cluster.local:8084']
-      - job_name: 'falco'
+      - job_name: 'ecommerce-app'
         static_configs:
-          - targets: ['http://falco-exporter.monitoring.svc.cluster.local:9376/metrics']
+          - targets: ['ecommerce-service.ecommerce.svc.cluster.local:8080'] 
+        metrics_path: /metrics
+        relabel_configs:
+          - source_labels: [__address__]
+            target_label: instance
+            regex: '([^:]+)(:\d+)?'
+            replacement: $1
 
 alertmanager:
   alertmanagerSpec:
@@ -64,6 +70,18 @@ nodeExporter:
 kube-state-metrics:
   enabled: true
 
-# ajouter des metrics pour ecommerce
-# exporter falco
-# ajouter des alertes
+prometheus-operator:
+  prometheus-rules:
+    enabled: true
+    rules:
+      falco-critical-alerts:
+        alert: FalcoHighCriticalAlertRate
+        expr: |
+          sum(rate(falco_alerts{priority="Critical"}[5m])) > 5
+        for: 5m
+        labels:
+          severity: critical
+          team: security
+        annotations:
+          summary: "High number of falco alerts detected"
+          description: "The number of 'Critical' alerts is more than 5/minute for more than 5 minutes. Please check the Loki logs and Falco metrics."

@@ -50,7 +50,7 @@ jobs:
         env:
           COSIGN_PUBLIC_KEY: ${{ secrets.COSIGN_PUBLIC_KEY }}
       
-      - name: Load docket image
+      - name: Load docker image
         run: docker load -i image.tar
 
       - name: Login to DockerHub
