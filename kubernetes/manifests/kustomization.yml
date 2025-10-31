@@ -1,19 +1,19 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
+
+
+
 resources:
 - namespace.yml
 - configmap.yml
 - ressource_quota.yml
-
 - secrets.yml
 - service_accounts.yml
 - ecommerce-role.yml
 - network_policy.yml
-
 - postgress_pvc.yml
 - postgres_deployment.yml
-
 - application_deployment.yml
 - ingress.yml
 
@@ -23,4 +23,4 @@ commonLabels:
 
 images:
 - name: titouonee/clouddevops_ecommerce
-  newTag: 9b3627988ea630560590736946a0407c1047a53d
+  newTag: 321cb9bb24f2a9a24d71a05ca84dc287642ee191
