@@ -19,8 +19,3 @@ module "eks" {
   max_unavailable = var.max_unavailable
   depends_on      = [module.network]
 }
-
-module "OICD" {
-  source = "./modules/OICD"
-  github_repo = var.github_repo
-}
