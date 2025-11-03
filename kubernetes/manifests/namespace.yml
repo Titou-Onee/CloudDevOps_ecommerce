@@ -35,24 +35,25 @@ metadata:
   namespace: ecommerce
 spec:
   limits:
-    - default:
+    - type: Container
+      default:
         cpu: 200m
         memory: 512Mi
       defaultRequest:
         cpu: 100m
         memory: 256Mi
-      type: Container
-
-    - max:
+      max:
         cpu: 1000m
         memory: 2Gi
       min:
         cpu: 50m
         memory: 128Mi
-      type: Container
 
-    - default:
-        cpu: 500m
-        memory: 1Gi
-      type: Pod
+    - type: Pod
+      max:
+        cpu: 4
+        memory: 4Gi
+      min:
+        cpu: 100m
+        memory: 128Mi
 
