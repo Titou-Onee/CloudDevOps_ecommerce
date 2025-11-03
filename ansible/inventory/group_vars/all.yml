@@ -26,7 +26,7 @@ argocd:
   bootstrap:
     enabled: true
     name: app-of-apps
-    path: gitops/apps  # Dossier contenant app-of-apps.yaml
+    path: gitops  # Dossier contenant app-of-apps.yaml
     auto_sync: true
     self_heal: true
 
