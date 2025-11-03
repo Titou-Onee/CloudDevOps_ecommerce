@@ -10,7 +10,7 @@ resources:
 - ressource_quota.yml
 - secrets.yml
 - service_accounts.yml
-- ecommerce-role.yml
+- ecommerce_roles.yml
 - network_policy.yml
 - postgress_pvc.yml
 - postgres_deployment.yml
