@@ -1,0 +1,26 @@
+{% for project in argocd_projects_list %}
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: {{ project.name }}
+  namespace: {{ argocd_projects_namespace }}
+spec:
+  description: "{{ project.description }}"
+  sourceRepos:
+{% for repo in project.source_repos %}
+    - "{{ repo }}"
+{% endfor %}
+  destinations:
+{% for dest in project.destinations %}
+    - namespace: "{{ dest.namespace }}"
+      server: "https://kubernetes.default.svc"
+{% endfor %}
+  namespaceResourceWhitelist:
+    - group: '*'
+      kind: '*'
+  clusterResourceWhitelist:
+    - group: '*'
+      kind: '*'
+
+---
+{% endfor %}

@@ -1,0 +1,13 @@
+---
+
+- name: 1. Générer le manifeste consolidé des AppProjects
+  ansible.builtin.template:
+    src: projects.yaml.j2
+    dest: "/tmp/argocd-projects-{{ inventory_hostname }}.yaml"
+  delegate_to: localhost # Exécuter la tâche de templating en local
+
+- name: 2. Appliquer les Projets ArgoCD au cluster Kubernetes
+  kubernetes.core.k8s:
+    definition: "{{ lookup('file', '/tmp/argocd-projects-' + inventory_hostname + '.yaml') }}"
+    kubeconfig: "{{ kubeconfig_path }}"
+    state: present

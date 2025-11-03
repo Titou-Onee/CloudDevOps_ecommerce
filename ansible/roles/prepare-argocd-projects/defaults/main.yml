@@ -1,0 +1,38 @@
+---
+argocd_projects_namespace: argocd
+
+
+argocd_projects_list:
+  - name: security-project
+    description: Projet pour Gatekeeper, Falco et les politiques PSA.
+    source_repos:
+      - 'https://github.com/Titou-Onee/CloudDevOps_ecommerce.git'
+      - 'https://open-policy-agent.github.io/gatekeeper/charts'
+      - 'https://falcosecurity.github.io/charts'
+    destinations:
+      - namespace: 'gatekeeper-system'
+      - namespace: 'argocd'
+      - namespace: '*'
+
+  - name: monitoring-project
+    description: Projet pour Prometheus, Alertmanager, Grafana et Loki.
+    source_repos:
+      - 'https://github.com/Titou-Onee/CloudDevOps_ecommerce.git'
+      - 'https://grafana.github.io/helm-charts'
+      - 'https://prometheus-community.github.io/helm-charts'
+    destinations:
+      - namespace: 'monitoring'
+
+  - name: ecommerce-project
+    description: Projet dédié à l'application e-commerce.
+    source_repos:
+      - 'https://github.com/Titou-Onee/CloudDevOps_ecommerce.git'
+    destinations:
+      - namespace: 'ecommerce'
+
+  - name: system-project
+    description: Projet pour le déploiement des outils d'infrastructure (Bootstrap App).
+    source_repos:
+      - 'https://github.com/Titou-Onee/CloudDevOps_ecommerce.git'
+    destinations:
+      - namespace: 'argocd'
