@@ -21,10 +21,10 @@ spec:
     requests.cpu: "2"
     requests.memory: 4Gi
 
-    pods: "20"
-    services: "10"
-    replicationcontrollers: "5"
-    deployments.apps: "5"
+    count/pods: "20"
+    count/services: "10"
+    count/replicationcontrollers: "5"
+    count/deployments.apps: "5"
     
     requests.storage: 20Gi
 ---

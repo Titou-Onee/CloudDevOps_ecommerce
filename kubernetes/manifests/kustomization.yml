@@ -7,7 +7,6 @@ kind: Kustomization
 resources:
 - namespace.yml
 - configmap.yml
-- ressource_quota.yml
 - secrets.yml
 - service_accounts.yml
 - ecommerce_roles.yml
