@@ -4,6 +4,7 @@ metadata:
   name: pod-security-checks
   annotations:
     argocd.argoproj.io/sync-wave: "2"
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
 spec:
   enforcementAction : dryrun
   match:
