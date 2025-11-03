@@ -3,7 +3,7 @@ kind: K8sResourcePolicy
 metadata:
   name: resource-policy
   annotations:
-    argocd.argoproj.io/sync-wave: "1"
+    argocd.argoproj.io/sync-wave: "2"
 spec:
   enforcementAction : dryrun
   match:

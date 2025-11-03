@@ -3,7 +3,7 @@ kind: ConstraintTemplate
 metadata:
   name: k8simagepolicy
   annotations:
-    argocd.argoproj.io/sync-wave: "2"
+    argocd.argoproj.io/sync-wave: "1"
 spec:
   crd:
     spec:
