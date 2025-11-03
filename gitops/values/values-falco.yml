@@ -65,6 +65,7 @@ customRules:
         Kubernetes Secret accessed (user=%ka.user.name resource=%ka.target.name)
       priority: WARNING
       tags: [k8s, secrets]
+      source: k8s_audit
 
     - rule: Shell Spawned in Container
       desc: Detects when a shell (bash/sh) is spawned inside a container
