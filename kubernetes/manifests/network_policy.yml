@@ -13,8 +13,8 @@ spec:
   ingress:
     - from:
       - podSelector:
-        matchLabels:
-          app: ecommerce-app 
+          matchLabels:
+            app: ecommerce-app 
       ports:
         - protocol: TCP
           port: 5432
