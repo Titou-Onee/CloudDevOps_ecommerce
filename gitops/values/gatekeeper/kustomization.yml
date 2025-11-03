@@ -10,12 +10,12 @@ resources:
 - templates/pod-security-policy.yml
 - templates/ressource-security-policy.yml
 
-- constraints/access-roles-constaint.yml
-- constraints/argocd-applications-constaint.yml
-- constraints/image-security-constaint.yml
-- constraints/namespace-label-constaint.yml
-- constraints/pod-security-constaint.yml
-- constraints/ressource-security-constaint.yml 
+- constraints/access-roles-constraint.yml
+- constraints/argocd-applications-constraint.yml
+- constraints/image-security-constraint.yml
+- constraints/namespace-label-constraint.yml
+- constraints/pod-security-constraint.yml
+- constraints/ressource-security-constraint.yml 
 
 commonLabels:
   app.kubernetes.io/managed-by: gatekeeper
