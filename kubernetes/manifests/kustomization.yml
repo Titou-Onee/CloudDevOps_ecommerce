@@ -14,7 +14,7 @@ resources:
 - network_policy.yml
 - postgress_pvc.yml
 - postgres_deployment.yml
-- application_deployment.yml
+- ecommerce_deployment.yml
 - ingress.yml
 
 commonLabels:
