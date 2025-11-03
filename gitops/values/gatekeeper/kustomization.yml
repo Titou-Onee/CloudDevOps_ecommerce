@@ -3,8 +3,19 @@ kind: Kustomization
 
 resources:
 - config.yml
-- templates/ 
-- constaints/ 
+- templates/access-roles-policy.yml
+- templates/argocd-applications-policy.yml
+- templates/image-security-policy.yml
+- templates/namespace-label-policy.yml
+- templates/pod-security-policy.yml
+- templates/ressource-security-policy.yml
+
+- constaints/access-roles-constaints.yml
+- constaints/argocd-applications-constaints.yml
+- constaints/image-security-constaints.yml
+- constaints/namespace-label-constaints.yml
+- constaints/pod-security-constaints.yml
+- constaints/ressource-security-constaints.yml 
 
 commonLabels:
   app.kubernetes.io/managed-by: gatekeeper
