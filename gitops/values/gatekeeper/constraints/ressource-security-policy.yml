@@ -1,0 +1,16 @@
+apiVersion: constraints.gatekeeper.sh/v1beta1
+kind: K8sResourcePolicy
+metadata:
+  name: resource-policy
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+spec:
+  enforcementAction : dryrun
+  match:
+    kinds:
+      - apiGroups: [""]
+        kinds: ["Pod"]
+    excludedNamespaces:
+      - kube-system
+#      - monitoring
+#      - security

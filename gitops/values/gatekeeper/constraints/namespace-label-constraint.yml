@@ -1,0 +1,15 @@
+apiVersion: constraints.gatekeeper.sh/v1beta1
+kind: K8sNamespacePolicy
+metadata:
+  name: namespace-policy
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+spec:
+  enforcementAction : dryrun
+  match:
+    kinds:
+      - apiGroups: ["apps"]
+        kinds: ["Deployment"]
+    excludedNamespaces:
+      - kube-system
+      - argocd

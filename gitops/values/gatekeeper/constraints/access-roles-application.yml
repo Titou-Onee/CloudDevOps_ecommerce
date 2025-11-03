@@ -1,0 +1,19 @@
+apiVersion: constraints.gatekeeper.sh/v1beta1
+kind: K8sAccessPolicy
+metadata:
+  name: access-policy
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+spec:
+  enforcementAction : dryrun
+  match:
+    kinds:
+      - apiGroups: [""]
+        kinds: ["Pod"]
+      - apiGroups: ["rbac.authorization.k8s.io"]
+        kinds: ["Role"]
+      - apiGroups: ["apps"]
+        kinds: ["Deployment"]
+    excludedNamespaces:
+      - kube-system
+   #   - security

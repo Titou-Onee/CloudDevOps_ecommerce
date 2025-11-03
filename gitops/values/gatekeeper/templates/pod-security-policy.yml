@@ -1,0 +1,97 @@
+apiVersion: templates.gatekeeper.sh/v1
+kind: ConstraintTemplate
+metadata:
+  name: k8spodsecuritychecks
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
+spec:
+  crd:
+    spec:
+      names:
+        kind: K8sPodSecurityChecks
+  targets:
+    - target: admission.k8s.gatekeeper.sh
+      rego: |
+        package k8spodsecuritychecks
+        
+        all_containers[container] {
+            some c
+            container := input.review.object.spec.containers[c]
+        }
+        all_containers[container] {
+            input.review.object.spec.initContainers
+            some c
+            container := input.review.object.spec.initContainers[c]
+        }
+        all_containers[container] {
+            input.review.object.spec.ephemeralContainers
+            some c
+            container := input.review.object.spec.ephemeralContainers[c]
+        }
+        default msg = ""
+
+        violation[{"msg": msg}] {
+          input.review.kind.kind == "Pod"
+          container := all_containers[_]
+          container.securityContext.privileged == true
+          msg := sprintf("the container %q is run in privileged mode (privileged=true)", [container.name])
+        }
+
+        violation[{"msg": msg}] {
+          input.review.kind.kind == "Pod"
+          container := all_containers[_]
+          not container.securityContext.runAsNonRoot == true
+          msg := sprintf("the container %q is run as Root (runAsNonRoot=false)", [container.name])
+        }
+
+        violation[{"msg": msg}] {
+          input.review.kind.kind == "Pod"
+          input.review.object.spec.hostNetwork == true
+          msg := sprintf("the pod %q uses the host network (hostNetwork=true)", [input.review.object.metadata.name])
+        }
+
+        violation[{"msg": msg}] {
+          input.review.kind.kind == "Pod"
+          input.review.object.spec.hostPID == true
+          msg := sprintf("the pod %q uses the host PID (hostPID=true)", [input.review.object.metadata.name])
+        }
+
+        violation[{"msg": msg}] {
+          input.review.kind.kind == "Pod"
+          input.review.object.spec.hostIPC == true
+          msg := sprintf("the pod %q uses the host IPC (hostIPC=true)", [input.review.object.metadata.name])          
+        }
+
+        violation[{"msg": msg}] {
+          input.review.kind.kind == "Pod"
+          some v
+          volume := input.review.object.spec.volumes[v]
+          volume.hostPath
+          volume.hostPath.path != ""
+          not startswith(volume.hostPath.path, "/var/log/containers")
+          msg := sprintf("The volume hostPath '%s' is not authorized", [volume.hostPath.path])
+        }
+
+        violation[{"msg": msg}] {
+        input.review.kind.kind == "Pod"
+        some v
+        volume := input.review.object.spec.volumes[v]
+        volume.hostPath.path # Vérifie que le champ existe 
+        not startswith(volume.hostPath.path, "/var/log/containers")
+        msg := sprintf("Le volume hostPath '%s' n'est pas autorisé dans le Pod %q.", [volume.hostPath.path, input.review.object.metadata.name])
+        }
+        
+        violation[{"msg": msg}] {
+          input.review.kind.kind == "Pod"
+          container := containers.all[_]
+          container.
+          not container.securityContext.readOnlyRootFilesystem == true
+          msg := sprintf("The container %q must define readOnlyRootFilesystem=true", [input.review.object.spec.containers[c].name])
+        }
+
+        violation[{"msg": msg}]{
+        input.review.kind.kind == "Pod"
+        container := containers.all[_]
+        container.securityContext.allowPrivilegeEscalation == true
+        msg := sprintf("The container %q uses privilege escalation (allowPrivilegeEscalation=true)", [container.name]")
+        }

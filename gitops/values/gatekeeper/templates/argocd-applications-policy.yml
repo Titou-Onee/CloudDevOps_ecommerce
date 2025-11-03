@@ -1,0 +1,31 @@
+apiVersion: templates.gatekeeper.sh/v1
+kind: ConstraintTemplate
+metadata:
+  name: k8sArgoCDPolicy
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
+spec:
+  crd:
+    spec:
+      names:
+        kind: k8sArgoCDPolicy
+  targets:
+    - target: admission.k8s.gatekeeper.sh
+      rego: |
+        package k8simagepolicy
+        violation[{"msg": msg}] {
+            input.review.kind.kind == "Application"
+            input.review.object.spec.project == "default"
+            input.review.object.spec.destination.namespace == "ecommerce"
+            msg := "The project 'default' is not authorized to deploy in 'ecommerce'."
+        }
+
+        violation[{"msg": msg}] {
+            input.review.kind.kind == "Application"
+            some s
+            source_url := input.review.object.spec.sources[s].repoURL
+            
+            not input.parameters.approvedUrls[_] == source_url
+            
+            msg := sprintf("The URL of the repo '%q' is not on the list of approved sources.", [source_url])
+        }

@@ -1,0 +1,18 @@
+apiVersion: constraints.gatekeeper.sh/v1beta1
+kind: K8sPodSecurityChecks
+metadata:
+  name: pod-security-checks
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+spec:
+  enforcementAction : dryrun
+  match:
+    kinds:
+      - apiGroups: ["apps"]
+        kinds: ["Deployment", "StatefulSet"] 
+      - apiGroups: [""]
+        kinds: ["Pod"]
+    excludedNamespaces:
+      - kube-system
+#      - monitoring
+#      - security

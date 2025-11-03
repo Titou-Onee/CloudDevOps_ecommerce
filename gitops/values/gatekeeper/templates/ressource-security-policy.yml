@@ -1,0 +1,41 @@
+apiVersion: templates.gatekeeper.sh/v1
+kind: ConstraintTemplate
+metadata:
+  name: k8sresourcepolicy
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
+spec:
+  crd:
+    spec:
+      names:
+        kind: K8sResourcePolicy
+  targets:
+    - target: admission.k8s.gatekeeper.sh
+      rego: |
+        package k8sresourcepolicy
+
+        all_containers[container] {
+            some c
+            container := input.review.object.spec.containers[c]
+        }
+        all_containers[container] {
+            some c
+            container := input.review.object.spec.initContainers[c]
+        }
+        all_containers[container] {
+            some c
+            container := input.review.object.spec.ephemeralContainers[c]
+        }
+
+        violation[{"msg": msg}] {
+          input.review.kind.kind == "Pod"
+          container := all_containers[_]
+          not container.resources.requests
+          msg := sprintf("The container %q must define resource.requests", [input.review.object.spec.containers[c].name])
+        }
+        violation[{"msg": msg}] {
+          input.review.kind.kind == "Pod"
+          container := all_containers[_]
+          not container.resources.limits
+          msg := sprintf("The container %q must define resource.limits", [input.review.object.spec.containers[c].name])
+        }

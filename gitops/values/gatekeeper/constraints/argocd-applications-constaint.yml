@@ -1,0 +1,17 @@
+apiVersion: constraints.gatekeeper.sh/v1beta1
+kind: k8sArgoCDPolicy
+metadata:
+  name: argocd-approved-repos
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+spec:
+  enforcementAction : dryrun
+  match:
+    kinds:
+      - apiGroups: ["argoproj.io"]
+        kinds: ["Application"]
+    namespace:
+      - ecommerce
+  parameters:
+    approvedUrls:
+      https://github.com/Titou-Onee/CloudDevOps_ecommerce.git
