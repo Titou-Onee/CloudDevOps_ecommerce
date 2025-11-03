@@ -9,7 +9,7 @@ metadata:
     app.kubernetes.io/name: grafana
     app.kubernetes.io/component: monitoring
 spec:
-  project: default
+  project: monitoring-project
   ignoreDifferences:
     - group: argoproj.io
       kind: Application
@@ -20,7 +20,7 @@ spec:
   sources:
     - repoURL: https://grafana.github.io/helm-charts
       chart: grafana
-      targetRevision: 7.3.0
+      targetRevision: 10.1.4
       helm:
         valueFiles:
           - $values/gitops/values/values-grafana.yml
@@ -48,8 +48,14 @@ spec:
         duration: 5s
         maxDuration: 3m
 
-# ajouter l'accès 
-#adminUser: admin
-#adminPassword: changeme
-#service:
-#  type: LoadBalancer
+
+datasources:
+  datasources.yaml:
+    apiVersion: 1
+    datasources:
+      - name: Prometheus
+        type: prometheus
+        access: proxy
+        url: http://kube-prometheus-stack-prometheus.monitoring.svc.cluster.local:9090
+        isDefault: true
+

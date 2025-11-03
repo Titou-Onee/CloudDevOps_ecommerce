@@ -12,30 +12,80 @@ spec:
       labels:
         app: postgres
     spec:
+      serviceAccountName: postgres-sa
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 999
+        fsGroup: 999
+        allowPrivilegeEscalation: false
+        readOnlyRootFilesystem: true
+        capabilities:
+          drop:
+            - ALL 
+
+      strategy:
+        type: Recreate
+      replicas: 1
+      
       containers:
-      - name: postgres
-        image: postgres:11
-        env:
-        - name: POSTGRES_HOST_AUTH_METHOD
-          value: "trust"
-        ports:
-        - containerPort: 5432
-        volumeMounts:
-        - name: postgres-storage
-          mountPath: /var/lib/postgresql/data
+        - name: postgres
+          image: bitnami/postgres:11.22.0
+          env:
+            - name: POSTGRESQL_DATABASE
+              valueFrom:
+                configMapKeyRef:
+                  name: ecommerce-config
+                  key: POSTGRESQL_DATABASE
+            - name: POSTGRESQL_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: ecommerce-secret
+                  key: POSTGRESQL_USERNAME
+            - name: POSTGRESQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: ecommerce-secret
+                  key: POSTGRESQL_PASSWORD
+          securityContext:
+
+          ports:
+          - containerPort: 5432
+          volumeMounts:
+          - name: postgres-storage
+            mountPath: /var/lib/postgresql/data
+
       volumes:
       - name: postgres-storage
         persistentVolumeClaim:
-          claimName: postgres-pvc1
+          claimName: postgres-data-pvc
+      livenessProbe:
+          exec:
+            command: ["pg_isready", "-U", "$(POSTGRES_USER)"] 
+          initialDelaySeconds: 30
+          periodSeconds: 10
+      readinessProbe:
+          exec:
+            command: ["pg_isready", "-U", "$(POSTGRES_USER)"]
+          initialDelaySeconds: 5
+          periodSeconds: 5
+      resources:
+          requests:
+            memory: "1Gi"
+            cpu: "500m"
+          limits:
+            memory: "2Gi" 
+            cpu: "1000m"
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: db
+  name: postgres-service
   namespace: ecommerce
 spec:
   selector:
     app: postgres
   ports:
-  - port: 5432
+  - name: postgres
+    protocol: TCP
+    port: 5432
     targetPort: 5432

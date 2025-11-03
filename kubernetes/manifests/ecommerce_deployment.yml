@@ -15,6 +15,12 @@ spec:
       labels:
         app: ecommerce-app
     spec:
+      serviceAccountName: ecommerce-app-sa 
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 3000
+        allowPrivilegeEscalation: false
       initContainers:
         - name: postgres-migration
           image: titouonee/clouddevops_ecommerce
@@ -28,6 +34,11 @@ spec:
       - name: ecommerce-app
         image: titouonee/clouddevops_ecommerce
         command: ['python3', 'manage.py', 'runserver', '0.0.0.0:8000']
+        securityContext:
+          readOnlyRootFilesystem: true
+          capabilities:
+            drop:
+              - all
         ports:
         - containerPort: 8000
           name: http
@@ -36,6 +47,19 @@ spec:
               name: ecommerce-config
           - secretRef:
               name: ecommerce-secret
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 15
+          timeoutSeconds: 5
+        readinessProbe:
+          httpGet:
+            path: /readOnlyRootFilesystem
+            port: 8000
+          initialDelaySeconds: 5
+          timeoutSeconds: 3
+          periodSeconds: 5
         resources:
           requests:
             memory: "256Mi"
@@ -59,4 +83,4 @@ spec:
     protocol: TCP 
     port: 80
     targetPort: 8000
-  type: LoadBalancer
+  type: ClusterIP

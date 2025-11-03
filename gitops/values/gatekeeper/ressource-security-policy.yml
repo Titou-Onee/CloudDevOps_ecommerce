@@ -12,16 +12,29 @@ spec:
       rego: |
         package k8sresourcepolicy
 
+        all_containers[container] {
+            some c
+            container := input.review.object.spec.containers[c]
+        }
+        all_containers[container] {
+            some c
+            container := input.review.object.spec.initContainers[c]
+        }
+        all_containers[container] {
+            some c
+            container := input.review.object.spec.ephemeralContainers[c]
+        }
+
         violation[{"msg": msg}] {
           input.review.kind.kind == "Pod"
-          some c
-          not input.review.object.spec.containers[c].resources.requests
+          container := all_containers[_]
+          not container.resources.requests
           msg := sprintf("The container %q must define resource.requests", [input.review.object.spec.containers[c].name])
         }
         violation[{"msg": msg}] {
           input.review.kind.kind == "Pod"
-          some c
-          not input.review.object.spec.containers[c].resources.limits
+          container := all_containers[_]
+          not container.resources.limits
           msg := sprintf("The container %q must define resource.limits", [input.review.object.spec.containers[c].name])
         }
 

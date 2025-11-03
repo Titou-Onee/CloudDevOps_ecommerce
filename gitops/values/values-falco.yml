@@ -4,10 +4,6 @@ falco:
   stdoutOutput: true
   jsonIncludeOutputProperty: true
 
-  httpOutput:
-    enabled: true
-    url: http://localhost:2801
-
   grpc:
    enabled: true
    bind_address: unix:///var/run/falco/falco.sock
@@ -73,11 +69,40 @@ customRules:
     - rule: Shell Spawned in Container
     desc: Detects when a shell (bash/sh) is spawned inside a container
     condition: >
-      container and proc.name in (bash, sh, zsh)
+      container and proc.name in (bash, sh, zsh) and proc.tty != 0 and user.name != "falco"
     output: >
       Shell spawned in container (container_id=%container.id image=%container.image.repository)
     priority: CRITICAL
     tags: [container, shell]
+
+    - rule: Web App Spawning Shell
+      desc: Detects a shell spawned by a typical web application process (e.g., Python web server).
+      condition: >
+        container and proc.name in (bash, sh, zsh) and proc.pname in (python, java, node, php, httpd)
+      output: >
+        Shell spawned by web app process (parent=%proc.pname child=%proc.name container=%container.name)
+      priority: CRITICAL
+      tags: [container, rce, exploit]
+
+    - rule: Container Reading IMDS
+      desc: Detects when a container accesses the AWS Instance Metadata Service endpoint
+      condition: >
+        container and fd.name in ("tcp://169.254.169.254:80", "udp://169.254.169.254:80")
+      output: >
+        Container accessing IMDS (container=%container.name image=%container.image.repository user=%user.name)
+      priority: CRITICAL
+      tags: [aws, attack, imds]
+
+    - rule: Change Namespace for Privileges Escalation
+      desc: Detects attempts to change the namespace context inside a container
+      condition: >
+        proc.name in (setns, nsenter) and container and proc.cmdline contains "mnt"
+      output: >
+        Privilege escalation attempt with setns/nsenter (user=%user.name command=%proc.cmdline)
+      priority: CRITICAL
+      tags: [container, privilege]
+
+
 
 
 

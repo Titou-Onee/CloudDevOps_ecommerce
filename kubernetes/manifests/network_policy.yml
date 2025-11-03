@@ -1,0 +1,32 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: postgres-isolation
+  namespace: ecommerce
+spec:
+  podSelector:
+    matchLabels:
+      app: postgres
+  policyTypes:
+  - Ingress
+  - Egress
+  ingress:
+    - from:
+      - podSelector:
+        matchLabels:
+          app: ecommerce-app 
+      ports:
+        - protocol: TCP
+          port: 5432
+  egress:
+   - to:
+    - namespaceSelector: {} # Cible tous les namespaces
+        podSelector:
+      # Cible typiquement les Pods de CoreDNS/Kube-DNS
+          matchLabels:
+            k8s-app: kube-dns # Vérifier ce label sur votre CoreDNS/Kube-DNS
+        ports:
+          - protocol: UDP
+            port: 53
+          - protocol: TCP
+            port: 53

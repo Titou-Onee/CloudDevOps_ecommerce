@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: postgres-data-pvc
+  namespace: ecommerce
+  labels:
+    app.kubernetes.io/component: database
+    environment: prod
+spec:
+  storageClassName: gp3-standard 
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi

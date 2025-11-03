@@ -1,0 +1,36 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: gatekeeper-policies
+  namespace: argocd
+  labels:
+    app.kubernetes.io/component: governance
+    app.kubernetes.io/name: gatekeeper-policies
+spec:
+  project: security-project
+  
+  source:
+    repoURL: https://github.com/Titou-Onee/CloudDevOps_ecommerce.git
+    targetRevision: master 
+    path: gitops/values/gatekeeper
+    
+    kustomize:
+      forceCommonLabels: false
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: gatekeeper-system 
+
+  syncPolicy:
+    automated:
+      selfHeal: true
+      prune: true
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true
+      - RespectIgnoreDifferences=true
+    retry:
+      limit: 5
+      backoff:
+        duration: 5s
+        maxDuration: 3m
