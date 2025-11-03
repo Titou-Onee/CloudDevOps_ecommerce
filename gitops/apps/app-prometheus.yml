@@ -4,7 +4,7 @@ metadata:
   name: monitoring-prometheus
   namespace: argocd
   annotations:
-    argocd.argoproj.io/sync-wave: "2"
+    argocd.argoproj.io/sync-wave: "3"
   labels:
     app.kubernetes.io/name: monitoring-prometheus
     app.kubernetes.io/component: monitoring

@@ -19,14 +19,13 @@ spec:
         - protocol: TCP
           port: 5432
   egress:
-   - to:
-    - namespaceSelector: {} # Cible tous les namespaces
-        podSelector:
-      # Cible typiquement les Pods de CoreDNS/Kube-DNS
-          matchLabels:
-            k8s-app: kube-dns # Vérifier ce label sur votre CoreDNS/Kube-DNS
-        ports:
-          - protocol: UDP
-            port: 53
-          - protocol: TCP
-            port: 53
+    to:
+    - namespaceSelector: {} 
+      podSelector:
+        matchLabels:
+          k8s-app: kube-dns
+      ports:
+        - protocol: UDP
+          port: 53
+        - protocol: TCP
+          port: 53

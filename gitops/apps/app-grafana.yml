@@ -4,7 +4,7 @@ metadata:
   name: grafana
   namespace: argocd
   annotations:
-    argocd.argoproj.io/sync-wave: "3"
+    argocd.argoproj.io/sync-wave: "4"
   labels:
     app.kubernetes.io/name: grafana
     app.kubernetes.io/component: monitoring

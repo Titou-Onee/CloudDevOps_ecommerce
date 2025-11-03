@@ -22,6 +22,7 @@ argocd_projects_list:
       - 'https://prometheus-community.github.io/helm-charts'
     destinations:
       - namespace: 'monitoring'
+      - namespace: 'kube-system'
 
   - name: ecommerce-project
     description: Projet dédié à l'application e-commerce.

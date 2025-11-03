@@ -4,7 +4,7 @@ metadata:
   name: ecommerce-app
   namespace: argocd
   annotations:
-    argocd.argoproj.io/sync-wave: "4"
+    argocd.argoproj.io/sync-wave: "5"
   labels:
     app.kubernetes.io/name: ecommerce-app
     app.kubernetes.io/managed-by: argocd
