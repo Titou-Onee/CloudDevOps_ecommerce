@@ -18,7 +18,6 @@ falco:
     - /etc/falco/falco_rules.yaml
     - /etc/falco/falco_rules.local.yaml
     - /etc/falco/rules.d
-    - /etc/falco/rules.d/custom-sec-rules.yaml
 
 driver:
   enabled: true

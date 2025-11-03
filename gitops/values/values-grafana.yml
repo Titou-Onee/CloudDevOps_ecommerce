@@ -1,7 +1,11 @@
-admin:
-  existingSecret: grafana-admin-credentials
-    usernameKey: admin-user-grafana
-    passwordKey: admin-pass-grafana
+# admin:
+#  existingSecret: grafana-admin-credentials
+#    usernameKey: admin-user-grafana
+#    passwordKey: admin-pass-grafana
+
+  
+adminUser: admin
+adminPassword: monSuperMotDePasse
 
 service:
   type: LoadBalancer
