@@ -9,7 +9,7 @@ metadata:
     app.kubernetes.io/name: security-falco
     app.kubernetes.io/component: security
 spec:
-  project: default
+  project: security-project
   ignoreDifferences:
     - group: argoproj.io
       kind: Application
@@ -32,7 +32,7 @@ spec:
   
   destination:
     server: https://kubernetes.default.svc
-    namespace: falco
+    namespace: security
   
   syncPolicy:
     automated:
