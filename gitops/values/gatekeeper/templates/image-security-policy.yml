@@ -30,6 +30,7 @@ spec:
         violation[{"msg": msg}] {
           input.review.kind.kind == "Pod"
           container := all_containers[_]
+          image := container.image
           not startswith(image, "titouonee/")
           msg := sprintf("The image %q doesn't come from a certified registry ", [image])
         }

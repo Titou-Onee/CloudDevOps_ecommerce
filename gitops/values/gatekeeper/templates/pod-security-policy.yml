@@ -73,12 +73,12 @@ spec:
         }
 
         violation[{"msg": msg}] {
-        input.review.kind.kind == "Pod"
-        some v
-        volume := input.review.object.spec.volumes[v]
-        volume.hostPath.path # Vérifie que le champ existe 
-        not startswith(volume.hostPath.path, "/var/log/containers")
-        msg := sprintf("Le volume hostPath '%s' n'est pas autorisé dans le Pod %q.", [volume.hostPath.path, input.review.object.metadata.name])
+          input.review.kind.kind == "Pod"
+          some v
+          volume := input.review.object.spec.volumes[v]
+          volume.hostPath.path # Vérifie que le champ existe 
+          not startswith(volume.hostPath.path, "/var/log/containers")
+          msg := sprintf("Le volume hostPath '%s' n'est pas autorisé dans le Pod %q.", [volume.hostPath.path, input.review.object.metadata.name])
         }
         
         violation[{"msg": msg}] {
@@ -90,8 +90,8 @@ spec:
         }
 
         violation[{"msg": msg}]{
-        input.review.kind.kind == "Pod"
-        container := containers.all[_]
-        container.securityContext.allowPrivilegeEscalation == true
-        msg := sprintf("The container %q uses privilege escalation (allowPrivilegeEscalation=true)", [container.name]")
+          input.review.kind.kind == "Pod"
+          container := containers.all[_]
+          container.securityContext.allowPrivilegeEscalation == true
+          msg := sprintf("The container %q uses privilege escalation (allowPrivilegeEscalation=true)", [container.name]")
         }
