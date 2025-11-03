@@ -18,6 +18,7 @@ falco:
     - /etc/falco/falco_rules.yaml
     - /etc/falco/falco_rules.local.yaml
     - /etc/falco/rules.d
+    - /etc/falco/rules.d/custom-sec-rules.yaml
 
 driver:
   enabled: true
@@ -57,22 +58,22 @@ customRules:
       tags: [users, system]
 
     - rule: K8s Secret Read
-    desc: Detects when a Kubernetes Secret is read
-    condition: >
-      ka.verb=get and ka.target.resource=secrets
-    output: >
-      Kubernetes Secret accessed (user=%ka.user.name resource=%ka.target.name)
-    priority: WARNING
-    tags: [k8s, secrets]
+      desc: Detects when a Kubernetes Secret is read
+      condition: >
+        ka.verb=get and ka.target.resource=secrets
+      output: >
+        Kubernetes Secret accessed (user=%ka.user.name resource=%ka.target.name)
+      priority: WARNING
+      tags: [k8s, secrets]
 
     - rule: Shell Spawned in Container
-    desc: Detects when a shell (bash/sh) is spawned inside a container
-    condition: >
-      container and proc.name in (bash, sh, zsh) and proc.tty != 0 and user.name != "falco"
-    output: >
-      Shell spawned in container (container_id=%container.id image=%container.image.repository)
-    priority: CRITICAL
-    tags: [container, shell]
+      desc: Detects when a shell (bash/sh) is spawned inside a container
+      condition: >
+        container and proc.name in (bash, sh, zsh) and proc.tty != 0 and user.name != "falco"
+      output: >
+        Shell spawned in container (container_id=%container.id image=%container.image.repository)
+      priority: CRITICAL
+      tags: [container, shell]
 
     - rule: Web App Spawning Shell
       desc: Detects a shell spawned by a typical web application process (e.g., Python web server).
