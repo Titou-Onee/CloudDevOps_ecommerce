@@ -1,18 +1,18 @@
 apiVersion: templates.gatekeeper.sh/v1
 kind: ConstraintTemplate
 metadata:
-  name: k8sArgoCDPolicy
+  name: k8sargocdpolicy
   annotations:
     argocd.argoproj.io/sync-wave: "1"
 spec:
   crd:
     spec:
       names:
-        kind: k8sArgoCDPolicy
+        kind: k8sargocdpolicy
   targets:
     - target: admission.k8s.gatekeeper.sh
       rego: |
-        package k8simagepolicy
+        package k8sargocdpolicy
         violation[{"msg": msg}] {
             input.review.kind.kind == "Application"
             input.review.object.spec.project == "default"
