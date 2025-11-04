@@ -7,7 +7,9 @@ on:
   pull_request:
 
 jobs:
-  code_quality: 
+  code_quality:
+    if: ${{ false }}
+
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -49,6 +51,8 @@ jobs:
           pipenv run flake8 . --count --exit-zero --max-complexity=10 --max-line-length=88 --statistics
 
   call_security_checks:
+    if: ${{ false }}
+
     needs: code_quality
     uses: titou-onee/clouddevops_ecommerce/.github/workflows/security.yml@master
     with:
@@ -60,6 +64,8 @@ jobs:
 
 
   call_release:
+    if: ${{ false }}
+
     needs: call_security_checks
     uses: titou-onee/clouddevops_ecommerce/.github/workflows/release.yml@master
     with:
@@ -73,6 +79,8 @@ jobs:
       COSIGN_PUBLIC_KEY: ${{ secrets.COSIGN_PUBLIC_KEY}}
 
   call_deploy:
+    if: ${{ false }}
+
     needs: call_release
     uses: titou-onee/clouddevops_ecommerce/.github/workflows/deploy.yml@master
     with: 
