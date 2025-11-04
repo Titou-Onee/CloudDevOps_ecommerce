@@ -21,11 +21,18 @@ spec:
         }
 
         violation[{"msg": msg}] {
-            input.review.kind.kind == "Application"
-            some s
-            source_url := input.review.object.spec.sources[s].repoURL
-            
-            not input.parameters.approvedUrls[_] == source_url
-            
-            msg := sprintf("The URL of the repo '%q' is not on the list of approved sources.", [source_url])
+          input.review.kind.kind == "Application"
+
+          some s
+          source_url := input.review.object.spec.sources[s].repoURL
+
+          not source_url_in_list(source_url, input.parameters.approvedUrls)
+
+          msg := sprintf("The URL of the repo '%q' is not on the list of approved sources.", [source_url])
         }
+
+        source_url_in_list(url, list) {
+          some i
+          list[i] == url
+        }
+

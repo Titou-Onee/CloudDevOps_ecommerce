@@ -40,9 +40,10 @@ spec:
           container := all_containers[_]
           
           image_policy := container.imagePullPolicy
+          image := container.image
           image_tag := split(container.image, ":")[1]
 
           image_tag != "latest"
           image_policy == "Always"
-          msg := sprintf("The container %q must have imagePullPolicy=Always", [input.review.object.spec.containers[c].name])
+          msg := sprintf("The container %q must have imagePullPolicy=Always", [container.name])
         }

@@ -76,7 +76,7 @@ spec:
           input.review.kind.kind == "Pod"
           some v
           volume := input.review.object.spec.volumes[v]
-          volume.hostPath.path # Vérifie que le champ existe 
+          volume.hostPath.path
           not startswith(volume.hostPath.path, "/var/log/containers")
           msg := sprintf("Le volume hostPath '%s' n'est pas autorisé dans le Pod %q.", [volume.hostPath.path, input.review.object.metadata.name])
         }
@@ -84,7 +84,6 @@ spec:
         violation[{"msg": msg}] {
           input.review.kind.kind == "Pod"
           container := containers.all[_]
-          container.
           not container.securityContext.readOnlyRootFilesystem == true
           msg := sprintf("The container %q must define readOnlyRootFilesystem=true", [input.review.object.spec.containers[c].name])
         }
