@@ -28,6 +28,8 @@ argocd_projects_list:
     description: Projet dédié à l'application e-commerce.
     source_repos:
       - 'https://github.com/Titou-Onee/CloudDevOps_ecommerce.git'
+      - 'https://hub.docker.com/r/bitnami'
+
     destinations:
       - namespace: 'ecommerce'
 
