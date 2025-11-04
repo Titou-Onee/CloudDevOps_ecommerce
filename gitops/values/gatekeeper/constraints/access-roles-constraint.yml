@@ -18,3 +18,4 @@ spec:
     excludedNamespaces:
       - kube-system
    #   - security
+#templates : nom en minuscules et kin en majuscule, faire pareil pour les constraints
