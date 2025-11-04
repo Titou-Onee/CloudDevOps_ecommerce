@@ -15,4 +15,9 @@ spec:
       - ecommerce
   parameters:
     approvedUrls:
-      https://github.com/Titou-Onee/CloudDevOps_ecommerce.git
+      - "https://github.com/Titou-Onee/CloudDevOps_ecommerce.git"
+      - "https://hub.docker.com/r/bitnami"
+      - "https://grafana.github.io/helm-charts"
+      - "https://prometheus-community.github.io/helm-charts"
+      - "https://open-policy-agent.github.io/gatekeeper/charts"
+      - "https://falcosecurity.github.io/charts"
