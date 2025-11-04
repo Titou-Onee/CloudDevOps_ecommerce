@@ -78,7 +78,7 @@ spec:
           volume := input.review.object.spec.volumes[v]
           volume.hostPath.path
           not startswith(volume.hostPath.path, "/var/log/containers")
-          msg := sprintf("Le volume hostPath '%s' n'est pas autorisé dans le Pod %q.", [volume.hostPath.path, input.review.object.metadata.name])
+          msg := sprintf("The volume hostPath '%s' is not authorized in Pod %q.", [volume.hostPath.path, input.review.object.metadata.name])
         }
         
         violation[{"msg": msg}] {
