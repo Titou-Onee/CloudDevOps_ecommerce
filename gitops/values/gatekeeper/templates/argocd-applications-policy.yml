@@ -8,7 +8,7 @@ spec:
   crd:
     spec:
       names:
-        kind: k8sargocdpolicy
+        kind: k8sArgocdPolicy
       validation:
         openAPIV3Schema:
           type: object

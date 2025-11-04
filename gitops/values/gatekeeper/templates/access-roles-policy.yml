@@ -8,7 +8,7 @@ spec:
   crd:
     spec:
       names:
-        kind: K8saccesspolicy
+        kind: K8sAccessPolicy
   targets:
     - target: admission.k8s.gatekeeper.sh
       rego: |
