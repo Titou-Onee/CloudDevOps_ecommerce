@@ -30,67 +30,67 @@ spec:
         }
         default msg = ""
 
-        violation[{"msg": msg}] {
+        violation[{"msg": m}] {
           input.review.kind.kind == "Pod"
           container := all_containers[_]
           container.securityContext.privileged == true
-          msg := sprintf("the container %q is run in privileged mode (privileged=true)", [container.name])
+          m := sprintf("the container %q is run in privileged mode (privileged=true)", [container.name])
         }
 
-        violation[{"msg": msg}] {
+        violation[{"msg": m}] {
           input.review.kind.kind == "Pod"
           container := all_containers[_]
           not container.securityContext.runAsNonRoot == true
-          msg := sprintf("the container %q is run as Root (runAsNonRoot=false)", [container.name])
+          m := sprintf("the container %q is run as Root (runAsNonRoot=false)", [container.name])
         }
 
-        violation[{"msg": msg}] {
+        violation[{"msg": m}] {
           input.review.kind.kind == "Pod"
           input.review.object.spec.hostNetwork == true
-          msg := sprintf("the pod %q uses the host network (hostNetwork=true)", [input.review.object.metadata.name])
+          m := sprintf("the pod %q uses the host network (hostNetwork=true)", [input.review.object.metadata.name])
         }
 
-        violation[{"msg": msg}] {
+        violation[{"msg": m}] {
           input.review.kind.kind == "Pod"
           input.review.object.spec.hostPID == true
-          msg := sprintf("the pod %q uses the host PID (hostPID=true)", [input.review.object.metadata.name])
+          m := sprintf("the pod %q uses the host PID (hostPID=true)", [input.review.object.metadata.name])
         }
 
-        violation[{"msg": msg}] {
+        violation[{"msg": m}] {
           input.review.kind.kind == "Pod"
           input.review.object.spec.hostIPC == true
-          msg := sprintf("the pod %q uses the host IPC (hostIPC=true)", [input.review.object.metadata.name])          
+          m := sprintf("the pod %q uses the host IPC (hostIPC=true)", [input.review.object.metadata.name])          
         }
 
-        violation[{"msg": msg}] {
+        violation[{"msg": m}] {
           input.review.kind.kind == "Pod"
           some v
           volume := input.review.object.spec.volumes[v]
           volume.hostPath
           volume.hostPath.path != ""
           not startswith(volume.hostPath.path, "/var/log/containers")
-          msg := sprintf("The volume hostPath '%s' is not authorized", [volume.hostPath.path])
+          m := sprintf("The volume hostPath '%s' is not authorized", [volume.hostPath.path])
         }
 
-        violation[{"msg": msg}] {
+        violation[{"msg": m}] {
           input.review.kind.kind == "Pod"
           some v
           volume := input.review.object.spec.volumes[v]
           volume.hostPath.path
           not startswith(volume.hostPath.path, "/var/log/containers")
-          msg := sprintf("The volume hostPath '%s' is not authorized in Pod %q.", [volume.hostPath.path, input.review.object.metadata.name])
+          m := sprintf("The volume hostPath '%s' is not authorized in Pod %q.", [volume.hostPath.path, input.review.object.metadata.name])
         }
         
-        violation[{"msg": msg}] {
+        violation[{"msg": m}] {
           input.review.kind.kind == "Pod"
           container := all_containers[_]
           not container.securityContext.readOnlyRootFilesystem == true
-          msg := sprintf("The container %q must define readOnlyRootFilesystem=true", [input.review.object.spec.containers[c].name])
+          m := sprintf("The container %q must define readOnlyRootFilesystem=true", [input.review.object.spec.containers[c].name])
         }
 
-        violation[{"msg": msg}]{
+        violation[{"msg": m}]{
           input.review.kind.kind == "Pod"
           container := all_containers[_]
           container.securityContext.allowPrivilegeEscalation == true
-          msg := sprintf("The container %q uses privilege escalation (allowPrivilegeEscalation=true)", [container.name])
+          m := sprintf("The container %q uses privilege escalation (allowPrivilegeEscalation=true)", [container.name])
         }
