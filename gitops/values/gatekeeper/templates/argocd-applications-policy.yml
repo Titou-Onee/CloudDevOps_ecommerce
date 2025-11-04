@@ -9,6 +9,15 @@ spec:
     spec:
       names:
         kind: k8sargocdpolicy
+      validation:
+        openAPIV3Schema:
+          type: object
+          properties:
+            approvedUrls:
+              type: array
+              description: "List of authorized URLs."
+              items:
+                type: string
   targets:
     - target: admission.k8s.gatekeeper.sh
       rego: |

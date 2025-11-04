@@ -1,7 +1,7 @@
 apiVersion: constraints.gatekeeper.sh/v1beta1
-kind: K8sLabelDeployment
+kind: ConstraintTemplate
 metadata:
-  name: namespace-policy
+  name: k8sLabelDeployment
   annotations:
     argocd.argoproj.io/sync-wave: "2"
     argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
