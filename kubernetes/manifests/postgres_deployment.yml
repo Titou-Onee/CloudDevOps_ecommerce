@@ -29,7 +29,7 @@ spec:
       
       containers:
         - name: postgres
-          image: bitnami/postgres:sha256-7a8b3ff35762af1b3046c29428bd9db4d200d34ba7317c4f23f164dbd6dcd772
+          image: bitnami/postgres@sha256-7a8b3ff35762af1b3046c29428bd9db4d200d34ba7317c4f23f164dbd6dcd772
           env:
             - name: POSTGRESQL_DATABASE
               valueFrom:
