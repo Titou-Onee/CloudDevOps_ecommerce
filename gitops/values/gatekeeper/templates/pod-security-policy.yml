@@ -92,5 +92,5 @@ spec:
           input.review.kind.kind == "Pod"
           container := containers.all[_]
           container.securityContext.allowPrivilegeEscalation == true
-          msg := sprintf("The container %q uses privilege escalation (allowPrivilegeEscalation=true)", [container.name]")
+          msg := sprintf("The container %q uses privilege escalation (allowPrivilegeEscalation=true), [container.name]")
         }
