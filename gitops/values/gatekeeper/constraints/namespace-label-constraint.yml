@@ -1,5 +1,5 @@
 apiVersion: constraints.gatekeeper.sh/v1beta1
-kind: K8sNamespacePolicy
+kind: K8sLabelDeployment
 metadata:
   name: namespace-policy
   annotations:
