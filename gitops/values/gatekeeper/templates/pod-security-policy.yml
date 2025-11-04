@@ -83,14 +83,14 @@ spec:
         
         violation[{"msg": msg}] {
           input.review.kind.kind == "Pod"
-          container := containers.all[_]
+          container := all_containers[_]
           not container.securityContext.readOnlyRootFilesystem == true
           msg := sprintf("The container %q must define readOnlyRootFilesystem=true", [input.review.object.spec.containers[c].name])
         }
 
         violation[{"msg": msg}]{
           input.review.kind.kind == "Pod"
-          container := containers.all[_]
+          container := all_containers[_]
           container.securityContext.allowPrivilegeEscalation == true
           msg := sprintf("The container %q uses privilege escalation (allowPrivilegeEscalation=true)", [container.name])
         }
