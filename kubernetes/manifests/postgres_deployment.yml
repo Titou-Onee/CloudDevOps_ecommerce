@@ -46,6 +46,11 @@ spec:
                 secretKeyRef:
                   name: ecommerce-secret
                   key: POSTGRESQL_PASSWORD
+            - name: POSTGRESQL_POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: ecommerce-secret
+                  key: POSTGRESQL_POSTGRES_PASSWORD
           securityContext:
 
           ports:
