@@ -11,7 +11,7 @@ spec:
     kinds:
       - apiGroups: ["argoproj.io"]
         kinds: ["Application"]
-    namespace:
+    namespaces:
       - ecommerce
   parameters:
     approvedUrls:
