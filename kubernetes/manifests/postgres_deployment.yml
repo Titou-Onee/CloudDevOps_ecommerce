@@ -51,35 +51,40 @@ spec:
                 secretKeyRef:
                   name: ecommerce-secret
                   key: POSTGRESQL_POSTGRES_PASSWORD
-          securityContext:
 
           ports:
           - containerPort: 5432
           volumeMounts:
           - name: postgres-storage
             mountPath: /var/lib/postgresql/data
+          - name: init-sql
+            mountPath: /docker-entrypoint-initdb.d
 
       volumes:
-      - name: postgres-storage
-        persistentVolumeClaim:
-          claimName: postgres-data-pvc
-      livenessProbe:
-          exec:
-            command: ["pg_isready", "-U", "$(POSTGRES_USER)"] 
-          initialDelaySeconds: 30
-          periodSeconds: 10
-      readinessProbe:
-          exec:
-            command: ["pg_isready", "-U", "$(POSTGRES_USER)"]
-          initialDelaySeconds: 5
-          periodSeconds: 5
-      resources:
-          requests:
-            memory: "1Gi"
-            cpu: "500m"
-          limits:
-            memory: "2Gi" 
-            cpu: "1000m"
+        - name: postgres-storage
+          persistentVolumeClaim:
+            claimName: postgres-data-pvc
+          livenessProbe:
+            exec:
+              command: ["pg_isready", "-U", "$(POSTGRES_USER)"] 
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          readinessProbe:
+            exec:
+              command: ["pg_isready", "-U", "$(POSTGRES_USER)"]
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          resources:
+            requests:
+              memory: "1Gi"
+              cpu: "500m"
+            limits:
+              memory: "2Gi" 
+              cpu: "1000m"
+
+        - name: init-sql
+          configMap: 
+            name: ecommerce-config
 ---
 apiVersion: v1
 kind: Service

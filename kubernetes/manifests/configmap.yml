@@ -1,8 +1,9 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: ecommerce-config
+  name: postgres-init-sql
   namespace: ecommerce
 data:
-  DB_HOST: "postgres-service"
-  DB_PORT: "5432"
+  01-init.sql: |
+    ALTER ROLE django_user CREATEDB CREATEROLE;
+    GRANT ALL PRIVILEGES ON DATABASE ecommerce_db TO django_user;
