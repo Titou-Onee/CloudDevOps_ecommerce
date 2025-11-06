@@ -4,6 +4,5 @@ metadata:
   name: ecommerce-config
   namespace: ecommerce
 data:
-  POSTGRESQL_DATABASE: "postgres"
   DB_HOST: "postgres-service"
   DB_PORT: "5432"

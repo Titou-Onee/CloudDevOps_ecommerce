@@ -33,7 +33,7 @@ spec:
           env:
             - name: POSTGRESQL_DATABASE
               valueFrom:
-                configMapKeyRef:
+                secretKeyRef:
                   name: ecommerce-config
                   key: POSTGRESQL_DATABASE
             - name: POSTGRESQL_USERNAME
