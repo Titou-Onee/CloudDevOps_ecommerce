@@ -5,5 +5,4 @@ metadata:
   namespace: ecommerce
 data:
   01-init.sql: |
-    ALTER ROLE django_user CREATEDB CREATEROLE;
-    GRANT ALL PRIVILEGES ON DATABASE ecommerce_db TO django_user;
+    ALTER ROLEadmin-user CREATEDB;
