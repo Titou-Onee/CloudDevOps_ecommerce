@@ -29,7 +29,7 @@ spec:
       
       containers:
         - name: postgres
-          image: bitnami/postgres:latest
+          image: bitnami/postgresql:latest
           env:
             - name: POSTGRESQL_DATABASE
               valueFrom:
