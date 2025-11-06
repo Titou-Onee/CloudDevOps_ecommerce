@@ -47,19 +47,19 @@ spec:
               name: ecommerce-config
           - secretRef:
               name: ecommerce-secret
-        livenessProbe:
-          httpGet:
-            path: /health
-            port: 8000
-          initialDelaySeconds: 15
-          timeoutSeconds: 5
-        readinessProbe:
-          httpGet:
-            path: /readOnlyRootFilesystem
-            port: 8000
-          initialDelaySeconds: 5
-          timeoutSeconds: 3
-          periodSeconds: 5
+#        livenessProbe:
+#          httpGet:
+#            path: /health
+#            port: 8000
+#          initialDelaySeconds: 15
+#          timeoutSeconds: 5
+#        readinessProbe:
+#          httpGet:
+#            path: /readOnlyRootFilesystem
+#            port: 8000
+#          initialDelaySeconds: 5
+#          timeoutSeconds: 3
+#          periodSeconds: 5
         resources:
           requests:
             memory: "256Mi"
