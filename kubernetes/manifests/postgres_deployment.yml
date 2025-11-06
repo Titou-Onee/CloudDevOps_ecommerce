@@ -34,7 +34,7 @@ spec:
             - name: POSTGRESQL_DATABASE
               valueFrom:
                 secretKeyRef:
-                  name: ecommerce-config
+                  name: ecommerce-secret
                   key: POSTGRESQL_DATABASE
             - name: POSTGRESQL_USERNAME
               valueFrom:
