@@ -35,7 +35,7 @@ spec:
         image: titouonee/clouddevops_ecommerce
         command: ['python3', 'manage.py', 'runserver', '0.0.0.0:8000']
         securityContext:
-          readOnlyRootFilesystem: true
+          #readOnlyRootFilesystem: true
           capabilities:
             drop:
               - all
