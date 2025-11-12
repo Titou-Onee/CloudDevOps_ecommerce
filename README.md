@@ -4,7 +4,8 @@ A comprehensive end-to-end CI/CD infrastructure for containerized application. T
 
 ---
 # Project Architecture
-![Architecture diagram](https://github.com/user-attachments/assets/d4d4010b-16d5-4d0f-a6ce-9d4a137daddf)
+<img width="2424" height="1754" alt="Ecommerce_diagram drawio" src="https://github.com/user-attachments/assets/99b4da41-d55c-4447-b3b5-ddccd9494b93" />
+
 ---
 ## Architecture Overview
 
