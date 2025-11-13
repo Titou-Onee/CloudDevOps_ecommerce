@@ -33,7 +33,6 @@ spec:
         image: titouonee/clouddevops_ecommerce
         command: ['python3', 'manage.py', 'runserver', '0.0.0.0:8000']
         securityContext:
-          #readOnlyRootFilesystem: true
           capabilities:
             drop:
               - all
@@ -43,19 +42,6 @@ spec:
         envFrom:
           - secretRef:
               name: ecommerce-secret
-#        livenessProbe:
-#          httpGet:
-#            path: /health
-#            port: 8000
-#          initialDelaySeconds: 15
-#          timeoutSeconds: 5
-#        readinessProbe:
-#          httpGet:
-#            path: /readOnlyRootFilesystem
-#            port: 8000
-#          initialDelaySeconds: 5
-#          timeoutSeconds: 3
-#          periodSeconds: 5
         resources:
           requests:
             memory: "256Mi"
