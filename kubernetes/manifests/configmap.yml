@@ -4,12 +4,16 @@ metadata:
   name: postgres-init-sql
   namespace: ecommerce
 data:
-  01-init-user.sql: |
-        ALTER SCHEMA public OWNER TO "admin-user";
-        GRANT ALL PRIVILEGES ON DATABASE postgres TO admin-user;
-        GRANT ALL PRIVILEGES ON SCHEMA public TO admin-user;
-        GRANT CREATE ON SCHEMA public TO admin-user;
+  01-init-user.sh: |
+    #!/bin/bash
+    set -e
 
+    psql -v ON_ERROR_STOP=1 --username "postgres" --dbname "db" <<-EOSQL
+        ALTER SCHEMA public OWNER TO "admin-user";
+        GRANT ALL PRIVILEGES ON DATABASE db TO "admin-user";
+        GRANT ALL PRIVILEGES ON SCHEMA public TO "admin-user";
+        GRANT CREATE ON SCHEMA public TO "admin-user";
+    EOSQL
 
 
 
