@@ -4,7 +4,8 @@ A comprehensive end-to-end CI/CD infrastructure for containerized application. T
 
 ---
 # Project Architecture
-Add Gif animation
+<img width="2424" height="1754" alt="Ecommerce_diagram drawio" src="https://github.com/user-attachments/assets/99b4da41-d55c-4447-b3b5-ddccd9494b93" />
+
 ---
 ## Architecture Overview
 
