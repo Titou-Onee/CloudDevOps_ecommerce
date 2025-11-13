@@ -5,22 +5,13 @@ metadata:
   namespace: ecommerce
 data:
   01-init-user.sql: |
-    #!/bin/bash
-    set -e
-
-    
-    psql -v ON_ERROR_STOP=1 --username "postgres" --dbname "postgres" <<-EOSQL
-
         GRANT ALL PRIVILEGES ON DATABASE postgres TO admin-user;
         
         GRANT ALL ON SCHEMA public TO admin-user;
         GRANT CREATE ON SCHEMA public TO admin-user;
-      
         
         ALTER USER admin-user CREATEDB;
-    EOSQL
-    
-    echo "Utilisateur créé et droits attribués avec succès!"
+
 
 
 #       GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO $POSTGRESQL_USERNAME;
