@@ -43,8 +43,6 @@ spec:
         - containerPort: 8000
           name: http
         envFrom:
-          - configMapRef:
-              name: ecommerce-config
           - secretRef:
               name: ecommerce-secret
 #        livenessProbe:
