@@ -26,8 +26,6 @@ spec:
           image: titouonee/clouddevops_ecommerce
           command: ['python3', 'manage.py', 'migrate']
           envFrom:
-            - configMapRef:
-                name: ecommerce-config
             - secretRef:
                 name: ecommerce-secret
       containers:
