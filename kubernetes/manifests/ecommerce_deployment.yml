@@ -26,10 +26,10 @@ spec:
             - secretRef:
                 name: ecommerce-secret
           securityContext:
-          runAsNonRoot: true
-          runAsUser: 1000
-          runAsGroup: 3000
-          allowPrivilegeEscalation: false
+            runAsNonRoot: true
+            runAsUser: 1000
+            runAsGroup: 3000
+            allowPrivilegeEscalation: false
       containers:
       - name: ecommerce-app
         image: titouonee/clouddevops_ecommerce
