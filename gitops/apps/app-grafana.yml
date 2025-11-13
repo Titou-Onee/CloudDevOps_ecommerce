@@ -48,14 +48,3 @@ spec:
         duration: 5s
         maxDuration: 3m
 
-
-datasources:
-  datasources.yaml:
-    apiVersion: 1
-    datasources:
-      - name: Prometheus
-        type: prometheus
-        access: proxy
-        url: http://kube-prometheus-stack-prometheus.monitoring.svc.cluster.local:9090
-        isDefault: true
-
