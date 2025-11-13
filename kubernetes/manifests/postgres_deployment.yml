@@ -5,7 +5,10 @@ metadata:
   namespace: ecommerce
 spec:
   strategy:
-    type: Rollout
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
   replicas: 1
   selector:
     matchLabels:
@@ -21,6 +24,7 @@ spec:
       containers:
         - name: postgres
           image: bitnami/postgresql:latest
+          imagePullPolicy: Always
           env:
             - name: POSTGRESQL_DATABASE
               valueFrom:
@@ -55,6 +59,7 @@ spec:
                 - ALL 
           ports:
           - containerPort: 5432
+            protocol: TCP
           volumeMounts:
           - name: postgres-storage
             mountPath: /var/lib/postgresql/data
