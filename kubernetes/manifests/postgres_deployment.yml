@@ -84,7 +84,7 @@ spec:
 
         - name: init-sql
           configMap: 
-            name: ecommerce-config
+            name: postgres-init-sql
 ---
 apiVersion: v1
 kind: Service
