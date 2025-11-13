@@ -4,6 +4,9 @@ metadata:
   name: postgres
   namespace: ecommerce
 spec:
+  strategy:
+    type: Rollout
+  replicas: 1
   selector:
     matchLabels:
       app: postgres
@@ -11,21 +14,9 @@ spec:
     metadata:
       labels:
         app: postgres
-    spec:
-      serviceAccountName: postgres-sa
-      securityContext:
-        runAsNonRoot: true
-        runAsUser: 999
-        fsGroup: 999
-        allowPrivilegeEscalation: false
-        readOnlyRootFilesystem: true
-        capabilities:
-          drop:
-            - ALL 
 
-      strategy:
-        type: Recreate
-      replicas: 1
+
+
       
       containers:
         - name: postgres
@@ -51,7 +42,17 @@ spec:
                 secretKeyRef:
                   name: ecommerce-secret
                   key: POSTGRESQL_POSTGRES_PASSWORD
-
+              spec:
+          serviceAccountName: postgres-sa
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 999
+            fsGroup: 999
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL 
           ports:
           - containerPort: 5432
           volumeMounts:
@@ -64,16 +65,6 @@ spec:
         - name: postgres-storage
           persistentVolumeClaim:
             claimName: postgres-data-pvc
-          livenessProbe:
-            exec:
-              command: ["pg_isready", "-U", "$(POSTGRES_USER)"] 
-            initialDelaySeconds: 30
-            periodSeconds: 10
-          readinessProbe:
-            exec:
-              command: ["pg_isready", "-U", "$(POSTGRES_USER)"]
-            initialDelaySeconds: 5
-            periodSeconds: 5
           resources:
             requests:
               memory: "1Gi"
