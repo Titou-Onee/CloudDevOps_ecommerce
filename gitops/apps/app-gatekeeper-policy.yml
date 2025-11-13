@@ -16,8 +16,6 @@ spec:
     targetRevision: master 
     path: gitops/values/gatekeeper
     
-    kustomize:
-      forceCommonLabels: false
 
   destination:
     server: https://kubernetes.default.svc
