@@ -1,0 +1,44 @@
+name: Main workflow
+on:
+  push:
+      branches:
+        - master
+        - dev
+  pull_request:
+
+jobs:
+  code_quality:
+    uses: titou-onee/clouddevops_ecommerce/.github/workflows/code-quality.yml@master
+
+  call_security_checks:
+    needs: code_quality
+    uses: titou-onee/clouddevops_ecommerce/.github/workflows/security.yml@master
+    with:
+      DOCKER_IMAGE: titouonee/clouddevops_ecommerce
+    secrets:
+      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
+      COSIGN_PRIVATE_KEY: ${{ secrets.COSIGN_PRIVATE_KEY}} 
+
+
+  call_release:
+
+    needs: call_security_checks
+    uses: titou-onee/clouddevops_ecommerce/.github/workflows/release.yml@master
+    with:
+      RELEASE_TAG: latest
+      DEFAULT_SHA:  ${{ github.sha }}
+      DOCKER_IMAGE: titouonee/clouddevops_ecommerce
+      RUN_ID: ${{ needs.call_security_checks.outputs.run_id }}
+    secrets:
+      DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+      DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+      COSIGN_PUBLIC_KEY: ${{ secrets.COSIGN_PUBLIC_KEY}}
+
+  call_deploy:
+
+    needs: call_release
+    uses: titou-onee/clouddevops_ecommerce/.github/workflows/deploy.yml@master
+    with: 
+      DEPLOY_TAG: ${{ github.sha }}
+      DOCKER_IMAGE: titouonee/clouddevops_ecommerce
