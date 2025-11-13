@@ -20,7 +20,7 @@ spec:
       kind: Deployment
       jsonPointers:
         - /spec/template/metadata/creationTimestamp 
-         - /spec/template/spec/containers/0/terminationMessagePath 
+        - /spec/template/spec/containers/0/terminationMessagePath 
         - /spec/template/spec/containers/0/terminationMessagePolicy 
         - /spec/template/spec/securityContext 
         - /status
