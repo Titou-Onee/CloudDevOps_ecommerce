@@ -1,60 +1,92 @@
 # End-to-End GitOps CI/CD Pipeline on AWS
 
-A comprehensive end-to-end CI/CD infrastructure for containerized application. This project leverages **Terraform** for AWS EKS infrastructure provisioning, **Ansible** for automated configuration management, **GitHub Actions** for continuos integration, and **ArgoCD** for GitOps-based deployment to **Kubernetes** cluster.*
+Welcome to **Ecommerce_DevSecOps Project**, a comprehensive hands-on student project focused of building an end-to-end CI/CD infrastructure for containerized application with native DevSecOps best practices.
+
+This project leverages :
+- **Infra as Code** with **Terraform** for AWS **EKS** infrastructure provisioning and **Ansible** for automated configuration management
+- **CI & Gitops** with **GitHub Actions** for continuous integration, and **ArgoCD** for GitOps-based deployment
+- **Security and monitoring** with  **OPA Gatekeeper**, **Falco**, **Prometheus**, **Grafana** and **SealedSecret**.
+
+**Community note** : This project was designed as an intensive learning experience, aiming to explore and experiment as many automation and security functionalities as possible. Feel free to fork this project to contribute and enhance its capabilities !
+
 
 ---
 # Project Architecture
-<img width="2424" height="1754" alt="Ecommerce_diagram drawio" src="https://github.com/user-attachments/assets/99b4da41-d55c-4447-b3b5-ddccd9494b93" />
+
+![ecommerce_architecture](https://github.com/user-attachments/assets/ec77b73f-411f-42a8-a195-d24d5eddc8a1)
 
 ---
 ## Architecture Overview
 
-### 1. AWS Infrastructure (Terraform provisioned)
-- **Amazon EKS (Elastic Kubernetes Service)** : 
-    - cluster with a node group
-    - 2 worker nodes
-- **Network** :
-    - VPC
-    - nodes services
-- **IAM** :
-    - RBAC roles for cluster composants
-    - Permissions to automatic installation of ebs csi drivers by ansible
-- **S3** : 
-    - Remote backend for Terraform state management
----
+### 1. Application and Dockerisation
+- Existing app from a forked project : [repo forked](https://github.com/fatemehkarimi/ecommerce_store.git)
+- DockerFile to create the Docker image
 
-### 2. Configuration Management using Ansible
-- **ArgoCD** : 
-    - Installation and configuration
-    - creation of the ecommerce application on the cluster
-- **Prometheus** : 
-    - Installation and configuration on the cluster
-    - Creation of alerts on argocd state
-- **Grafana** :
-    - Installation and configuration with Prometheus
-    - Creation and importation of dashboards for full cluster data overview
----
-
-### 3. Kubernetes Environment
-- **EKS Cluster**: 
-    - namespace isolation
-    - Worker for frontEnd
-    - Worker for Backend
-    - Volume for Database
-
-
-### 4. ArgoCD
-- **GitOps Management of the application**
-    - Automatic rollout of the application version
-    - Automatic Heal and prune
-
-
-## 5 GitHub Actions
-- **4 workflows** :
+### 2. GitHub Actions
+- **Terraform workflow** :
+    - On .tf files update -> Terraform init, plan, Tfsec, Checkov and Infracost
+- **Main** :
+    - On .yml files update -> main workflow calling modules
+- **Modules** :
     - **format-lint-code**: black formatting and flake8 linting
-    - **security**: Sonarqube, trivy fs and trivy image scan + reporting
-    - **release**: build and push of the image on DockerHub
+    - **security**: Sonarqube scan, trivy fs & manifest scan ; build of the docker image, scan with Trivy image and upload as a signed Artifact
+    - **release**: Recover signed image artifact, tag and push to DockerHub
     - **deploy**: Kustomize the kubernetes manifests to trigger ArgoCD
+
+### 3. Kubernetes Manifests
+- Use of **Kustomization** file to deploy the app and  dynamically update the image tag.
+- **Architecture** :
+    - Namespace : ecommerce
+    - Application_deployment
+    - Postgresql_deployment
+    - Postgresql_PVC
+    - Config map : for DB user access ???
+    - **SealedSecrets** : for DB secrets
+- **Service** :
+    - Ingress
+    - Network policy
+- **Security** :
+    - Service account : for DB
+    - Role : for DB
+
+### 4. AWS Infrastructure provisioning usign Terraform
+- **EKS module** :
+    - EKS cluster
+    - RBAC for nodes
+- **Network module** :
+    - EKS internet access
+    - Access list for nodes
+- **Remote state**
+    - S3 bucket on AWS
+
+### 5. Configuration Management using Ansible
+- **Preparation of the cluster** :
+    - Verification of the cluster state
+    - Installation of drivers
+- **ArgoCD** : 
+    - Installation of the controller
+    - Creation of the app-of-apps
+
+### 6. Applications management using ArgoCD
+App of Apps manifest use the GitOps repository to get the application manifest and the values for the configuration
+
+**App of Apps** :
+- **SyncWave 1 : OPA Gatekeeper**
+    - Controller for constraint deployment
+- **SyncWave 2 : OPA Gatekeeper Policies application**
+    - Constraints templates and constraint deployment
+- **SyncWave 3 : Sealed secret Controller**
+    - Decrypt kubernetes secrets with private key
+- **SyncWave 4 : Falco**
+    - Watch cluster and raise security alerts
+- **SyncWave 5 : Ecommerce application**
+    - Python application deployed with kustomize
+- **SyncWave 6 : Prometheus**
+    - Monitor cluster and apps
+- **SyncWave 7 : Grafana**
+    - Display data on dashboards for visualization
+
+---
 
 ## Project Structure 
 
@@ -65,19 +97,53 @@ A comprehensive end-to-end CI/CD infrastructure for containerized application. T
 ├── Docker/                # Dockerfile and app source code
 ├── Terraform/             # Terraform modules and scripts
 ├── Kubernetes/            # Kubernetes deployment and service manifests
+├── GitOps/                # ArgoCD managed applications manifests and configurations
+├── deploy.sh              # Script for Ansible deployment
 └── README.md              # Main documentation file
 ```
 
 ## prerequises :
 - AWS account
-- S3 bucket for remote terraform state (encryption, versioning and no public access)
-- linux environment or wsl (for ansible installation)
+- optional : S3 bucket for remote terraform state (encryption, versioning and no public access)
+- linux environment or wsl (for ansible playbook)
+- Terraform, Ansible, SealedSecret (optional)
+- Git secrets : 
+    - DOCKERHUB_USERNAME
+    - DOCKERHUB_TOKEN
+    - SONAR_TOKEN (for sonar scan)
+    - INFRACOST_API_KEY (for infracost scan)
+    - AWS_KEY (for infracost scan)
+    - AWS_SECRET_KEY (for infracost scan)
+    - COSIGN_PRIVATE_KEY (for integrity scan of docker image)
+    - COSIGN_PASSWORD (for integrity scan of docker image)
+    - COSIGN_PUBLIC_KEY (for integrity scan of docker image)
+
+## Fast Run
+Clone the repository :
+```bash
+git clone https://github.com/Titou-Onee/CloudDevOps_ecommerce.git
+```
+
+Create the infrastructure :
+```bash
+cd terraform/infra
+terraform init
+terraform apply
+```
+
+Install ArgoCD and managed apps
+```bash
+cd ../..
+chmod +x deploy.sh
+./deploy.sh
+```
+
 
   
 ## Author
 
 **Titouann Mauchamp**
-Student at UTT ;)
+Student at UTT
 
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-blue?logo=linkedin)](https://www.linkedin.com/in/titouann-mauchamp-a095ba224/)
 
