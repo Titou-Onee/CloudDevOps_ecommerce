@@ -60,12 +60,7 @@ spec:
           - name: postgres-storage
             mountPath: /var/lib/postgresql/data
           - name: init-sql
-            mountPath: /docker-entrypoint-initdb.d
-
-      volumes:
-        - name: postgres-storage
-          persistentVolumeClaim:
-            claimName: postgres-data-pvc
+            mountPath: /docker-entrypoint-initdb.d*
           resources:
             requests:
               memory: "1Gi"
@@ -74,9 +69,12 @@ spec:
               memory: "2Gi" 
               cpu: "1000m"
 
-        - name: init-sql
-          configMap: 
-            name: postgres-init-sql
+      volumes:
+        - name: postgres-storage
+          persistentVolumeClaim:
+            claimName: postgres-data-pvc
+          
+
 ---
 apiVersion: v1
 kind: Service
