@@ -6,7 +6,7 @@ kind: Kustomization
 
 resources:
 - namespace.yml
-- secrets.yml
+- sealed-secrets.yml
 - service_accounts.yml
 - ecommerce_roles.yml
 - network_policy.yml
