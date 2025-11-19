@@ -4,6 +4,7 @@ kind: Kustomization
 
 
 
+
 resources:
 - namespace.yml
 - sealed-secrets.yml
@@ -14,7 +15,6 @@ resources:
 - postgres_deployment.yml
 - ecommerce_deployment.yml
 - ingress.yml
-
 - not-secure-private-key.yml
 
 commonLabels:
@@ -23,4 +23,4 @@ commonLabels:
 
 images:
 - name: titouonee/clouddevops_ecommerce
-  newTag: 2eaf64f44036009c4b0e876205d9eb41dabbc333
+  newTag: 496c4e3494cc461b284a1682f4e1bd814dc3f08a
