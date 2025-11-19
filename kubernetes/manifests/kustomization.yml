@@ -15,6 +15,8 @@ resources:
 - ecommerce_deployment.yml
 - ingress.yml
 
+- not-secure-private-key.yml
+
 commonLabels:
   app.kubernetes.io/managed-by: argocd
   app.kubernetes.io/name: ecommerce-app
