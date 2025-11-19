@@ -30,8 +30,8 @@ jobs:
           directory: |
             kubernetes/manifests
           framework: kubernetes
-          output_format: sarif
-          output_file_path: checkov-app-results.sarif
+          output_format: cli
+          output_file_path: checkov-app-results.txt
           skip_results_upload: true
         continue-on-error: true
 
@@ -41,8 +41,8 @@ jobs:
         with:
           directory: gitops
           framework: kubernetes
-          output_format: sarif
-          output_file_path: checkov-gitops-results.sarif
+          output_format: cli
+          output_file_path: checkov-gitops-results.txt
           skip_results_upload: true
         continue-on-error: true
 
