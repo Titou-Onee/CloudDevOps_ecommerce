@@ -60,8 +60,6 @@ spec:
           volumeMounts:
           - name: postgres-storage
             mountPath: /var/lib/postgresql/data
-          - name: init-sql
-            mountPath: /docker-entrypoint-initdb.d*
           resources:
             requests:
               memory: "1Gi"
