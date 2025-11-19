@@ -51,8 +51,8 @@ jobs:
         with:
           name: checkov-report
           path: |
-            checkov-gitops-results.sarif
-            checkov-app-results.sarif
+            checkov-gitops-results.txt
+            checkov-app-results.txt
           retention-days: 1
 
       # no use of pull request for learning simplicity
