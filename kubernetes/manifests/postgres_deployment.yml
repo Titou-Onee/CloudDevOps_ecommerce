@@ -17,6 +17,12 @@ spec:
     metadata:
       labels:
         app: postgres 
+    spec :
+      serviceAccountName: postgres-sa
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 999
+        fsGroup: 999
       containers:
         - name: postgres
           image: bitnami/postgresql:latest
@@ -42,12 +48,7 @@ spec:
                 secretKeyRef:
                   name: ecommerce-secret
                   key: POSTGRESQL_POSTGRES_PASSWORD
-              spec:
-          serviceAccountName: postgres-sa
-          securityContext:
-            runAsNonRoot: true
-            runAsUser: 999
-            fsGroup: 999
+          securityContext:  
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: true
             capabilities:
