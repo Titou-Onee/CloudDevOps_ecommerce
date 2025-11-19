@@ -4,6 +4,10 @@ on:
       branches:
         - master
         - dev
+      paths:
+        - 'Docker'
+        - '**/*.yml'
+        - '**/*.yaml'
   pull_request:
 
 jobs:

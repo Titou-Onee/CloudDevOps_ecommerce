@@ -16,11 +16,7 @@ spec:
   template:
     metadata:
       labels:
-        app: postgres
-
-
-
-      
+        app: postgres 
       containers:
         - name: postgres
           image: bitnami/postgresql:latest
