@@ -10,6 +10,12 @@ spec:
   selector:
     matchLabels:
       app: ecommerce-app
+  ignoreDifferences:
+    - group: networking.k8s.io
+      kind: ingress 
+      jsonPointers:
+        - /metadata/annotations 
+        - /status
   template:
     metadata:
       labels:
@@ -53,7 +59,7 @@ spec:
         - name: ecommerce-app
           image: titouonee/clouddevops_ecommerce
           command: ['python3', 'manage.py', 'runserver', '0.0.0.0:8000']
-          
+
           securityContext:
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: true
