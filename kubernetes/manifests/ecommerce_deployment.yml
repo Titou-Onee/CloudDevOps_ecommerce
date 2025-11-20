@@ -17,7 +17,9 @@ spec:
     spec:
       serviceAccountName: ecommerce-app-sa 
       securityContext:
-
+        runAsNonRoot: true
+        runAsUser: 999
+        fsGroup: 999
       initContainers:
         - name: postgres-migration
           image: titouonee/clouddevops_ecommerce
@@ -26,22 +28,30 @@ spec:
             - secretRef:
                 name: ecommerce-secret
           securityContext:
-            runAsNonRoot: true
-            runAsUser: 1000
-            runAsGroup: 3000
             allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - NET_RAW
+                - ALL 
+                  resources:
+          requests:
+            memory: "256Mi"
+            cpu: "100m"
+          limits:
+            memory: "512Mi" 
+            cpu: "500m"
       containers:
       - name: ecommerce-app
         image: titouonee/clouddevops_ecommerce
         command: ['python3', 'manage.py', 'runserver', '0.0.0.0:8000']
         securityContext:
-          runAsNonRoot: true
-          runAsUser: 1000
-          runAsGroup: 3000
           allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
           capabilities:
-            drop:
-              - all
+              drop:
+                - ALL 
+                - NET_RAW
         ports:
         - containerPort: 8000
           name: http

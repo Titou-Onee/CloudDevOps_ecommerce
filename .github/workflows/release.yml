@@ -1,3 +1,4 @@
+# Verify signed image artifact, tag and push on DockerHub
 name: Push to DockerHub
 on:
   workflow_call:

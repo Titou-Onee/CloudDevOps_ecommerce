@@ -1,3 +1,5 @@
+# Main workflow 
+# Launch CI/CD for every yml changes or pull requests
 name: Main workflow
 on:
   push:
@@ -11,9 +13,11 @@ on:
   pull_request:
 
 jobs:
+  # Black formatting and flake8 linting
   code_quality:
     uses: titou-onee/clouddevops_ecommerce/.github/workflows/code-quality.yml@master
 
+  # Sonarqube and trivy fs scan ; trivy manifest scan ; build of the docker image, scan with trivy image and upload as an artifact with cosign
   call_security_checks:
     needs: code_quality
     uses: titou-onee/clouddevops_ecommerce/.github/workflows/security.yml@master
@@ -24,9 +28,8 @@ jobs:
       COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
       COSIGN_PRIVATE_KEY: ${{ secrets.COSIGN_PRIVATE_KEY}} 
 
-
+  # Verify signed image artifact, tag and push on DockerHub
   call_release:
-
     needs: call_security_checks
     uses: titou-onee/clouddevops_ecommerce/.github/workflows/release.yml@master
     with:
@@ -39,8 +42,8 @@ jobs:
       DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
       COSIGN_PUBLIC_KEY: ${{ secrets.COSIGN_PUBLIC_KEY}}
 
+  # Kustomize the kubernetes manifests to trigger ArgoCD
   call_deploy:
-
     needs: call_release
     uses: titou-onee/clouddevops_ecommerce/.github/workflows/deploy.yml@master
     with: 

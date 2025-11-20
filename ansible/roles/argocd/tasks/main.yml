@@ -20,7 +20,8 @@
     state: present
     kubeconfig: "{{ kubeconfig_path }}"
 
-- name: Créer le secret Redis si nécessaire
+# In the context of this project, we accept to use an insecure way to define password
+- name: Create Redis secret
   kubernetes.core.k8s:
     definition:
       apiVersion: v1
@@ -110,15 +111,8 @@
       type: Available
       status: true
     wait_timeout: 600
-
-#- name: Creation of argocd app
-#  kubernetes.core.k8s:
-#    definition: "{{ lookup('template', 'ecommerce.yml.j2') }}"
-#    kubeconfig: "{{ kubeconfig_path }}"
-#   state: present
-#  when: ecommerce_app is defined
   
-- name: Créer l'application Bootstrap (App of Apps)
+- name: Create Bootstrap application (App of Apps)
   kubernetes.core.k8s:
     definition:
       apiVersion: argoproj.io/v1alpha1
@@ -154,7 +148,7 @@
     state: present
   when: argocd.bootstrap.enabled
 
-- name: Attendre que l'application Bootstrap soit créée
+- name: Wait for bootstrap application
   kubernetes.core.k8s_info:
     api_version: argoproj.io/v1alpha1
     kind: Application
@@ -164,32 +158,3 @@
     wait: true
     wait_timeout: 60
   when: argocd.bootstrap.enabled
-
-- name: Afficher les informations de succès
-  debug:
-    msg:
-      - "╔════════════════════════════════════════════════════════════╗"
-      - "║  ✅ ArgoCD installé et configuré avec succès!              ║"
-      - "╚════════════════════════════════════════════════════════════╝"
-      - ""
-      - "🔑 Accès ArgoCD:"
-      - "  Port-forward: kubectl port-forward svc/argocd-server -n {{ argocd.namespace }} 8080:443"
-      - "  URL: https://localhost:8080"
-      - "  Username: admin"
-      - "  Password: {{ argocd.admin_password }}"
-      - ""
-      - "📦 Application Bootstrap créée!"
-      - "  ArgoCD déploie maintenant automatiquement toutes les applications"
-      - ""
-      - "🔍 Suivre le déploiement:"
-      - "  kubectl get applications -n {{ argocd.namespace }} -w"
-      - "  kubectl get pods --all-namespaces -w"
-      - ""
-      - "⏱️  Temps estimé de déploiement complet: 10-15 minutes"
-      - ""
-      - "📊 Applications qui seront déployées:"
-      - "  Wave 0: PSA (Pod Security Admission)"
-      - "  Wave 1: Gatekeeper + Falco"
-      - "  Wave 2: Prometheus"
-      - "  Wave 3: Grafana"
-      - "  Wave 4: E-commerce App"

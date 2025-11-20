@@ -1,3 +1,4 @@
+# Sonarqube and trivy fs scan ; trivy manifest scan ; build of the docker image, scan with trivy image and upload as an artifact with cosign
 name: Security checks
 on:
   workflow_call:

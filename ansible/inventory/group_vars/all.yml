@@ -1,45 +1,32 @@
-# Configuration Kubernetes
+# Kubernetes configuration
 kubernetes:
   cluster_name: eks-cluster
   kubeconfig: ~/.kube/config
 
-# Configuration ArgoCD (seul composant installé par Ansible)
+
 argocd:
-  # Namespace ArgoCD
   namespace: argocd
-  
-  # Version ArgoCD
   version: v2.9.3
-  
-  # Domaine (optionnel si vous avez un Ingress)
   domain: argocd.example.com
-  
-  # Mot de passe admin
+  # in the context of this project, we accept the unsecure way to define password
   admin_password: unsecure_admin_password
-  
-  # Repository Git principal
   git_repo:
     url: https://github.com/Titou-Onee/CloudDevOps_ecommerce.git
     name: gitops-main-repo
-  
-  # Application Bootstrap (App of Apps)
   bootstrap:
     enabled: true
     name: app-of-apps
-    path: gitops  # Dossier contenant app-of-apps.yaml
+    path: gitops
     auto_sync: true
     self_heal: true
 
-
 applications:
-  # Application e-commerce
   ecommerce:
     name: ecommerce-app
     namespace: ecommerce-app
     path: apps/ecommerce/manifests
     wave: "3"
   
-  # Sécurité
   security:
     psa:
       name: security-psa
@@ -61,7 +48,6 @@ applications:
       wave: "1"
       chart_version: "3.8.4"
   
-  # Monitoring
   monitoring:
     prometheus:
       name: monitoring-prometheus

@@ -1,5 +1,5 @@
 
-- name: Vérifier la connexion au cluster
+- name: Verify cluster connection
   kubernetes.core.k8s_info:
       api_version: v1
       kind: Node
@@ -11,7 +11,7 @@
     msg: "Cluster avec {{ nodes_info.resources | length }} nœud(s): {{ nodes_info.resources | map(attribute='metadata.name') | list }}"
  
 
-- name: Vérifier si le driver CSI EBS existe
+- name: Verify if CSI EBS driver exist
   kubernetes.core.k8s_info:
     api_version: storage.k8s.io/v1
     kind: CSIDriver
@@ -20,14 +20,14 @@
   register: csi_driver
   failed_when: false
 
-- name: Installer le driver EBS CSI via Helm
+- name: Install EBS CSI driver vwith Helm
   kubernetes.core.helm_repository:
     name: aws-ebs-csi-driver
     repo_url: https://kubernetes-sigs.github.io/aws-ebs-csi-driver
     state: present
   when: csi_driver.resources | length == 0
 
-- name: Installer le driver EBS CSI via Helm
+- name: Install EBS CSI via Helm
   kubernetes.core.helm:
     name: aws-ebs-csi-driver
     chart_ref: aws-ebs-csi-driver/aws-ebs-csi-driver
@@ -60,7 +60,7 @@
         type: gp3
   register: gp3_storageclass
 
-- name: Vérifier les StorageClasses existantes
+- name: Vérifie StorageClasses
   kubernetes.core.k8s_info:
     api_version: storage.k8s.io/v1
     kind: StorageClass
@@ -68,14 +68,14 @@
   register: storage_classes
 
 
-- name: Vérifier l'état final du cluster
+- name: Verify final state of the cluster
   kubernetes.core.k8s_info:
     api_version: v1
     kind: Node
     kubeconfig: "{{ kubeconfig_path }}"
   register: final_nodes
 
-- name: Afficher le résumé
+- name: Print the resume
   debug:
     msg:
       - "Noeuds: {{ final_nodes.resources | length }}"

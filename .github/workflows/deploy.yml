@@ -1,3 +1,4 @@
+# Kustomize the kubernetes manifests to trigger ArgoCD
 name: Update of manifests
 on:
   workflow_call:

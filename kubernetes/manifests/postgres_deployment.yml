@@ -54,6 +54,7 @@ spec:
             capabilities:
               drop:
                 - ALL 
+                - NET_RAW
           ports:
           - containerPort: 5432
             protocol: TCP
