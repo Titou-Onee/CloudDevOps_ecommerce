@@ -27,6 +27,7 @@ spec:
         - name: postgres
           image: bitnami/postgresql:latest
           imagePullPolicy: Always
+
           env:
             - name: POSTGRESQL_DATABASE
               valueFrom:
@@ -48,6 +49,7 @@ spec:
                 secretKeyRef:
                   name: ecommerce-secret
                   key: POSTGRESQL_POSTGRES_PASSWORD
+
           securityContext:  
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: true
@@ -55,12 +57,24 @@ spec:
               drop:
                 - ALL 
                 - NET_RAW
+
           ports:
-          - containerPort: 5432
-            protocol: TCP
+            - containerPort: 5432
+              protocol: TCP
+
           volumeMounts:
-          - name: postgres-storage
-            mountPath: /var/lib/postgresql/data
+            - name: postgres-storage
+              mountPath: /var/lib/postgresql/data
+            - name: temp
+              mountPath: /tmp
+
+          volumes:
+            - name: postgres-storage
+              persistentVolumeClaim:
+                claimName: postgres-data-pvc
+            - name: tmp 
+              emptyDir: {}
+
           resources:
             requests:
               memory: "1Gi"
@@ -68,15 +82,9 @@ spec:
             limits:
               memory: "2Gi" 
               cpu: "1000m"
-      volumeMounts:
-        - name: temp
-          mountPath: /tmp
-      volumes:
-        - name: postgres-storage
-          persistentVolumeClaim:
-            claimName: postgres-data-pvc
-        - name: tmp 
-          emptyDir: {}
+
+
+
 
 ---
 apiVersion: v1

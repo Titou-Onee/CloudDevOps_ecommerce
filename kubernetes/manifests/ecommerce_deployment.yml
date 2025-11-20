@@ -55,9 +55,11 @@ spec:
           ports:
           - containerPort: 8000
             name: http
+            
           envFrom:
             - secretRef:
-                name: ecommerce-secret
+              name: ecommerce-secret
+
           volumeMounts:
             - name: temp
               mountPath: /tmp
