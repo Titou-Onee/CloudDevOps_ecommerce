@@ -64,10 +64,6 @@ spec:
             - name: tmp
               mountPath: /tmp
 
-          volumes:
-            - name: tmp 
-              emptyDir: {}
-
           resources:
             requests:
               memory: "256Mi"
@@ -75,6 +71,9 @@ spec:
             limits:
               memory: "512Mi" 
               cpu: "500m"
+      volumes:
+        - name: tmp 
+          emptyDir: {}      
 ---
 apiVersion: v1
 kind: Service

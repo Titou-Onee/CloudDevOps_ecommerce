@@ -68,13 +68,6 @@ spec:
             - name: tmp
               mountPath: /tmp
 
-          volumes:
-            - name: postgres-storage
-              persistentVolumeClaim:
-                claimName: postgres-data-pvc
-            - name: tmp 
-              emptyDir: {}
-
           resources:
             requests:
               memory: "1Gi"
@@ -83,7 +76,12 @@ spec:
               memory: "2Gi" 
               cpu: "1000m"
 
-
+      volumes:
+        - name: postgres-storage
+          persistentVolumeClaim:
+            claimName: postgres-data-pvc
+        - name: tmp 
+          emptyDir: {}
 
 
 ---
