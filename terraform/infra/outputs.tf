@@ -13,6 +13,3 @@ output "cluster_endpoint" {
 output "ebs_csi_driver_role_arn" {
   value = module.eks.ebs_csi_driver_role_arn
 }
-output "github_oidc_role_arn" {
-  value       = module.OICD.github_actions_role_arn
-}
