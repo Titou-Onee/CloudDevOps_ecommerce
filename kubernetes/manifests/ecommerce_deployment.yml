@@ -24,16 +24,23 @@ spec:
         - name: postgres-migration
           image: titouonee/clouddevops_ecommerce
           command: ['python3', 'manage.py', 'migrate']
+
           envFrom:
             - secretRef:
                 name: ecommerce-secret
+
           securityContext:
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: true
             capabilities:
               drop:
                 - NET_RAW
-                - ALL 
+                - ALL
+
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp 
+
           resources:
             requests:
               memory: "256Mi"
@@ -41,10 +48,12 @@ spec:
             limits:
               memory: "512Mi" 
               cpu: "500m"
+
       containers:
         - name: ecommerce-app
           image: titouonee/clouddevops_ecommerce
           command: ['python3', 'manage.py', 'runserver', '0.0.0.0:8000']
+          
           securityContext:
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: true
