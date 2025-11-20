@@ -65,7 +65,7 @@ spec:
           volumeMounts:
             - name: postgres-storage
               mountPath: /var/lib/postgresql/data
-            - name: temp
+            - name: tmp
               mountPath: /tmp
 
           volumes:
