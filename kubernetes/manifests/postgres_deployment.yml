@@ -50,7 +50,7 @@ spec:
                   key: POSTGRESQL_POSTGRES_PASSWORD
           securityContext:  
             allowPrivilegeEscalation: false
-            readOnlyRootFilesystem: false
+            readOnlyRootFilesystem: true
             capabilities:
               drop:
                 - ALL 
@@ -68,12 +68,15 @@ spec:
             limits:
               memory: "2Gi" 
               cpu: "1000m"
-
+      volumeMounts:
+        - name: temp
+          mountPath: /tmp
       volumes:
         - name: postgres-storage
           persistentVolumeClaim:
             claimName: postgres-data-pvc
-          
+        - name: tmp 
+          emptyDir: {}
 
 ---
 apiVersion: v1
