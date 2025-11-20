@@ -26,7 +26,7 @@ spec:
           command: ['python3', 'manage.py', 'migrate']
           envFrom:
             - secretRef:
-                name: ecommerce-secret
+              name: ecommerce-secret
           securityContext:
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: true
