@@ -4,7 +4,7 @@ on:
     branches:
         - master
     paths:
-        - './terraform'
+        - 'terraform/**'
 
 jobs:
   terraform:

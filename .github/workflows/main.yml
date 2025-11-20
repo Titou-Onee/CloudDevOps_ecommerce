@@ -7,7 +7,7 @@ on:
         - master
         - dev
       paths:
-        - '/Docker'
+        - 'Docker/**'
 
   pull_request:
 

@@ -5,8 +5,8 @@ on:
         - dev
         - master
     paths:
-        - './gitops'
-        - './kubernetes'
+        - 'gitops/**'
+        - 'kubernetes/**'
 
 
 jobs:
