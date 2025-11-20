@@ -7,6 +7,7 @@ module "network" {
 
 }
 
+# creation of the cluster eks and roles
 module "eks" {
   source          = "./modules/eks"
   cluster_name    = var.cluster_name
