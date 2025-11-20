@@ -9,6 +9,7 @@ metadata:
     app.kubernetes.io/name: ecommerce-app
     app.kubernetes.io/managed-by: argocd
 spec:
+  
   project: ecommerce-project
   ignoreDifferences:
     - group: argoproj.io
@@ -23,6 +24,11 @@ spec:
         - /spec/template/spec/containers/0/terminationMessagePath 
         - /spec/template/spec/containers/0/terminationMessagePolicy 
         - /spec/template/spec/securityContext 
+        - /status
+    - group: networking.k8s.io
+      kind: Ingress
+      jsonPointers:
+        - /metadata/annotations
         - /status
   
   source:
