@@ -34,37 +34,37 @@ spec:
               drop:
                 - NET_RAW
                 - ALL 
-                  resources:
-          requests:
-            memory: "256Mi"
-            cpu: "100m"
-          limits:
-            memory: "512Mi" 
-            cpu: "500m"
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "100m"
+            limits:
+              memory: "512Mi" 
+              cpu: "500m"
       containers:
-      - name: ecommerce-app
-        image: titouonee/clouddevops_ecommerce
-        command: ['python3', 'manage.py', 'runserver', '0.0.0.0:8000']
-        securityContext:
-          allowPrivilegeEscalation: false
-          readOnlyRootFilesystem: true
-          capabilities:
-              drop:
-                - ALL 
-                - NET_RAW
-        ports:
-        - containerPort: 8000
-          name: http
-        envFrom:
-          - secretRef:
-              name: ecommerce-secret
-        resources:
-          requests:
-            memory: "256Mi"
-            cpu: "100m"
-          limits:
-            memory: "512Mi" 
-            cpu: "500m"
+        - name: ecommerce-app
+          image: titouonee/clouddevops_ecommerce
+          command: ['python3', 'manage.py', 'runserver', '0.0.0.0:8000']
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+                drop:
+                  - ALL 
+                  - NET_RAW
+          ports:
+          - containerPort: 8000
+            name: http
+          envFrom:
+            - secretRef:
+                name: ecommerce-secret
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "100m"
+            limits:
+              memory: "512Mi" 
+              cpu: "500m"
 ---
 apiVersion: v1
 kind: Service
