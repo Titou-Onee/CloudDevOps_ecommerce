@@ -47,7 +47,7 @@ spec:
           command: ['python3', 'manage.py', 'runserver', '0.0.0.0:8000']
           securityContext:
             allowPrivilegeEscalation: false
-            readOnlyRootFilesystem: false
+            readOnlyRootFilesystem: true
             capabilities:
                 drop:
                   - ALL 
