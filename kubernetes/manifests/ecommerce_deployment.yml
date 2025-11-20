@@ -58,6 +58,14 @@ spec:
           envFrom:
             - secretRef:
                 name: ecommerce-secret
+          volumeMounts:
+            - name: temp
+              mountPath: /tmp
+
+          volumes:
+            - name: tmp 
+              emptyDir: {}
+
           resources:
             requests:
               memory: "256Mi"
