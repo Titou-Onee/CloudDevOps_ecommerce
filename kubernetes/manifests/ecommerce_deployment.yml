@@ -26,7 +26,7 @@ spec:
           command: ['python3', 'manage.py', 'migrate']
           envFrom:
             - secretRef:
-                name: sealed-secrets
+                name: ecommerce-secret
           securityContext:
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: true
@@ -58,7 +58,7 @@ spec:
 
           envFrom:
             - secretRef:
-              name: sealed-secrets
+              name: ecommerce-secret
 
           volumeMounts:
             - name: tmp
