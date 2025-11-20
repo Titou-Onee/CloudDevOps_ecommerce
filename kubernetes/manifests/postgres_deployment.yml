@@ -50,7 +50,7 @@ spec:
                   key: POSTGRESQL_POSTGRES_PASSWORD
           securityContext:  
             allowPrivilegeEscalation: false
-            readOnlyRootFilesystem: true
+            readOnlyRootFilesystem: false
             capabilities:
               drop:
                 - ALL 
