@@ -15,7 +15,6 @@ resources:
 - postgres_deployment.yml
 - ecommerce_deployment.yml
 - ingress.yml
-- not-secure-private-key.yml
 
 commonLabels:
   app.kubernetes.io/managed-by: argocd
