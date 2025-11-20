@@ -7,9 +7,8 @@ on:
         - master
         - dev
       paths:
-        - 'Docker'
-        - '**/*.yml'
-        - '**/*.yaml'
+        - '/Docker'
+
   pull_request:
 
 jobs:

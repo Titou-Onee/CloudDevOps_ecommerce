@@ -4,8 +4,7 @@ on:
     branches:
         - master
     paths:
-        - '**.tf'
-        - '**.tfvars'
+        - './terraform'
 
 jobs:
   terraform:
