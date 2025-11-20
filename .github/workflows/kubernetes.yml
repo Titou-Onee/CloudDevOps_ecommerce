@@ -1,3 +1,4 @@
+# manifest scan for k8s and gitops
 name: k8s security
 on:
   push:
