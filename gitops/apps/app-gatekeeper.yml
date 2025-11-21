@@ -32,7 +32,7 @@ spec:
   
   destination:
     server: https://kubernetes.default.svc
-    namespace: gatekeeper-system
+    namespace: security
   
   syncPolicy:
     automated:

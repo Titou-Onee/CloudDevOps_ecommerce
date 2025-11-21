@@ -33,17 +33,7 @@ metadata:
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: falco
-  labels:
-    pod-security.kubernetes.io/enforce: baseline
-    pod-security.kubernetes.io/audit: baseline
-    pod-security.kubernetes.io/warn: baseline
-
----
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: gatekeeper-system
+  name: security
   labels:
     pod-security.kubernetes.io/enforce: baseline
     pod-security.kubernetes.io/audit: baseline

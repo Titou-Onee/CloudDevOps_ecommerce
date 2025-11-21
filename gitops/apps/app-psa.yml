@@ -1,0 +1,23 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: psa
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "0"
+  labels:
+    app.kubernetes.io/name: psa
+    app.kubernetes.io/managed-by: none
+spec:
+  project: security-project
+  source:
+    repoURL: https://github.com/Titou-Onee/CloudDevOps_ecommerce.git
+    path: gitops/apps/values/psa
+    
+  destination:
+    server: https://kubernetes.default.svc
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
