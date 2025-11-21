@@ -12,7 +12,7 @@ spec:
   project: security-project
   source:
     repoURL: https://github.com/Titou-Onee/CloudDevOps_ecommerce.git
-    path: gitops/apps/values/psa
+    path: gitops/apps/values/pss
     
   destination:
     server: https://kubernetes.default.svc
