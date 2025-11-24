@@ -1,11 +1,11 @@
-# IaC security and cost scan
 name: Terraform
 on:
   push:
     branches:
         - master
     paths:
-        - 'terraform/**'
+        - '**.tf'
+        - '**.tfvars'
 
 jobs:
   terraform:
@@ -38,9 +38,9 @@ jobs:
       - name: Terraform validation
         run: terraform validate
         continue-on-error: true
-
+ 
       - name: Run infracost diff
-        uses: infracost/infracost-gh-action@master@v3
+        uses: infracost/infracost-gh-action@master
         env:
           api-key: ${{ secrets.INFRACOST_API_KEY }}
           AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
