@@ -1,11 +1,12 @@
-# IaC security and cost scan
+# Worflow for terraform checks
 name: Terraform
 on:
   push:
     branches:
         - master
     paths:
-        - 'terraform/**'
+        - '**.tf'
+        - '**.tfvars'
 
 jobs:
   terraform:
@@ -20,6 +21,13 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+      
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
+          aws-region: eu-west-3
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
@@ -39,16 +47,34 @@ jobs:
         run: terraform validate
         continue-on-error: true
 
-      - name: Run infracost diff
-        uses: infracost/infracost-gh-action@master@v3
-        env:
+      - name: Setup Infracost
+        uses: infracost/actions/setup@v3
+        with: 
           api-key: ${{ secrets.INFRACOST_API_KEY }}
-          AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
-          AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
 
-      - name: TFLint
+      - name: Generate Infracost breakdown
+        run: |
+          infracost breakdown --path=. \
+                              --format=table \
+                              --show-skipped
+      
+      - name: Generate Infracost JSON output
+        run: |
+          infracost breakdown --path=. \
+                              --format=json \
+                              --out-file=/tmp/infracost.json
+      
+      - name: Upload Infracost results
+        uses: actions/upload-artifact@v4
+        with:
+          name: infracost-results
+          path: /tmp/infracost.json
+
+      - name: TSetup TFlint
         uses: terraform-linters/setup-tflint@v3
-      - run: tflint --recursive
+
+      - name: Run TFlint
+        run: tflint --recursive
         continue-on-error: true
 
       - name: TFsec
