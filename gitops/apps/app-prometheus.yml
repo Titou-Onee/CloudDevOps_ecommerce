@@ -16,6 +16,14 @@ spec:
       jsonPointers:
         - /metadata
         - /status 
+    - group: monitoring.coreos.com
+      kind: Prometheus
+      jqPathExpressions:
+        - .status
+    - group: monitoring.coreos.com
+      kind: ServiceMonitor
+    - group: monitoring.coreos.com
+      kind: PodMonitor
   
   sources:
     - repoURL: https://prometheus-community.github.io/helm-charts
@@ -41,6 +49,8 @@ spec:
     syncOptions:
       - CreateNamespace=true
       - ServerSideApply=true
+      - RespectIgnoreDifferences=true
+      - ApplyOutOfSyncOnly=true
     retry:
       limit: 5
       backoff:
