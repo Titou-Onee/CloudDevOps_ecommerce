@@ -30,9 +30,9 @@ resource "kubernetes_ingress_v1" "ecommerce_ingress_http_only" {
 
           backend {
             service {
-              name = "ecommerce-service"
+              name = var.service_name
               port {
-                number = 80
+                number = var.service_port
               }
             }
           }

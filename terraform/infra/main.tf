@@ -23,7 +23,10 @@ module "eks" {
 }
 
 module "ingress" {
-  source = "./modules/ingress"
-  ingress_name = var.ingress_name
+  source            = "./modules/ingress"
+  ingress_name      = var.ingress_name
   ingress_namespace = var.ingress_namespace
+  service_name      = var.service_name
+  service_port      = var.service_port
+  hostname          = var.hostname
 }
