@@ -20,3 +20,9 @@ module "eks" {
   max_unavailable = var.max_unavailable
   depends_on      = [module.network]
 }
+
+module "ingress" {
+  source = "./modules/ingress"
+  ingress_name = var.ingress_name
+  ingress_namespace = var.ingress_namespace
+}

@@ -15,3 +15,6 @@ variable "bucket_name" { default = "terraform-ecommerce-app" }
 
 variable "github_repo" { default = "Titou-onee/CloudDevops_ecommerce" }
 variable "git_orga_name" { default = "Titou-Onee" }
+
+variable "ingress_name" { default = "ecommerce-ingress" }
+variable "ingress_namespace" { default = "ecommerce" }

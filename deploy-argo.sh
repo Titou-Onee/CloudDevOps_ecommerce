@@ -23,7 +23,6 @@ install_ansible_deps() {
     log_success "Collections installed"
 }
 
-
 # Bootstrap GitOps
 bootstrap_gitops() {
     log_info "Bootstrap GitOps with Ansible..."
@@ -33,6 +32,13 @@ bootstrap_gitops() {
     log_success "Bootstrap finished"
 }
 
+# Apply key for SealedSecret
+sealedSecret_key(){
+    log_info "upload of the kubeseal Key"
+    kubectl apply -f not-secure-private-key.yml
+    log_success "Key uploaded" 
+
+}
 
 # Access informations
 show_access_info() {
@@ -59,6 +65,7 @@ show_access_info() {
 main() {
     install_ansible_deps
     bootstrap_gitops
+    sealedSecret_key
     show_access_info
     
     echo ""
