@@ -1,3 +1,4 @@
+# Variables definition file
 project_name    = "CloudDevOps_Project"
 cluster_name    = "eks-cluster"
 cluster_version = 1.33
