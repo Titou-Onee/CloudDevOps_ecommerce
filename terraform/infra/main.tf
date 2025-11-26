@@ -1,4 +1,4 @@
-# creation of the network for eks
+# Creation of the network for eks
 module "network" {
   source              = "./modules/network"
   project_name        = var.project_name
@@ -8,7 +8,7 @@ module "network" {
 
 }
 
-# creation of the cluster eks and roles
+# Creation of the cluster eks with IAM
 module "eks" {
   source          = "./modules/eks"
   cluster_name    = var.cluster_name
@@ -22,7 +22,7 @@ module "eks" {
   depends_on      = [module.network]
 }
 
-# creation of the ingress for ecommerce application
+# Creation of the ingress for ecommerce application
 module "ingress" {
   source            = "./modules/ingress"
   ingress_name      = var.ingress_name
