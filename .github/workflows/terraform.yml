@@ -89,7 +89,7 @@ jobs:
         uses: bridgecrewio/checkov-action@v3
         with:
           framework: terraform
-          output_format: cli
+          output_format: github_failed_only
           output_file_path: /tmp/checkov-report.txt
         continue-on-error: true
 
