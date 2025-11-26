@@ -1,8 +1,24 @@
-variable "cluster_name" {}
-variable "cluster_version" {}
-variable "subnet_ids" {}
-variable "instance_types" {}
-variable "desired_size" {}
-variable "min_size" {}
-variable "max_size" {}
-variable "max_unavailable" {}
+variable "cluster_name" {
+  type = string
+}
+variable "cluster_version" {
+  type = number
+}
+variable "subnet_ids" {
+  type = list(string)
+}
+variable "instance_types" {
+  type = list(string)
+}
+variable "desired_size" {
+  type = number
+}
+variable "min_size" {
+  type = number
+}
+variable "max_size" {
+  type = number
+}
+variable "max_unavailable" {
+  type = number
+}
