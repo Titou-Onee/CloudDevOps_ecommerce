@@ -12,5 +12,5 @@ COPY Pipfile Pipfile.lock /code/
 RUN python3 -m pip install pipenv && pipenv install --system
 
 COPY . /code/
-
+ 
 # Ajouter un .dockerignore
