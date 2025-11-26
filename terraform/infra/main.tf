@@ -22,7 +22,7 @@ module "eks" {
   depends_on      = [module.network]
 }
 
-# Creation of the ingress for ecommerce application
+# Creation of the ingress for ecommerce application 
 module "ingress" {
   source            = "./modules/ingress"
   ingress_name      = var.ingress_name
