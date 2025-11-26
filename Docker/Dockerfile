@@ -1,4 +1,4 @@
-#pull base image
+#pull base image python 
 FROM python:3.6
 
 ENV PYTHONDONTWRITEBYTECODE 1
