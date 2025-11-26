@@ -87,7 +87,6 @@ jobs:
           additional_args: >
             --format text
             --concise-output
-            # Chemin de sortie est relatif à la racine du dépôt
             --out terraform/infra/reports/tfsec-report.txt
         continue-on-error: true
 
@@ -98,7 +97,6 @@ jobs:
             -d terraform/infra
             --framework terraform
             --output github_failed_only
-            # Chemin de sortie est relatif à la racine du dépôt
             --output-file-path terraform/infra/reports/checkov-report.txt
         continue-on-error: true
 
