@@ -103,7 +103,8 @@ jobs:
           checkov -d terraform/infra \
                   --framework terraform \
                   --output cli \
-                  --output-file-path terraform/infra/reports/checkov-report.txt   
+                  --output-file-path terraform/infra/reports/checkov-report.txt \
+                  --quiet 
         continue-on-error: true
 
       - name: Upload reports
