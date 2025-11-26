@@ -14,3 +14,4 @@ output "cluster_endpoint" {
 output "ebs_csi_driver_role_arn" {
   value = module.eks.ebs_csi_driver_role_arn
 }
+ 
