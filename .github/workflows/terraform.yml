@@ -60,7 +60,7 @@ jobs:
         continue-on-error: true
       
       - name: Create reports directory
-        run: mkdir -p ${{ github.workspace }}/terraform/infrareports
+        run: mkdir -p ${{ github.workspace }}/terraform/infra/reports
 
       - name: Setup Infracost
         uses: infracost/actions/setup@v3
