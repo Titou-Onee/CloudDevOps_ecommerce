@@ -80,7 +80,7 @@ jobs:
         uses: aquasecurity/tfsec-action@v1.0.0
         with:
           additional_args: >
-            --format txt
+            --format text
             --concise-output
             --out /tmp/tfsec-report.txt
         continue-on-error: true
