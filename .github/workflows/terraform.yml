@@ -1,13 +1,16 @@
 # Worflow for terraform checks
+# Terraform init, plan, format, validate
+# TFlint verification
+# Infracost check
+# Checkov and TFsec scan
 name: Terraform
 on:
   push:
-    branches:
+      branches:
         - master
-    paths:
-        - '**.tf'
-        - '**.tfvars'
-
+        - dev
+      paths:
+        - 'terraform/**'
 jobs:
   terraform:
     runs-on: ubuntu-latest
@@ -46,6 +49,15 @@ jobs:
       - name: Terraform validation
         run: terraform validate
         continue-on-error: true
+      
+      - name: Setup TFlint
+        uses: terraform-linters/setup-tflint@v3
+        with:
+          tflint_version: v0.60.0
+
+      - name: Run TFlint
+        run: tflint --recursive
+        continue-on-error: true
 
       - name: Setup Infracost
         uses: infracost/actions/setup@v3
@@ -58,22 +70,13 @@ jobs:
                               --format=table \
                               --show-skipped
       
-      - name: Generate Infracost JSON output
+      - name: Generate Infracost txt output
         run: |
           infracost breakdown --path=. \
                               --format=table \
                               --out-file=infracost-report.txt
 
-      - name: TSetup TFlint
-        uses: terraform-linters/setup-tflint@v3
-        with:
-          tflint_version: v0.60.0
-
-      - name: Run TFlint
-        run: tflint --recursive
-        continue-on-error: true
-
-      - name: TFsec
+      - name: TFsec scan
         uses: aquasecurity/tfsec-action@v1.0.0
         with:
           additional_args: >
@@ -82,7 +85,7 @@ jobs:
             --out tfsec-report.txt
         continue-on-error: true
 
-      - name: Checkov
+      - name: Checkov scan
         uses: bridgecrewio/checkov-action@v3
         with:
           framework: terraform

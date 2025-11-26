@@ -1,4 +1,5 @@
 # manifest scan for k8s and gitops
+# Checkov manifest scan
 name: k8s security
 on:
   push:
