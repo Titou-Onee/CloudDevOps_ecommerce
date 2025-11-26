@@ -57,6 +57,11 @@ jobs:
           infracost breakdown --path=. \
                               --format=table \
                               --show-skipped
+      
+      - name: Generate Infracost JSON output
+        run: |
+          infracost breakdown --path=. \
+                              --format=table \
                               --out-file=infracost-report.txt
 
       - name: TSetup TFlint
