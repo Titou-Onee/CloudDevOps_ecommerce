@@ -6,20 +6,17 @@
 name: Terraform
 on:
   push:
-      branches:
-        - master
-        - dev
-      paths:
-        - 'terraform/**'
+    branches:
+      - master
+      - dev
+    paths:
+      - 'terraform/**'
 jobs:
   terraform:
     runs-on: ubuntu-latest
     permissions:
       id-token: write
       contents: read
-    defaults:
-      run:
-        working-directory: terraform/infra
 
     steps:
       - name: Checkout repository
@@ -39,15 +36,18 @@ jobs:
 
       - name: Terraform init
         run: terraform init
+        working-directory: terraform/infra
         env:
-           TF_VAR_aws_region: eu-west-3
+            TF_VAR_aws_region: eu-west-3
 
       - name: Terraform format
         run: terraform fmt --check -recursive
+        working-directory: terraform/infra
         continue-on-error: true
 
       - name: Terraform validation
         run: terraform validate
+        working-directory: terraform/infra
         continue-on-error: true
       
       - name: Setup TFlint
@@ -57,10 +57,11 @@ jobs:
 
       - name: Run TFlint
         run: tflint --recursive
+        working-directory: terraform/infra
         continue-on-error: true
       
       - name: Create reports directory
-        run: mkdir -p reports
+        run: mkdir -p terraform/infra/reports
 
       - name: Setup Infracost
         uses: infracost/actions/setup@v3
@@ -69,33 +70,36 @@ jobs:
 
       - name: Generate Infracost breakdown
         run: |
-          infracost breakdown --path=. \
+          infracost breakdown --path=terraform/infra \
                               --format=table \
                               --show-skipped
       
       - name: Generate Infracost txt output
         run: |
-          infracost breakdown --path=. \
+          infracost breakdown --path=terraform/infra \
                               --format=table \
-                              --out-file=reports/infracost-report.txt
+                              --out-file=terraform/infra/reports/infracost-report.txt
 
       - name: TFsec scan
         uses: aquasecurity/tfsec-action@v1.0.0
         with:
+          working_directory: terraform/infra 
           additional_args: >
             --format text
             --concise-output
-            --out ./reports/tfsec-report.txt
+            # Chemin de sortie est relatif à la racine du dépôt
+            --out terraform/infra/reports/tfsec-report.txt
         continue-on-error: true
 
       - name: Checkov scan
         uses: bridgecrewio/checkov-action@v3
         with:
           args: >
-            -d .
+            -d terraform/infra
             --framework terraform
             --output github_failed_only
-            --output-file-path ./reports/checkov-report.txt
+            # Chemin de sortie est relatif à la racine du dépôt
+            --output-file-path terraform/infra/reports/checkov-report.txt
         continue-on-error: true
 
       - name: Upload reports
