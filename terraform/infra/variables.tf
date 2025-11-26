@@ -1,4 +1,4 @@
-# default variable for main and modules
+# default variable for main and modules 
 variable "project_name" {}
 variable "cluster_name" {}
 variable "cluster_version" { default = 1.33 }
