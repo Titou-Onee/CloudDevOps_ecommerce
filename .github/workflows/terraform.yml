@@ -102,5 +102,5 @@ jobs:
           path: |
             terraform/infra/checkov-report.txt
             terraform/infra/tfsec-report.txt
-            terraform/infra/infracost-report.txt
+            infracost-report.txt
           retention-days: 1
