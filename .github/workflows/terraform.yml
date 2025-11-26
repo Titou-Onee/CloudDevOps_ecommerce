@@ -96,7 +96,7 @@ jobs:
           args: >
             -d terraform/infra
             --framework terraform
-            --output github_failed_only
+            --output cli
             --output-file-path terraform/infra/reports/checkov-report.txt
         continue-on-error: true
 
