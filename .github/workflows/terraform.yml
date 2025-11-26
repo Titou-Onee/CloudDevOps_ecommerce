@@ -91,13 +91,11 @@ jobs:
         continue-on-error: true
 
       - name: Checkov scan
-        uses: bridgecrewio/checkov-action@v3
-        with:
-          args: >
-            -d terraform/infra
-            --framework terraform
-            --output cli
-            --output-file-path terraform/infra/reports/checkov-report.txt
+        run: |
+          checkov -d terraform/infra \
+                  --framework terraform \
+                  --output cli \
+                  --output-file-path terraform/infra/reports/checkov-report.txt
         continue-on-error: true
 
       - name: Upload reports
