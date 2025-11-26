@@ -74,7 +74,7 @@ jobs:
         run: |
           infracost breakdown --path=. \
                               --format=table \
-                              --out-file=/tmp/infracost-report.txt
+                              --out-file=infracost-report.txt
 
       - name: TFsec scan
         uses: aquasecurity/tfsec-action@v1.0.0
@@ -82,15 +82,17 @@ jobs:
           additional_args: >
             --format text
             --concise-output
-            --out /tmp/tfsec-report.txt
+            --out tfsec-report.txt
         continue-on-error: true
 
       - name: Checkov scan
         uses: bridgecrewio/checkov-action@v3
         with:
-          framework: terraform
-          output_format: github_failed_only
-          output_file_path: /tmp/checkov-report.txt
+          args: >
+            -d .
+            --framework: terraform
+            --output: github_failed_only
+            --output-file-path: checkov-report.txt
         continue-on-error: true
 
       - name: Upload reports
@@ -98,7 +100,7 @@ jobs:
         with:
           name: terraform-security-report
           path: |
-            /tmp/checkov-report.txt
-            /tmp/tfsec-report.txt
-            /tmp/infracost-report.txt
+            checkov-report.txt
+            tfsec-report.txt
+            infracost-report.txt
           retention-days: 1
