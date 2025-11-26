@@ -12,7 +12,7 @@ spec:
       rules:
         - alert: ArgoAppNotSynced
           expr: argocd_app_info{sync_status!="Synced"}
-          for: 5m
+          for: 5m 
           labels:
             severity: critical
             component: argocd-app
