@@ -21,4 +21,4 @@ variable "ingress_name" { default = "ecommerce-ingress" }
 variable "ingress_namespace" { default = "ecommerce" }
 variable "service_name" { default = "ecommerce-service" }
 variable "service_port" { default = 80 }
-variable "hostname" { default = "api.mon-ecommerce.com" }  
+variable "hostname" { default = "api.mon-ecommerce.com" }   
