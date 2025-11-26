@@ -99,5 +99,8 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: terraform-security-report
-          path: terraform/infra/reports
+          path: |
+            terraform/infra/checkov-report.txt
+            terraform/infra/tfsec-report.txt
+            terraform/infra/infracost-report.txt
           retention-days: 1
