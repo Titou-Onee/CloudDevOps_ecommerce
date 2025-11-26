@@ -18,3 +18,4 @@ terraform {
 #dynamodb_table = "terraform-state-lock"  # Pour le verrouillage
 #encrypt        = true
 #}
+ 
