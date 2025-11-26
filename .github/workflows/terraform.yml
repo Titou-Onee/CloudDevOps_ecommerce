@@ -57,21 +57,12 @@ jobs:
           infracost breakdown --path=. \
                               --format=table \
                               --show-skipped
-      
-      - name: Generate Infracost JSON output
-        run: |
-          infracost breakdown --path=. \
-                              --format=json \
-                              --out-file=/tmp/infracost.json
-      
-      - name: Upload Infracost results
-        uses: actions/upload-artifact@v4
-        with:
-          name: infracost-results
-          path: /tmp/infracost.json
+                              --out-file=infracost-report.txt
 
       - name: TSetup TFlint
         uses: terraform-linters/setup-tflint@v3
+        with:
+          tflint_version: v0.60.0
 
       - name: Run TFlint
         run: tflint --recursive
@@ -79,8 +70,27 @@ jobs:
 
       - name: TFsec
         uses: aquasecurity/tfsec-action@v1.0.0
+        with:
+          additional_args: >
+            --format cli
+            --concise-output
+            --out tfsec-report.txt
         continue-on-error: true
 
       - name: Checkov
         uses: bridgecrewio/checkov-action@v3
+        with:
+          framework: terraform
+          output_format: cli
+          output_file_path: console,checkov-report.txt
         continue-on-error: true
+
+      - name: Upload reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: terraform-security-report
+          path: |
+            checkov-report.txt
+            tfsec-report.txt
+            infracost-report.txt
+          retention-days: 1
