@@ -21,33 +21,6 @@ argocd:
     self_heal: true
 
 applications:
-  ecommerce:
-    name: ecommerce-app
-    namespace: ecommerce-app
-    path: apps/ecommerce/manifests
-    wave: "3"
-  
-  security:
-    psa:
-      name: security-psa
-      namespace: kube-system
-      path: security/psa
-      wave: "0"
-    
-    gatekeeper:
-      name: security-gatekeeper
-      namespace: gatekeeper-system
-      path: security/gatekeeper
-      wave: "1"
-      chart_version: "3.15.1"
-    
-    falco:
-      name: security-falco
-      namespace: falco
-      path: security/falco
-      wave: "1"
-      chart_version: "3.8.4"
-  
   monitoring:
     prometheus:
       name: monitoring-prometheus
@@ -55,10 +28,3 @@ applications:
       path: monitoring/prometheus
       wave: "2"
       chart_version: "55.5.0"
-    
-    grafana:
-      name: monitoring-grafana
-      namespace: monitoring
-      path: monitoring/grafana
-      wave: "3"
-      chart_version: "7.3.0"
