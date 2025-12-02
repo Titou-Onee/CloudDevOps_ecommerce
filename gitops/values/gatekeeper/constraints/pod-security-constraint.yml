@@ -1,3 +1,4 @@
+# Application of the PodSecurityChecks
 apiVersion: constraints.gatekeeper.sh/v1beta1
 kind: K8sPodSecurityChecks
 metadata:

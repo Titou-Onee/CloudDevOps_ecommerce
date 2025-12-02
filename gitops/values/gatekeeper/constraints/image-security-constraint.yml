@@ -1,3 +1,4 @@
+# Application of the ImagePolicy
 apiVersion: constraints.gatekeeper.sh/v1beta1
 kind: K8sImagePolicy
 metadata:
@@ -16,3 +17,7 @@ spec:
     excludedNamespaces:
       - kube-system
 #      - security
+  parameters:
+    approvedRegistry:
+      - "titouonee/"
+      - "bitnami/"

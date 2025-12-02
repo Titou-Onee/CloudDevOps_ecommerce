@@ -1,3 +1,4 @@
+# App-of-apps used to deploy all the applications in the cluster
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:

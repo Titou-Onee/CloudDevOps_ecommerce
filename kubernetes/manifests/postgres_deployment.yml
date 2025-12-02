@@ -3,6 +3,12 @@ kind: Deployment
 metadata:
   name: postgres
   namespace: ecommerce
+  labels:
+    app: postgres
+    name: postgres
+    component: database
+  annotations:
+    pdb/enabled: "true"
 spec:
   strategy:
     rollingUpdate:

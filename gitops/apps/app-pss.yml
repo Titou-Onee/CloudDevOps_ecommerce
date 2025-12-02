@@ -1,3 +1,4 @@
+# PSS policies manifest using value repository
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:

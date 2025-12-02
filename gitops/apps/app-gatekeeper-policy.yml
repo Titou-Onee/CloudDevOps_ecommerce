@@ -1,3 +1,4 @@
+# OPA policies manifest using the "value" repository
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:

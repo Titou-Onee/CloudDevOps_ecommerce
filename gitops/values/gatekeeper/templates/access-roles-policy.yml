@@ -1,3 +1,4 @@
+# template for default serviceAccount use / global permissions / podDisruptionBudget
 apiVersion: templates.gatekeeper.sh/v1
 kind: ConstraintTemplate
 metadata:

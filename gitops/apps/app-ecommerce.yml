@@ -1,3 +1,4 @@
+# Ecommerce app manifest using kubernetes directory
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:

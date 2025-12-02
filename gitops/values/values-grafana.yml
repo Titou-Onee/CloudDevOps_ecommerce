@@ -1,3 +1,5 @@
+# Values for Grafana configuration
+# In the context of the project, the password is unsecure
 adminUser: admin
 adminPassword: unsecure_admin_password
 

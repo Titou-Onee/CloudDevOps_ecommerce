@@ -1,3 +1,4 @@
+# Values for falco configuration
 falco:
   jsonOutput: true
   logLevel: info
