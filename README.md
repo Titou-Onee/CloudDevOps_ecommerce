@@ -24,9 +24,11 @@ This project leverages :
 
 ### 2. GitHub Actions
 - **Terraform workflow** :
-    - On .tf files update -> Terraform init, plan, Tfsec, Checkov and Infracost
+    - On .tf files update -> Terraform init, plan, TfLint, Tfsec, Checkov and Infracost
+- **Kubernetes Worflow** :
+    - On manifest update -> Checkov scan
 - **Main** :
-    - On .yml files update -> main workflow calling modules
+    - On application update -> main workflow calling modules
 - **Modules** :
     - **format-lint-code**: black formatting and flake8 linting
     - **security**: Sonarqube scan, trivy fs & manifest scan ; build of the docker image, scan with Trivy image and upload as a signed Artifact
@@ -34,37 +36,39 @@ This project leverages :
     - **deploy**: Kustomize the kubernetes manifests to trigger ArgoCD
 
 ### 3. Kubernetes Manifests
-- Use of **Kustomization** file to deploy the app and  dynamically update the image tag.
+- Use of **Kustomization** file to deploy the app and dynamically update the image tag.
 - **Architecture** :
     - Namespace : ecommerce
     - Application_deployment
     - Postgresql_deployment
     - Postgresql_PVC
-    - Config map : for DB user access ???
     - **SealedSecrets** : for DB secrets
 - **Service** :
     - Ingress
     - Network policy
 - **Security** :
-    - Service account : for DB
-    - Role : for DB
+    - Service account
+    - Role
 
 ### 4. AWS Infrastructure provisioning usign Terraform
-- **EKS module** :
-    - EKS cluster
-    - RBAC for nodes
-- **Network module** :
-    - EKS internet access
-    - Access list for nodes
+- **1 VPC**
+- **Private Subnets** :
+  - EKS module :
+    - scaling nodes
+    - iam RBAC
+    - network security group
+- **Public Subnets** :
+     - Ec2 Bastion for cluster administration access via ssh
+     - alb for application access
 - **Remote state**
     - S3 bucket on AWS
 
 ### 5. Configuration Management using Ansible
 - **Preparation of the cluster** :
     - Verification of the cluster state
-    - Installation of drivers
+    - Installation of drivers and gp3
 - **ArgoCD** : 
-    - Installation of the controller
+    - Installation of the argoCD controller
     - Creation of the app-of-apps
 
 ### 6. Applications management using ArgoCD
@@ -93,11 +97,11 @@ App of Apps manifest use the GitOps repository to get the application manifest a
 ```bash
 .
 ├── .github/workflows/     # GitHub Actions Workflows
-├── Ansible/               # Ansible inventory playbooks and roles
+├── ansible/               # Ansible inventory playbooks and roles
 ├── Docker/                # Dockerfile and app source code
-├── Terraform/             # Terraform modules and scripts
-├── Kubernetes/            # Kubernetes deployment and service manifests
-├── GitOps/                # ArgoCD managed applications manifests and configurations
+├── terraform/             # Terraform modules and scripts
+├── kubernetes/            # Kubernetes deployment and service manifests
+├── gitOps/                # ArgoCD managed applications manifests and configurations
 ├── deploy.sh              # Script for Ansible deployment
 └── README.md              # Main documentation file
 ```
@@ -107,7 +111,7 @@ App of Apps manifest use the GitOps repository to get the application manifest a
 - optional : S3 bucket for remote terraform state (encryption, versioning and no public access)
 - linux environment or wsl (for ansible playbook)
 - Terraform, Ansible, SealedSecret (optional)
-- Git secrets : 
+- Git secrets (GitActions part): 
     - DOCKERHUB_USERNAME
     - DOCKERHUB_TOKEN
     - SONAR_TOKEN (for sonar scan)
@@ -143,7 +147,7 @@ chmod +x deploy.sh
 ## Author
 
 **Titouann Mauchamp**
-Student at UTT
+Student at UTT / Network & telecommunication - Information Systems Security
 
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-blue?logo=linkedin)](https://www.linkedin.com/in/titouann-mauchamp-a095ba224/)
 
