@@ -3,7 +3,7 @@ kubernetes:
   cluster_name: eks-cluster
   kubeconfig: ~/.kube/config
 
-
+# ArgoCD configuration
 argocd:
   namespace: argocd
   version: v2.9.3
@@ -20,11 +20,8 @@ argocd:
     auto_sync: true
     self_heal: true
 
+#Applications confiration
 applications:
   monitoring:
     prometheus:
-      name: monitoring-prometheus
       namespace: monitoring
-      path: monitoring/prometheus
-      wave: "2"
-      chart_version: "55.5.0"

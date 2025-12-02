@@ -1,24 +1,23 @@
+# Main roles
+# Install ArgoCD (namespaces, redis, argo serveur)
+# Install the app-of-apps through argocd
 - name: Add ArgoCD Helm Repository
   kubernetes.core.helm_repository:
     name: argocd
     repo_url: https://argoproj.github.io/argo-helm
     state: present
 
-- name: Create ArgoCD namespace
+- name: Create ArgoCD and monitoring namespace
   kubernetes.core.k8s:
-    name: "{{ argocd.namespace }}"
+    name: "{{ item }}"
     api_version: v1
     kind: namespace
     state: present
     kubeconfig: "{{ kubeconfig_path }}"
+  loop:
+    - "{{ argocd.namespace }}"
+    - "{{ applications.monitoring.prometheus.namespace }}"
 
-- name: Create monitoring namespace
-  kubernetes.core.k8s:
-    name: "{{ applications.monitoring.prometheus.namespace }}"
-    api_version: v1
-    kind: namespace
-    state: present
-    kubeconfig: "{{ kubeconfig_path }}"
 
 # In the context of this project, we accept to use an insecure way to define password
 - name: Create Redis secret
