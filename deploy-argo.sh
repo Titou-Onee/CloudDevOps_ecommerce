@@ -43,21 +43,25 @@ sealedSecret_key(){
 # Access informations
 show_access_info() {
 
+    echo "Ajouter autres applications"
+    
+    echo " Grafana "
+    echo "  kubectl port-forward svc/grafana -n monitoring 3000:80"
+    echo "  Username : admin"
+    echo "  Password : unsecure_admin_password"
+    echo "  URL: http://localhost:3000"
+    echo ""
+    
+    echo " Prometheus"
+    echo "  kubectl port-forward svc/kube-prometheus-stack-prometheus -n monitoring 9090:9090"
+    echo "  URL: http://localhost:9090"
+    echo ""
+
     echo " ArgoCD"
     echo "  kubectl port-forward svc/argocd-server -n argocd 8080:443"
     echo "  URL: https://localhost:8080"
     echo "  Username: admin"
     echo "  Password: kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d && echo"
-    echo ""
-    
-    echo " Grafana "
-    echo "  kubectl port-forward svc/grafana -n monitoring 3000:80"
-    echo "  URL: http://localhost:3000"
-    echo ""
-    
-    echo "📈 Prometheus"
-    echo "  kubectl port-forward svc/kube-prometheus-stack-prometheus -n monitoring 9090:9090"
-    echo "  URL: http://localhost:9090"
     echo ""
 }
 
@@ -70,8 +74,7 @@ main() {
     
     echo ""
     log_success "Bootstrap GitOps finished!"
-    echo "  kubectl port-forward svc/argocd-server -n argocd 8080:443"
-    echo "  https://localhost:8080"
+    echo ""
 }
 
 main "$@"

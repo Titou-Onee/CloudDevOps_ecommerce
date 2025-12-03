@@ -1,3 +1,4 @@
+# kustomize for application deployment and image update
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
@@ -21,4 +22,4 @@ commonLabels:
 
 images:
 - name: titouonee/clouddevops_ecommerce
-  newTag: b210d57596a70bc2475abf64bd630461f9f5465c
+  newTag: b16b38ce6ee07c3bb5ed09e817c1ac381d1887e0

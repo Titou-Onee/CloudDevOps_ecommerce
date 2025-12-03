@@ -1,3 +1,4 @@
+# template for label name / label component
 apiVersion: templates.gatekeeper.sh/v1
 kind: ConstraintTemplate
 metadata:

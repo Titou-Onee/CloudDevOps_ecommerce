@@ -1,3 +1,4 @@
+# Deployment for the application ecommerce
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -5,6 +6,10 @@ metadata:
   namespace: ecommerce
   labels:
     app: ecommerce-app
+    name: ecommerce-app
+    component: application
+  annotations:
+    pdb/enabled: "true"
 spec:
   replicas: 1
   selector:

@@ -1,5 +1,9 @@
 # Main workflow 
 # Launch CI/CD for every yml changes or pull requests
+# Code-quality
+# Code security scan
+# Code containerisation and upload
+# Code deployment with kustomize
 name: Main workflow
 on:
   push:

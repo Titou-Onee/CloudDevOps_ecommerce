@@ -1,3 +1,4 @@
+# template for resource.request and resource.limits
 apiVersion: templates.gatekeeper.sh/v1
 kind: ConstraintTemplate
 metadata:

@@ -1,4 +1,7 @@
-# Verify signed image artifact, tag and push on DockerHub
+# Containerisation of the application
+# Cosign artefact verification
+# Login to DockerHub
+# Tag and push of the image
 name: Push to DockerHub
 on:
   workflow_call:

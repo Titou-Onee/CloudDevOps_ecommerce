@@ -1,3 +1,4 @@
+# template for use of non-certified registry
 apiVersion: templates.gatekeeper.sh/v1
 kind: ConstraintTemplate
 metadata:
@@ -9,6 +10,15 @@ spec:
     spec:
       names:
         kind: K8sImagePolicy
+      validation:
+        openAPIV3Schema:
+          type: object
+          properties:
+            approvedRegistry:
+              type: array
+              description: "List of authorized registries"
+              items:
+                type: string
   targets:
     - target: admission.k8s.gatekeeper.sh
       rego: |
@@ -31,19 +41,7 @@ spec:
           input.review.kind.kind == "Pod"
           container := all_containers[_]
           image := container.image
-          not startswith(image, "titouonee/")
+          approved := input.parameters.approvedRegistry
+          not is_approved(image, approved)
           msg := sprintf("The image %q doesn't come from a certified registry ", [image])
-        }
-
-        violation[{"msg": msg}] {
-          input.review.kind.kind == "Pod"
-          container := all_containers[_]
-          
-          image_policy := container.imagePullPolicy
-          image := container.image
-          image_tag := split(container.image, ":")[1]
-
-          image_tag != "latest"
-          image_policy == "Always"
-          msg := sprintf("The container %q must have imagePullPolicy=Always", [container.name])
         }

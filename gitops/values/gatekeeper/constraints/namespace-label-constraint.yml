@@ -1,3 +1,4 @@
+# Application of the LabelDeployment
 apiVersion: constraints.gatekeeper.sh/v1beta1
 kind: k8sLabelDeployment
 metadata:

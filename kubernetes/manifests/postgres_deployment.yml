@@ -1,8 +1,16 @@
+# Deployment of the postgres database
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: postgres
   namespace: ecommerce
+  labels:
+    app: postgres
+    name: postgres
+    component: database
+  annotations:
+    pdb/enabled: "true"
+    gatekeeper.sh/exempt-rofs: "true"
 spec:
   strategy:
     rollingUpdate:

@@ -1,3 +1,4 @@
+# Application of the ImagePolicy
 apiVersion: constraints.gatekeeper.sh/v1beta1
 kind: K8sImagePolicy
 metadata:
@@ -13,6 +14,9 @@ spec:
         kinds: ["Pod"]
       - apiGroups: ["apps"]
         kinds: ["Deployment", "StatefulSet"]
-    excludedNamespaces:
-      - kube-system
-#      - security
+    namespaces:
+      - ecommerce
+  parameters:
+    approvedRegistry:
+      - "titouonee/"
+      - "bitnami/"

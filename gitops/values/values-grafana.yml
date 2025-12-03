@@ -1,11 +1,7 @@
-# admin:
-#  existingSecret: grafana-admin-credentials
-#    usernameKey: admin-user-grafana
-#    passwordKey: admin-pass-grafana
-
-  
+# Values for Grafana configuration
+# In the context of the project, the password is unsecure
 adminUser: admin
-adminPassword: monSuperMotDePasse
+adminPassword: unsecure_admin_password
 
 
 persistence:

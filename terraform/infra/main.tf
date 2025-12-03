@@ -1,4 +1,4 @@
-# creation of the network for eks
+# Creation of the network for eks
 module "network" {
   source               = "./modules/network"
   project_name         = var.project_name
@@ -49,6 +49,7 @@ module "eks" {
 
 }
 
+# Creation of the ingress for ecommerce application 
 module "ingress" {
   source            = "./modules/ingress"
   project_name      = var.project_name

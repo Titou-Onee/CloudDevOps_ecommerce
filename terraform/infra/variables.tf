@@ -1,3 +1,4 @@
+# default variable for main and modules 
 variable "project_name" {}
 
 

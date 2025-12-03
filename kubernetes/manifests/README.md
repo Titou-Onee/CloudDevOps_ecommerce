@@ -1,0 +1,12 @@
+Use of **Kustomization** file to deploy the app and dynamically update the image tag.
+- **Architecture** :
+    - Namespace : ecommerce
+    - Application_deployment
+    - Postgresql_deployment
+    - Postgresql_PVC
+    - **SealedSecrets** : for DB secrets
+- **Service** :
+    - Network policy
+- **Security** :
+    - Service account
+    - Role

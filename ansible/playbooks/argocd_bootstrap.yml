@@ -1,3 +1,6 @@
+# Main playbook
+# Prepare cluster
+# Install Argocd and apps
 - name: Deploy Argocd and apps
   hosts: kubernetes
   gather_facts: false
