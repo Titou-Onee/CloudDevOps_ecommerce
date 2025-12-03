@@ -16,7 +16,7 @@ argocd:
   bootstrap:
     enabled: true
     name: app-of-apps
-    path: gitops
+    path: gitops/app-of-apps
     auto_sync: true
     self_heal: true
 

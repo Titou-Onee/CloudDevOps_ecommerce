@@ -7,8 +7,6 @@
 adminUser: admin
 adminPassword: monSuperMotDePasse
 
-service:
-  type: LoadBalancer
 
 persistence:
   enabled: true

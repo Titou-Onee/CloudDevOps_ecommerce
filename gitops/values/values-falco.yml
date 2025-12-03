@@ -102,12 +102,3 @@ customRules:
         Privilege escalation attempt with setns/nsenter (user=%user.name command=%proc.cmdline)
       priority: CRITICAL
       tags: [container, privilege]
-
-
-
-
-
-
-# niveau d'alerte à ajouter
-# ajouter d'autres alertes
-# faire le lien avec prometheus
