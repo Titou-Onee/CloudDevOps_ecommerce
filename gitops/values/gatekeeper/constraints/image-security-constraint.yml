@@ -14,9 +14,8 @@ spec:
         kinds: ["Pod"]
       - apiGroups: ["apps"]
         kinds: ["Deployment", "StatefulSet"]
-    excludedNamespaces:
-      - kube-system
-#      - security
+    namespaces:
+      - ecommerce
   parameters:
     approvedRegistry:
       - "titouonee/"
