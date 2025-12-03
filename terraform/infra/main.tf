@@ -49,7 +49,7 @@ module "eks" {
 
 }
 
-# Creation of the ingress for ecommerce application 
+#Creation of the ingress for ecommerce application 
 module "ingress" {
   source            = "./modules/ingress"
   project_name      = var.project_name
