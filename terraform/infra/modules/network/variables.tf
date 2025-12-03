@@ -1,4 +1,8 @@
 variable "project_name" {}
+variable "cluster_name" {
+  
+}
 variable "vpc_cidr" {}
-variable "public_subnet_cidrs"{}
-variable "availability_zone" {}
+variable "availability_zones" {}
+variable "bastion_key_name" {}
+variable "allowed_bastion_cidr" {}
