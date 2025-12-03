@@ -7,7 +7,7 @@
       kubeconfig: "{{ kubeconfig_path }}"
   register: nodes_info
 
-- name: Afficher les nœuds
+- name: Print nodes
   debug:
     msg: "Cluster avec {{ nodes_info.resources | length }} nœud(s): {{ nodes_info.resources | map(attribute='metadata.name') | list }}"
  

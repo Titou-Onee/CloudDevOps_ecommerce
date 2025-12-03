@@ -10,6 +10,7 @@ metadata:
     component: database
   annotations:
     pdb/enabled: "true"
+    gatekeeper.sh/exempt-rofs: "true"
 spec:
   strategy:
     rollingUpdate:

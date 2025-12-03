@@ -75,6 +75,8 @@ This project leverages :
 App of Apps manifest use the GitOps repository to get the application manifest and the values for the configuration
 
 **App of Apps** :
+- **SyncWave 0 : Pod Security Standards**
+    - PSS configuration for namespaces
 - **SyncWave 1 : OPA Gatekeeper**
     - Controller for constraint deployment
 - **SyncWave 2 : OPA Gatekeeper Policies application**
