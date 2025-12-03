@@ -12,7 +12,7 @@
     msg: "Cluster avec {{ nodes_info.resources | length }} nœud(s): {{ nodes_info.resources | map(attribute='metadata.name') | list }}"
  
 
-- name: Vérifier si le pilote CSI EBS existe déjà
+- name: Verify CSI EBS driver
   kubernetes.core.k8s_info:
     api_version: storage.k8s.io/v1
     kind: CSIDriver
@@ -22,20 +22,20 @@
   failed_when: false
   tags: [csi_check]
 
-- name: Définir la variable pour l'installation du pilote
+- name: Define variable
   set_fact:
     install_csi_driver: "{{ csi_driver.resources | length == 0 }}"
   tags: [csi_check]
 
 
-- name: Ajouter le dépôt Helm pour le pilote CSI EBS
+- name: Add Helm repo for CSI EBS
   kubernetes.core.helm_repository:
     name: aws-ebs-csi-driver
     repo_url: https://kubernetes-sigs.github.io/aws-ebs-csi-driver
     state: present
   when: install_csi_driver
 
-- name: Installer le pilote CSI EBS via Helm
+- name: Install CSI EBS driver
   kubernetes.core.helm:
     name: aws-ebs-csi-driver
     chart_ref: aws-ebs-csi-driver/aws-ebs-csi-driver
