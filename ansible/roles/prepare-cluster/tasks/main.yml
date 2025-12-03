@@ -12,7 +12,7 @@
     msg: "Cluster avec {{ nodes_info.resources | length }} nœud(s): {{ nodes_info.resources | map(attribute='metadata.name') | list }}"
  
 
-- name: Verify if CSI EBS driver exist
+- name: Vérifier si le pilote CSI EBS existe déjà
   kubernetes.core.k8s_info:
     api_version: storage.k8s.io/v1
     kind: CSIDriver
@@ -20,15 +20,22 @@
     kubeconfig: "{{ kubeconfig_path }}"
   register: csi_driver
   failed_when: false
+  tags: [csi_check]
 
-- name: Install EBS CSI driver vwith Helm
+- name: Définir la variable pour l'installation du pilote
+  set_fact:
+    install_csi_driver: "{{ csi_driver.resources | length == 0 }}"
+  tags: [csi_check]
+
+
+- name: Ajouter le dépôt Helm pour le pilote CSI EBS
   kubernetes.core.helm_repository:
     name: aws-ebs-csi-driver
     repo_url: https://kubernetes-sigs.github.io/aws-ebs-csi-driver
     state: present
-  when: csi_driver.resources | length == 0
+  when: install_csi_driver
 
-- name: Install EBS CSI via Helm
+- name: Installer le pilote CSI EBS via Helm
   kubernetes.core.helm:
     name: aws-ebs-csi-driver
     chart_ref: aws-ebs-csi-driver/aws-ebs-csi-driver
@@ -43,7 +50,48 @@
           name: ebs-csi-controller-sa
           annotations:
             eks.amazonaws.com/role-arn: "arn:aws:iam::436567292667:role/eks-cluster-ebs-csi-driver"
-  when: csi_driver.resources | length == 0
+  when: install_csi_driver
+
+# - name: Verify if CSI EBS driver exist
+#   kubernetes.core.k8s_info:
+#     api_version: storage.k8s.io/v1
+#     kind: CSIDriver
+#     name: ebs.csi.aws.com
+#     kubeconfig: "{{ kubeconfig_path }}"
+#   register: csi_driver
+#   failed_when: false
+
+# - name: Install EBS CSI driver vwith Helm
+#   kubernetes.core.helm_repository:
+#     name: aws-ebs-csi-driver
+#     repo_url: https://kubernetes-sigs.github.io/aws-ebs-csi-driver
+#     state: present
+#   when: csi_driver.resources | length == 0
+
+# - name: Install EBS CSI via Helm
+#   kubernetes.core.helm:
+#     name: aws-ebs-csi-driver
+#     chart_ref: aws-ebs-csi-driver/aws-ebs-csi-driver
+#     release_namespace: kube-system
+#     create_namespace: false
+#     kubeconfig: "{{ kubeconfig_path }}"
+#     wait: true
+#     values:
+#       controller:
+#         serviceAccount:
+#           create: true
+#           name: ebs-csi-controller-sa
+#           annotations:
+#             eks.amazonaws.com/role-arn: "arn:aws:iam::436567292667:role/eks-cluster-ebs-csi-driver"
+#   when: csi_driver.resources | length == 0
+
+
+- name: Vérifie StorageClasses
+  kubernetes.core.k8s_info:
+    api_version: storage.k8s.io/v1
+    kind: StorageClass
+    kubeconfig: "{{ kubeconfig_path }}"
+  register: storage_classes
 
 - name: Ensure gp3 StorageClass exists
   kubernetes.core.k8s:
@@ -59,14 +107,8 @@
       reclaimPolicy: Delete
       parameters:
         type: gp3
-  register: gp3_storageclass
+  when: "'gp3' not in (storage_classes.resources | map(attribute='metadata.name') |)"
 
-- name: Vérifie StorageClasses
-  kubernetes.core.k8s_info:
-    api_version: storage.k8s.io/v1
-    kind: StorageClass
-    kubeconfig: "{{ kubeconfig_path }}"
-  register: storage_classes
 
 
 - name: Verify final state of the cluster
