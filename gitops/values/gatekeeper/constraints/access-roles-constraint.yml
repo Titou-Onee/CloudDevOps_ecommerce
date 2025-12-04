@@ -18,3 +18,4 @@ spec:
         kinds: ["Deployment"]
     excludedNamespaces:
       - kube-system
+      
