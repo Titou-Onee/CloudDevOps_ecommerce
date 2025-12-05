@@ -1,4 +1,6 @@
-
+# Main file of the EKS module
+# Create a node group within a eks cluster
+# define security group for nodes and cluster that allow intern traffic and a bastion connection
 resource "aws_security_group" "eks_control_plane" {
   name   = "${var.project_name}-eks-control-plane-sg"
   vpc_id = var.vpc_id

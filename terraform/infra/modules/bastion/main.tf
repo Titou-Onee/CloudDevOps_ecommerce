@@ -1,3 +1,6 @@
+# Main file of the Bastion module
+# This bastion create an EC2 instance with a security group that allow connection to the eks cluster
+# The bastion configuration include : git, curl, unzip, kubectl, ansible-galaxy, aws cli and a clone of this github repo
 data "aws_ami" "amazon_linux_2" {
   most_recent = true
   owners      = ["amazon"]

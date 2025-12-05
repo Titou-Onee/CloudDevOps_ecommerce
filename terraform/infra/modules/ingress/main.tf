@@ -1,3 +1,9 @@
+# Main file of the ingress module
+# Using the ssh tunneling to the bastion
+# Create ecommerce namespace
+# Create the ingress controller inside the cluster via "campaand/alb-ingress-controller/aws" module
+# Create the ingress inside the cluster
+
 terraform {
   required_providers {
     kubernetes = {

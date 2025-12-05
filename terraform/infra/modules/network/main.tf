@@ -1,3 +1,7 @@
+# Main file of the network module
+# Create a VPC, gateway, nat, eip, route table
+# Create private subnets for eks and public subnets for bastion and alb
+
 # Main VPC
 resource "aws_vpc" "main" {
   cidr_block = var.vpc_cidr

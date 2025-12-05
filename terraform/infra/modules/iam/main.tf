@@ -1,3 +1,5 @@
+# Main file of the iam module
+# Define role for eks cluster, nodes and ec2 bastion
 resource "aws_iam_role" "eks_cluster_role" {
   name = "${var.project_name}-eks-cluster-role"
 

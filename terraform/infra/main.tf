@@ -1,3 +1,9 @@
+# Main file of this project
+# Creation of the network, iam roles
+# Creation of the bastion
+# Creation of the cluster
+# 2nd apply to create ingress and alb controller in the cluster using the ssh tunneling throug the ec2 bastion
+
 # Creation of the network for eks
 module "network" {
   source               = "./modules/network"
