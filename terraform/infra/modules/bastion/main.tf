@@ -51,6 +51,8 @@ resource "aws_instance" "bastion" {
                 sudo yum update -y
 
                 sudo yum install -y curl unzip git
+                sudo amazon-linux-extras install -y python3.8
+                sudo update-alternatives --install /usr/bin/python python /usr/bin/python3.8 1
 
                 KUBE_VERSION=$(curl -L -s https://dl.k8s.io/release/stable.txt)
                 curl -LO "https://dl.k8s.io/release/$KUBE_VERSION/bin/linux/amd64/kubectl"

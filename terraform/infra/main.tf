@@ -55,7 +55,9 @@ module "eks" {
 
 }
 
-#Creation of the ingress for ecommerce application 
+#Creation of the ingress for ecommerce application
+# 1st apply need to be commented (ctrl+k+c)
+# 2nd apply usign the ssh tunneling through ec2 bastion 
 module "ingress" {
   source            = "./modules/ingress"
   project_name      = var.project_name
