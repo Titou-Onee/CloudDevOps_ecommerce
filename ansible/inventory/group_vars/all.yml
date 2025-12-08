@@ -1,7 +1,7 @@
 # Kubernetes configuration
 kubernetes:
   cluster_name: eks-cluster
-  kubeconfig: ~/.kube/config
+  kubeconfig: /home/ec2-user/.kube/config
 
 # ArgoCD configuration
 argocd:
@@ -25,3 +25,4 @@ applications:
   monitoring:
     prometheus:
       namespace: monitoring
+

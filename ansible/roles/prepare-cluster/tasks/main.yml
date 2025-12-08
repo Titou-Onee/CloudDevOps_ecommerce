@@ -11,6 +11,40 @@
   debug:
     msg: "Cluster avec {{ nodes_info.resources | length }} nœud(s): {{ nodes_info.resources | map(attribute='metadata.name') | list }}"
  
+- name: Récupérer les informations de l'identité OIDC du cluster EKS
+  community.aws.eks_cluster_info:
+    name: "{{ cluster_name }}" # Assurez-vous que cette variable contient le nom de votre cluster
+    # Les credentials AWS doivent être disponibles pour Ansible (variables d'environnement, profil, etc.)
+  register: eks_info
+
+- name: Définir les variables OIDC pour la politique de confiance
+  set_fact:
+    oidc_url: "{{ eks_info.clusters[0].identity.oidc.issuer | replace('https://', '') }}"
+    account_id: "{{ eks_info.clusters[0].arn | regex_replace('arn:aws:iam::(\\d+):.*', '\\1') }}"
+    role_arn_target: "arn:aws:iam::{{ account_id }}:role/eks-cluster-ebs-csi-driver" # L'ARN exact que vous utilisez dans la tâche Helm
+- name: Créer/Mettre à jour la politique de confiance (Assume Role Policy) pour le driver EBS
+  template:
+    src: files/ebs-csi-trust-policy.json.j2 # Fichier à créer (voir note ci-dessous)
+    dest: /tmp/ebs-csi-trust-policy.json
+    mode: '0600'
+  # Exécuté sur le bastion/hôte de contrôle Ansible
+  delegate_to: localhost 
+
+- name: Créer ou mettre à jour le Rôle IAM pour le driver CSI EBS
+  community.aws.iam_role:
+    name: "eks-cluster-ebs-csi-driver"
+    assume_role_policy_document: "{{ lookup('file', '/tmp/ebs-csi-trust-policy.json') }}"
+    managed_policy: "arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverServiceRole"
+    state: present
+  # Exécuté sur le bastion/hôte de contrôle Ansible
+  delegate_to: localhost
+
+- name: S'assurer que le fichier de confiance est supprimé
+  file:
+    path: /tmp/ebs-csi-trust-policy.json
+    state: absent
+  # Exécuté sur le bastion/hôte de contrôle Ansible
+  delegate_to: localhost
 
 - name: Verify CSI EBS driver
   kubernetes.core.k8s_info:
@@ -49,7 +83,7 @@
           create: true
           name: ebs-csi-controller-sa
           annotations:
-            eks.amazonaws.com/role-arn: "arn:aws:iam::436567292667:role/eks-cluster-ebs-csi-driver"
+            eks.amazonaws.com/role-arn: "{{ role_arn_target }}"
   when: install_csi_driver
 
 # - name: Verify if CSI EBS driver exist
