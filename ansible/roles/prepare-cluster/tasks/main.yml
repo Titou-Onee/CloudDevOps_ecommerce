@@ -107,7 +107,7 @@
       reclaimPolicy: Delete
       parameters:
         type: gp3
-  when: "'gp3' not in (storage_classes.resources | map(attribute='metadata.name') |)"
+  when: "'gp3' not in (storage_classes.resources | map(attribute='metadata.name'))"
 
 
 

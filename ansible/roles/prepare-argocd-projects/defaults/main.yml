@@ -9,6 +9,7 @@ argocd_projects_list:
       - 'https://github.com/Titou-Onee/CloudDevOps_ecommerce.git'
       - 'https://open-policy-agent.github.io/gatekeeper/charts'
       - 'https://falcosecurity.github.io/charts'
+      - 'https://bitnami-labs.github.io/sealed-secrets'
     destinations:
       - namespace: 'gatekeeper-system'
       - namespace: 'argocd'
@@ -25,11 +26,10 @@ argocd_projects_list:
       - namespace: 'kube-system'
 
   - name: ecommerce-project
-    description: Project for the application "e-commerce"
+    description: Project for the application e-commerce
     source_repos:
       - 'https://github.com/Titou-Onee/CloudDevOps_ecommerce.git'
       - 'https://hub.docker.com/r/bitnami'
-
     destinations:
       - namespace: 'ecommerce'
 
