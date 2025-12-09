@@ -25,6 +25,8 @@ spec:
         runAsNonRoot: true
         runAsUser: 999
         fsGroup: 999
+        seccompProfile:
+          type: RuntimeDefault
       initContainers:
         - name: postgres-migration
           image: titouonee/clouddevops_ecommerce
