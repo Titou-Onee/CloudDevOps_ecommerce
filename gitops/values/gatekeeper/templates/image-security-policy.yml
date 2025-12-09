@@ -48,7 +48,6 @@ spec:
             [image, approved],
           )
         }
-
         is_approved(image, approved_reg) {
           startswith(image, approved_reg)
         }
