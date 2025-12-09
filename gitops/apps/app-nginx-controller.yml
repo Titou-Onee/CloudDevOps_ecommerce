@@ -24,6 +24,7 @@ spec:
   
     - repoURL: https://github.com/Titou-Onee/CloudDevOps_ecommerce.git
       targetRevision: master
+      ref: values
 
             
   destination:
