@@ -1,133 +1,82 @@
 # Verify the cluster state
 # Install CSI EBS drivers and ensure that gp3 storageclass exists
-- name: Verify cluster connection
+- name: Vérifier la connexion au cluster
   kubernetes.core.k8s_info:
-      api_version: v1
-      kind: Node
-      kubeconfig: "{{ kubeconfig_path }}"
+    api_version: v1
+    kind: Node
+    kubeconfig: "{{ kubeconfig_path }}"
   register: nodes_info
-
-- name: Print nodes
-  debug:
-    msg: "Cluster avec {{ nodes_info.resources | length }} nœud(s): {{ nodes_info.resources | map(attribute='metadata.name') | list }}"
- 
-- name: Récupérer les informations de l'identité OIDC du cluster EKS
-  community.aws.eks_cluster_info:
-    name: "{{ cluster_name }}" # Assurez-vous que cette variable contient le nom de votre cluster
-    # Les credentials AWS doivent être disponibles pour Ansible (variables d'environnement, profil, etc.)
-  register: eks_info
-
-- name: Définir les variables OIDC pour la politique de confiance
-  set_fact:
-    oidc_url: "{{ eks_info.clusters[0].identity.oidc.issuer | replace('https://', '') }}"
-    account_id: "{{ eks_info.clusters[0].arn | regex_replace('arn:aws:iam::(\\d+):.*', '\\1') }}"
-    role_arn_target: "arn:aws:iam::{{ account_id }}:role/eks-cluster-ebs-csi-driver" # L'ARN exact que vous utilisez dans la tâche Helm
-- name: Créer/Mettre à jour la politique de confiance (Assume Role Policy) pour le driver EBS
-  template:
-    src: files/ebs-csi-trust-policy.json.j2 # Fichier à créer (voir note ci-dessous)
-    dest: /tmp/ebs-csi-trust-policy.json
-    mode: '0600'
-  # Exécuté sur le bastion/hôte de contrôle Ansible
-  delegate_to: localhost 
-
-- name: Créer ou mettre à jour le Rôle IAM pour le driver CSI EBS
-  community.aws.iam_role:
-    name: "eks-cluster-ebs-csi-driver"
-    assume_role_policy_document: "{{ lookup('file', '/tmp/ebs-csi-trust-policy.json') }}"
-    managed_policy: "arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverServiceRole"
-    state: present
-  # Exécuté sur le bastion/hôte de contrôle Ansible
+  
+- name: Récupérer les informations du cluster EKS
+  amazon.aws.eks_cluster_info:
+    name: "{{ cluster_name }}"
+    region: "{{ aws_region | default(omit) }}"
+  register: eks_cluster
   delegate_to: localhost
 
-- name: S'assurer que le fichier de confiance est supprimé
-  file:
-    path: /tmp/ebs-csi-trust-policy.json
-    state: absent
-  # Exécuté sur le bastion/hôte de contrôle Ansible
-  delegate_to: localhost
 
-- name: Verify CSI EBS driver
+- name: Vérifier si le driver CSI EBS est déjà installé
   kubernetes.core.k8s_info:
     api_version: storage.k8s.io/v1
     kind: CSIDriver
     name: ebs.csi.aws.com
     kubeconfig: "{{ kubeconfig_path }}"
-  register: csi_driver
+  register: csi_driver_check
   failed_when: false
-  tags: [csi_check]
 
-- name: Define variable
-  set_fact:
-    install_csi_driver: "{{ csi_driver.resources | length == 0 }}"
-  tags: [csi_check]
-
-
-- name: Add Helm repo for CSI EBS
+- name: Ajouter le dépôt Helm du driver EBS CSI
   kubernetes.core.helm_repository:
     name: aws-ebs-csi-driver
     repo_url: https://kubernetes-sigs.github.io/aws-ebs-csi-driver
     state: present
-  when: install_csi_driver
+  when: csi_driver_check.resources | length == 0
 
-- name: Install CSI EBS driver
+- name: Installer/Mettre à jour le driver EBS CSI
   kubernetes.core.helm:
     name: aws-ebs-csi-driver
     chart_ref: aws-ebs-csi-driver/aws-ebs-csi-driver
     release_namespace: kube-system
-    create_namespace: false
     kubeconfig: "{{ kubeconfig_path }}"
     wait: true
+    wait_timeout: "{{ helm_timeout | default('5m') }}"
     values:
       controller:
         serviceAccount:
           create: true
           name: ebs-csi-controller-sa
           annotations:
-            eks.amazonaws.com/role-arn: "{{ role_arn_target }}"
-  when: install_csi_driver
+            eks.amazonaws.com/role-arn: "{{ ebs_csi_role_arn }}"
+        region: "{{ aws_region | default(omit) }}"
+        node:
+          serviceAccount:
+            create: true
+            name: ebs-csi-node-sa      
+  when: csi_driver_check.resources | length == 0
 
-# - name: Verify if CSI EBS driver exist
-#   kubernetes.core.k8s_info:
-#     api_version: storage.k8s.io/v1
-#     kind: CSIDriver
-#     name: ebs.csi.aws.com
-#     kubeconfig: "{{ kubeconfig_path }}"
-#   register: csi_driver
-#   failed_when: false
-
-# - name: Install EBS CSI driver vwith Helm
-#   kubernetes.core.helm_repository:
-#     name: aws-ebs-csi-driver
-#     repo_url: https://kubernetes-sigs.github.io/aws-ebs-csi-driver
-#     state: present
-#   when: csi_driver.resources | length == 0
-
-# - name: Install EBS CSI via Helm
-#   kubernetes.core.helm:
-#     name: aws-ebs-csi-driver
-#     chart_ref: aws-ebs-csi-driver/aws-ebs-csi-driver
-#     release_namespace: kube-system
-#     create_namespace: false
-#     kubeconfig: "{{ kubeconfig_path }}"
-#     wait: true
-#     values:
-#       controller:
-#         serviceAccount:
-#           create: true
-#           name: ebs-csi-controller-sa
-#           annotations:
-#             eks.amazonaws.com/role-arn: "arn:aws:iam::436567292667:role/eks-cluster-ebs-csi-driver"
-#   when: csi_driver.resources | length == 0
+- name: Attendre que le driver CSI soit prêt
+  kubernetes.core.k8s_info:
+    api_version: apps/v1
+    kind: Deployment
+    name: ebs-csi-controller
+    namespace: kube-system
+    kubeconfig: "{{ kubeconfig_path }}"
+  register: csi_controller
+  until: 
+    - csi_controller.resources | length > 0
+    - csi_controller.resources[0].status.readyReplicas | default(0) > 0
+  retries: 30
+  delay: 10
+  when: csi_driver_check.resources | length == 0
 
 
-- name: Vérifie StorageClasses
+- name: Lister les StorageClass existantes
   kubernetes.core.k8s_info:
     api_version: storage.k8s.io/v1
     kind: StorageClass
     kubeconfig: "{{ kubeconfig_path }}"
   register: storage_classes
 
-- name: Ensure gp3 StorageClass exists
+- name: Créer la StorageClass gp3
   kubernetes.core.k8s:
     kubeconfig: "{{ kubeconfig_path }}"
     state: present
@@ -136,24 +85,40 @@
       kind: StorageClass
       metadata:
         name: gp3
+        annotations:
+          storageclass.kubernetes.io/is-default-class: "{{ set_gp3_default | default('false') }}"
       provisioner: ebs.csi.aws.com
       volumeBindingMode: WaitForFirstConsumer
+      allowVolumeExpansion: true
       reclaimPolicy: Delete
       parameters:
         type: gp3
-  when: "'gp3' not in (storage_classes.resources | map(attribute='metadata.name'))"
+        encrypted: "true"
+        iops: "{{ gp3_iops | default('3000') }}"
+        throughput: "{{ gp3_throughput | default('125') }}"
+  when: "'gp3' not in (storage_classes.resources | map(attribute='metadata.name') | list)"
 
-
-
-- name: Verify final state of the cluster
+- name: Vérifier l'état final du cluster
   kubernetes.core.k8s_info:
     api_version: v1
     kind: Node
     kubeconfig: "{{ kubeconfig_path }}"
   register: final_nodes
 
-- name: Print the resume
+- name: Vérifier les StorageClass disponibles
+  kubernetes.core.k8s_info:
+    api_version: storage.k8s.io/v1
+    kind: StorageClass
+    kubeconfig: "{{ kubeconfig_path }}"
+  register: final_storage_classes
+
+- name: Afficher le résumé de l'installation
   debug:
     msg:
-      - "Noeuds: {{ final_nodes.resources | length }}"
-      - "Noeuds Ready: {{ final_nodes.resources | selectattr('status.conditions', 'defined') | list | length }}"
+      - "=== Résumé de l'installation ==="
+      - "Cluster: {{ cluster_name }}"
+      - "Nœuds: {{ final_nodes.resources | length }}"
+      - "Nœuds Ready: {{ final_nodes.resources | selectattr('status.conditions', 'defined') | selectattr('status.conditions', 'selectattr', 'type', 'equalto', 'Ready') | list | length }}"
+      - "Rôle IAM: {{ ebs_csi_role_arn }}"
+      - "Driver CSI EBS: {{ 'Installé' if csi_driver_check.resources | length == 0 else 'Déjà présent' }}"
+      - "StorageClasses disponibles: {{ final_storage_classes.resources | map(attribute='metadata.name') | list | join(', ') }}"

@@ -30,3 +30,7 @@ output "eks_oidc_url" {
 output "cluster_ca_certificate" {
   value = aws_eks_cluster.main.certificate_authority[0].data
 }
+output "ebs_csi_driver_role_arn" {
+  value       = aws_iam_role.ebs_csi_driver.arn
+  description = "ARN du rôle IAM pour EBS CSI Driver"
+}

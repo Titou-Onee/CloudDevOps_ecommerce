@@ -1,4 +1,11 @@
 # Kubernetes configuration
+ebs_csi_iam_role_name: "AmazonEKS_EBS_CSI_DriverRole"
+helm_timeout: "5m"
+gp3_iops: "3000"
+gp3_throughput: "125"
+set_gp3_default: false
+create_encrypted_sc: false
+
 kubernetes:
   cluster_name: eks-cluster
   kubeconfig: /home/ec2-user/.kube/config

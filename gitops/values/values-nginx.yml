@@ -1,0 +1,15 @@
+        controller:
+          service:
+            type: LoadBalancer 
+            
+
+          extraArgs:
+            enable-ssl-passthrough: "true"
+          
+
+          replicaCount: 2
+
+          ingressClassResource:
+            enabled: true
+            default: true
+            name: nginx

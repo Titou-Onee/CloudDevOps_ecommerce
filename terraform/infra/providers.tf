@@ -20,45 +20,45 @@ terraform {
 # ssh tunneling definitino for ingress installation
 # 1st apply need to be commented (ctrl+k+c)
 # 2nd apply usign the ssh tunneling through ec2 bastion 
-data "aws_eks_cluster" "main" {
-  name = var.cluster_name
-}
+# data "aws_eks_cluster" "main" {
+#   name = var.cluster_name
+# }
 
-provider "kubernetes" {
-  alias = "tunnel"
-  host = "https://127.0.0.1:8086"
-  insecure = true
+# provider "kubernetes" {
+#   alias = "tunnel"
+#   host = "https://127.0.0.1:8086"
+#   insecure = true
 
 
-  exec {
-    api_version = "client.authentication.k8s.io/v1beta1"
-    command     = "aws"
-    args = [
-      "eks",
-      "get-token",
-      "--cluster-name",
-      data.aws_eks_cluster.main.name,
-    ]
-  }
-}
+#   exec {
+#     api_version = "client.authentication.k8s.io/v1beta1"
+#     command     = "aws"
+#     args = [
+#       "eks",
+#       "get-token",
+#       "--cluster-name",
+#       data.aws_eks_cluster.main.name,
+#     ]
+#   }
+# }
 
-provider "helm" {
-  alias = "helm_tunnel"
-  kubernetes {
-    host       = "https://127.0.0.1:8086"
-    insecure   = true
-    exec {
-      api_version = "client.authentication.k8s.io/v1beta1"
-      command     = "aws"
-      args = [
-        "eks",
-        "get-token",
-        "--cluster-name",
-        data.aws_eks_cluster.main.name,
-      ]
-    }
-  }
-}
+# provider "helm" {
+#   alias = "helm_tunnel"
+#   kubernetes {
+#     host       = "https://127.0.0.1:8086"
+#     insecure   = true
+#     exec {
+#       api_version = "client.authentication.k8s.io/v1beta1"
+#       command     = "aws"
+#       args = [
+#         "eks",
+#         "get-token",
+#         "--cluster-name",
+#         data.aws_eks_cluster.main.name,
+#       ]
+#     }
+#   }
+# }
 
 
 #backend "s3" {

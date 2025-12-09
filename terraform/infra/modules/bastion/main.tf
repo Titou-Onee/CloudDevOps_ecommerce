@@ -1,13 +1,13 @@
 # Main file of the Bastion module
 # This bastion create an EC2 instance with a security group that allow connection to the eks cluster
 # The bastion configuration include : git, curl, unzip, kubectl, ansible-galaxy, aws cli and a clone of this github repo
-data "aws_ami" "amazon_linux_2" {
+data "aws_ami" "amazon_linux_2023" {
   most_recent = true
   owners      = ["amazon"]
 
   filter {
     name   = "name"
-    values = ["amzn2-ami-hvm-*-x86_64-gp2"]
+    values = ["al2023-ami-2023*x86_64"]
   }
 
   filter {
@@ -38,7 +38,7 @@ resource "aws_security_group" "bastion" {
 }
 
 resource "aws_instance" "bastion" {
-  ami                    = data.aws_ami.amazon_linux_2.id
+  ami                    = data.aws_ami.amazon_linux_2023.id
   instance_type          = var.bastion_instance_type
   key_name               = var.bastion_key_name
   associate_public_ip_address = true
@@ -47,40 +47,42 @@ resource "aws_instance" "bastion" {
   iam_instance_profile = var.bastion_instance_profile_name
 
   user_data = <<-EOF
-                #!/bin/bash
-                sudo yum update -y
+                  #!/bin/bash
 
-                sudo yum install -y curl unzip git
-                sudo amazon-linux-extras install -y python3.8
-                sudo update-alternatives --install /usr/bin/python python /usr/bin/python3.8 1
+                  dnf update -y
+                  dnf install -y git python3 python3-pip
 
-                KUBE_VERSION=$(curl -L -s https://dl.k8s.io/release/stable.txt)
-                curl -LO "https://dl.k8s.io/release/$KUBE_VERSION/bin/linux/amd64/kubectl"
-                curl -LO "https://dl.k8s.io/$KUBE_VERSION/bin/linux/amd64/kubectl.sha256"
-                echo "$(cat kubectl.sha256)  kubectl" | sha256sum --check
-                chmod +x kubectl
-                sudo mv kubectl /usr/local/bin/
+                  python3 -m pip install ansible
+                  python3 -m pip install kubernetes
 
-                curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-                unzip awscliv2.zip
-                sudo ./aws/install
+                  KUBE_VERSION=$(curl -L -s https://dl.k8s.io/release/stable.txt)
+                  curl -LO "https://dl.k8s.io/release/$KUBE_VERSION/bin/linux/amd64/kubectl"
+                  chmod +x kubectl
+                  sudo mv kubectl /usr/local/bin/
 
-                sudo sed -i 's/^#PasswordAuthentication.*/PasswordAuthentication no/' /etc/ssh/sshd_config
-                sudo sed -i 's/^PasswordAuthentication.*/PasswordAuthentication no/' /etc/ssh/sshd_config
-                sudo systemctl restart sshd
+                  curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
+                  chmod 700 get_helm.sh
+                  ./get_helm.sh
+                  rm get_helm.sh
 
-                mkdir -p /home/ec2-user/repos
-                cd /home/ec2-user/repos
-                
-                for i in {1..5}; do
-                    git clone https://github.com/Titou-Onee/CloudDevOps_ecommerce.git && break
-                    echo "Retrying git clone in 5s..."
-                    sleep 5
-                done
-                chown -R ec2-user:ec2-user /home/ec2-user/repos
-                EOF
+                  sed -i 's/^#PasswordAuthentication.*/PasswordAuthentication no/' /etc/ssh/sshd_config
+                  sed -i 's/^PasswordAuthentication.*/PasswordAuthentication no/' /etc/ssh/sshd_config
+                  systemctl restart sshd
+
+                  mkdir -p /home/ec2-user/repos
+                  cd /home/ec2-user/repos
+                  git clone https://github.com/Titou-Onee/CloudDevOps_ecommerce.git
+                  chmod +x /home/ec2-user/repos/CloudDevOps_ecommerce/deploy-argocd.sh
+
+                  chown -R ec2-user:ec2-user /home/ec2-user/repos
+                  echo 'export PATH=$HOME/.local/bin:/usr/local/bin:$PATH' >> /home/ec2-user/.bashrc
+                  echo 'export PATH=$HOME/.local/bin:/usr/local/bin:$PATH' >> /root/.bashrc
+
+                  dnf clean all
+
+                  EOF
 
   tags = {
-    Name = "${var.project_name}-bastion"
+    Name = "${var.project_name}-ec2-bastion"
   }
 }

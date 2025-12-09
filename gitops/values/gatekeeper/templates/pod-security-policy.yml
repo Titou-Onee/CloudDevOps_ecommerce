@@ -82,14 +82,6 @@ spec:
           m := sprintf("The volume hostPath '%s' is not authorized in Pod %q.", [volume.hostPath.path, input.review.object.metadata.name])
         }
         
-        violation[{"msg": m}] {
-          input.review.kind.kind == "Pod"
-          container := all_containers[_]
-          not input.review.object.metadata.annotations["gatekeeper.sh/exempt-rofs"] == "true"
-          not container.securityContext.readOnlyRootFilesystem == true
-          m := sprintf("The container %q must define readOnlyRootFilesystem=true", [input.review.object.spec.containers[c].name])
-        }
-
         violation[{"msg": m}]{
           input.review.kind.kind == "Pod"
           container := all_containers[_]

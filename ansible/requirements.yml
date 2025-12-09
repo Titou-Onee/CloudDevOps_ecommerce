@@ -3,5 +3,7 @@ collections:
     version: ">=2.4.0"
   - name: community.general
     version: ">=12.0.0"
+  - name: amazon.aws
+  - name: community.aws
 
 roles: []

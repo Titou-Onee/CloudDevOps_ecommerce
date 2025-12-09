@@ -10,6 +10,7 @@ resources:
 - namespace.yml
 - sealed-secrets.yml
 - service_accounts.yml
+- ingress.yml
 - ecommerce_roles.yml
 - network_policy.yml
 - postgress_pvc.yml
