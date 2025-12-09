@@ -19,7 +19,7 @@ prometheus:
         memory: 1Gi
         cpu: 500m
       limits:
-        memory: 4Gi
+        memory: 2Gi
         cpu: 1500m
 
     serviceMonitorSelectorNilUsesHelmValues: true
