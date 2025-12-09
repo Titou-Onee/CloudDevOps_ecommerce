@@ -20,7 +20,7 @@ prometheus:
         cpu: 500m
       limits:
         memory: 4Gi
-        cpu: 2
+        cpu: 1500m
 
     serviceMonitorSelectorNilUsesHelmValues: true
     serviceMonitorSelector: {}
