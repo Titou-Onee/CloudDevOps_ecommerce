@@ -24,35 +24,33 @@ spec:
       rego: |
         package k8simagepolicy
 
-        is_approved(image, approved_reg) {
-          startswith(image, approved_reg)
-        }
+        all_containers := [c |
+          input.review.kind.kind == "Pod"
+          some i
+          container := input.review.object.spec.containers[i]
+          c := container
+        ] ++ [c |
+          input.review.kind.kind == "Pod"
+          some i
+          container := input.review.object.spec.initContainers[i]
+          c := container
+        ] ++ [c |
+          input.review.kind.kind == "Pod"
+          some i
+          container := input.review.object.spec.ephemeralContainers[i]
+          c := container
+        ]
 
-        all_containers[container] {
-          input.review.object.spec.containers[_] == container
-        }
-
-        all_containers[container] {
-          input.review.object.spec.initContainers[_] == container
-        }
-
-        all_containers[container] {
-          input.review.object.spec.ephemeralContainers[_] == container
+        is_approved(image, approved) {
+          startswith(image, approved)
         }
 
         violation[{"msg": msg}] {
-          input.review.kind.kind == "Pod"
-
           container := all_containers[_]
-          image := container.image
-
           approved := input.parameters.approvedRegistry
+          not is_approved(container.image, approved)
 
-          not is_approved(image, approved)
-
-          msg := sprintf(
-            "The image %q doesn't come from an approved registry %q",
-            [image, approved],
-          )
+          msg := sprintf("The image %q doesn't come from an approved registry", [container.image])
         }
+
 
