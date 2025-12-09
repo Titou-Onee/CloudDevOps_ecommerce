@@ -16,7 +16,10 @@ spec:
       kind: Application
       jsonPointers:
         - /metadata
-        - /status 
+        - /status
+    - kind: CustomResourceDefinition
+      jsonPointers:
+        - /spec/preserveUnknownFields 
   
   sources:
 
