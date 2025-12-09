@@ -23,34 +23,36 @@ spec:
     - target: admission.k8s.gatekeeper.sh
       rego: |
         package k8simagepolicy
-
-        all_containers := [c |
-          input.review.kind.kind == "Pod"
-          some i
-          container := input.review.object.spec.containers[i]
-          c := container
-        ] ++ [c |
-          input.review.kind.kind == "Pod"
-          some i
-          container := input.review.object.spec.initContainers[i]
-          c := container
-        ] ++ [c |
-          input.review.kind.kind == "Pod"
-          some i
-          container := input.review.object.spec.ephemeralContainers[i]
-          c := container
-        ]
+        
+        all_containers[container] {
+            some c
+            container := input.review.object.spec.containers[c]
+        }
+        all_containers[container] {
+            input.review.object.spec.initContainers
+            some c
+            container := input.review.object.spec.initContainers[c]
+        }
+        all_containers[container] {
+            input.review.object.spec.ephemeralContainers
+            some c
+            container := input.review.object.spec.ephemeralContainers[c]
+        }
+        default msg = ""
 
         is_approved(image, approved) {
-          startswith(image, approved)
+        startswith(image, approved)
         }
 
         violation[{"msg": msg}] {
-          container := all_containers[_]
-          approved := input.parameters.approvedRegistry
-          not is_approved(container.image, approved)
+            # L'opérateur [_] est utilisé pour itérer sur les éléments d'un ensemble.
+            container := all_containers[_]
+            approved := input.parameters.approvedRegistry
+            
+            # Vérification
+            not is_approved(container.image, approved)
 
-          msg := sprintf("The image %q doesn't come from an approved registry", [container.image])
+            msg := sprintf("The image %q doesn't come from an approved registry", [container.image])
         }
 
 
