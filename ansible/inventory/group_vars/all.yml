@@ -13,7 +13,7 @@ kubernetes:
 # ArgoCD configuration
 argocd:
   namespace: argocd
-  version: v2.9.3
+  version: v3.2.1
   domain: argocd.example.com
   # in the context of this project, we accept the unsecure way to define password
   admin_password: unsecure_admin_password

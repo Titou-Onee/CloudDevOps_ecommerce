@@ -6,14 +6,6 @@
     kind: Node
     kubeconfig: "{{ kubeconfig_path }}"
   register: nodes_info
-  
-- name: Récupérer les informations du cluster EKS
-  amazon.aws.eks_cluster_info:
-    name: "{{ cluster_name }}"
-    region: "{{ aws_region | default(omit) }}"
-  register: eks_cluster
-  delegate_to: localhost
-
 
 - name: Vérifier si le driver CSI EBS est déjà installé
   kubernetes.core.k8s_info:
@@ -47,10 +39,10 @@
           annotations:
             eks.amazonaws.com/role-arn: "{{ ebs_csi_role_arn }}"
         region: "{{ aws_region | default(omit) }}"
-        node:
-          serviceAccount:
-            create: true
-            name: ebs-csi-node-sa      
+      node:
+        serviceAccount:
+          create: true
+          name: ebs-csi-node-sa      
   when: csi_driver_check.resources | length == 0
 
 - name: Attendre que le driver CSI soit prêt
@@ -86,7 +78,7 @@
       metadata:
         name: gp3
         annotations:
-          storageclass.kubernetes.io/is-default-class: "{{ set_gp3_default | default('false') }}"
+          storageclass.kubernetes.io/is-default-class: "{{ set_gp3_default | default('false') | string }}"
       provisioner: ebs.csi.aws.com
       volumeBindingMode: WaitForFirstConsumer
       allowVolumeExpansion: true
@@ -94,8 +86,8 @@
       parameters:
         type: gp3
         encrypted: "true"
-        iops: "{{ gp3_iops | default('3000') }}"
-        throughput: "{{ gp3_throughput | default('125') }}"
+        iops: "{{ gp3_iops | default('3000') | string}}"
+        throughput: "{{ gp3_throughput | default('125') | string}}"
   when: "'gp3' not in (storage_classes.resources | map(attribute='metadata.name') | list)"
 
 - name: Vérifier l'état final du cluster
@@ -116,9 +108,8 @@
   debug:
     msg:
       - "=== Résumé de l'installation ==="
-      - "Cluster: {{ cluster_name }}"
+      - "Cluster: {{ kubernetes.cluster_name }}"
       - "Nœuds: {{ final_nodes.resources | length }}"
-      - "Nœuds Ready: {{ final_nodes.resources | selectattr('status.conditions', 'defined') | selectattr('status.conditions', 'selectattr', 'type', 'equalto', 'Ready') | list | length }}"
       - "Rôle IAM: {{ ebs_csi_role_arn }}"
       - "Driver CSI EBS: {{ 'Installé' if csi_driver_check.resources | length == 0 else 'Déjà présent' }}"
       - "StorageClasses disponibles: {{ final_storage_classes.resources | map(attribute='metadata.name') | list | join(', ') }}"

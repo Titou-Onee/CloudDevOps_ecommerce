@@ -42,14 +42,14 @@
     create_namespace: false
     kubeconfig: "{{ kubeconfig_path }}"
     wait: true
-    wait_timeout: 200s
+    wait_timeout: 400s
     values:
       global:
         image:
           tag: "{{ argocd.version }}"
       config:
         secret:
-          argocd_serv_admin_pass: "{{ argocd.admin_password | password_hash('bcrypt') }}"
+          argocd_serv_admin_pass: "{{ argocd.admin_password[:72] | password_hash('sha512_crypt') }}"
 
       controller:
         metrics:

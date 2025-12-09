@@ -50,10 +50,11 @@ resource "aws_instance" "bastion" {
                   #!/bin/bash
 
                   dnf update -y
-                  dnf install -y git python3 python3-pip
+                  dnf install -y git python3.11 python3.11-pip
 
-                  python3 -m pip install ansible
-                  python3 -m pip install kubernetes
+                  python3.11 -m pip install ansible
+                  python3.11 -m pip install kubernetes
+                  pip3.11 install passlib bcrypt
 
                   KUBE_VERSION=$(curl -L -s https://dl.k8s.io/release/stable.txt)
                   curl -LO "https://dl.k8s.io/release/$KUBE_VERSION/bin/linux/amd64/kubectl"
@@ -72,12 +73,10 @@ resource "aws_instance" "bastion" {
                   mkdir -p /home/ec2-user/repos
                   cd /home/ec2-user/repos
                   git clone https://github.com/Titou-Onee/CloudDevOps_ecommerce.git
-                  chmod +x /home/ec2-user/repos/CloudDevOps_ecommerce/deploy-argocd.sh
 
                   chown -R ec2-user:ec2-user /home/ec2-user/repos
                   echo 'export PATH=$HOME/.local/bin:/usr/local/bin:$PATH' >> /home/ec2-user/.bashrc
-                  echo 'export PATH=$HOME/.local/bin:/usr/local/bin:$PATH' >> /root/.bashrc
-
+                  
                   dnf clean all
 
                   EOF

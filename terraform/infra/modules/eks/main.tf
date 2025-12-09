@@ -178,28 +178,39 @@ resource "aws_eks_access_policy_association" "bastion_policy" {
   ]
 }
 
-# data "aws_caller_identity" "current" {
-# }
-# resource "aws_eks_access_entry" "eks_admin_access" {
-#   cluster_name = var.cluster_name
-#   principal_arn = data.aws_caller_identity.current.arn
-#   depends_on = [ aws_eks_cluster.main ]
-# }
+data "tls_certificate" "eks" {
+  url = aws_eks_cluster.main.identity[0].oidc[0].issuer
+}
 
-# resource "aws_eks_access_policy_association" "eks_admin_policy" {
-#   cluster_name  = aws_eks_cluster.main.name
+resource "aws_iam_openid_connect_provider" "eks" {
+  client_id_list  = ["sts.amazonaws.com"]
+  thumbprint_list = [data.tls_certificate.eks.certificates[0].sha1_fingerprint]
+  url             = aws_eks_cluster.main.identity[0].oidc[0].issuer
+}
 
-#   principal_arn = data.aws_caller_identity.current.arn
-  
+resource "aws_iam_role" "ebs_csi_driver" {
+  name = "${var.cluster_name}-ebs-csi-driver"
 
-#   policy_arn    =             "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy" 
-  
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Effect = "Allow"
+      Principal = {
+        Federated = aws_iam_openid_connect_provider.eks.arn
+      }
+      Action = "sts:AssumeRoleWithWebIdentity"
+      Condition = {
+        StringEquals = {
+          "${replace(aws_iam_openid_connect_provider.eks.url, "https://", "")}:sub" = "system:serviceaccount:kube-system:ebs-csi-controller-sa"
+          "${replace(aws_iam_openid_connect_provider.eks.url, "https://", "")}:aud" = "sts.amazonaws.com"
+        }
+      }
+    }]
+  })
+}
 
-#   access_scope {
-#     type = "cluster"
-#   }
-  
-#   depends_on = [
-#     aws_eks_access_entry.eks_admin_access
-#   ]
-# }
+resource "aws_iam_role_policy_attachment" "ebs_csi_driver" {
+  role       = aws_iam_role.ebs_csi_driver.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy"
+}
+

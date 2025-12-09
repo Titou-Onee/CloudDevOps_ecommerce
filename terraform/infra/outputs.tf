@@ -18,3 +18,6 @@ output "kubectl_config_command" {
 output "deploy_argocd" {
   value = "../../deploy-argo.sh"
 }
+output "ebs_csi_driver_role_arn" {
+  value = module.eks.ebs_csi_driver_role_arn
+}
