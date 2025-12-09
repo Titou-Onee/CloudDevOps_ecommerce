@@ -25,16 +25,15 @@ spec:
         package k8simagepolicy
 
         all_containers[container] {
-            some c
-            container := input.review.object.spec.containers[c]
+          input.review.object.spec.containers[_] == container
         }
+
         all_containers[container] {
-            some c
-            container := input.review.object.spec.initContainers[c]
+          input.review.object.spec.initContainers[_] == container
         }
+
         all_containers[container] {
-            some c
-            container := input.review.object.spec.ephemeralContainers[c]
+          input.review.object.spec.ephemeralContainers[_] == container
         }
 
         violation[{"msg": msg}] {
@@ -43,5 +42,13 @@ spec:
           image := container.image
           approved := input.parameters.approvedRegistry
           not is_approved(image, approved)
-          msg := sprintf("The image %q doesn't come from a certified registry ", [image])
+
+          msg := sprintf(
+            "The image %q doesn't come from an approved registry: %v",
+            [image, approved],
+          )
+        }
+
+        is_approved(image, approved_reg) {
+          startswith(image, approved_reg)
         }
