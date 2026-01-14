@@ -3,6 +3,23 @@
 adminUser: admin
 adminPassword: unsecure_admin_password
 
+podSecurityContext:
+  runAsNonRoot: true
+  runAsUser: 472
+  fsGroup: 472
+
+containerSecurityContext:
+  runAsNonRoot: true
+  runAsUser: 472
+  allowPrivilegeEscalation: false
+  readOnlyRootFilesystem: true
+  capabilities:
+    drop:
+      - ALL
+  seccompProfile:
+    type: RuntimeDefault
+
+
 
 persistence:
   enabled: true
@@ -158,6 +175,13 @@ sidecar:
     enabled: true
   datasources:
     enabled: true
+  securityContext:
+    runAsNonRoot: true
+    runAsUser: 65534
+    allowPrivilegeEscalation: false
+    capabilities:
+      drop:
+        - ALL
 
 serviceMonitor:
   enabled: true
