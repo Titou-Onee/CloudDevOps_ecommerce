@@ -19,5 +19,8 @@ spec:
       - argocd
   parameters:
     approvedRegistry:
-      - "titouonee/"
-      - "bitnami/"
+      - "titouonee/clouddevops_ecommerce:b16b38ce6ee07c3bb5ed09e817c1ac381d1887e0"
+      - "bitnami/postgresql:latest"
+      - "quay.io/argoproj/argocd:v3.2.1"
+      - "ghcr.io/dexidp/dex:v2.44.0"
+      - "ecr-public.aws.com/docker/library/redis:8.2.2-alpine"

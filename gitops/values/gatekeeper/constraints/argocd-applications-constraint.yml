@@ -25,3 +25,4 @@ spec:
       - "https://open-policy-agent.github.io/gatekeeper/charts"
       - "https://falcosecurity.github.io/charts"
       - "https://bitnami-labs.github.io/sealed-secrets"
+      - "https://kubernetes.github.io/ingress-nginx"

@@ -16,3 +16,5 @@ spec:
       - kube-system
       - ingress-nginx
       - security
+      - argocd
+      - monitoring
