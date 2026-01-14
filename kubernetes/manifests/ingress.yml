@@ -10,8 +10,7 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-  - host: api.mon-ecommerce.com
-    http:
+  - http:
       paths:
       - path: /
         pathType: Prefix
