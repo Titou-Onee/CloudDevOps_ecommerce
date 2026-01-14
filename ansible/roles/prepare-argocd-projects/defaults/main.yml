@@ -39,3 +39,11 @@ argocd_projects_list:
       - 'https://github.com/Titou-Onee/CloudDevOps_ecommerce.git'
     destinations:
       - namespace: 'argocd'
+
+  - name: ingress-nginx
+    description: Project for the deployment of the ingress-nginx controller
+    source_repos:
+      - 'https://kubernetes.github.io/ingress-nginx'
+      - 'https://github.com/Titou-Onee/CloudDevOps_ecommerce.git'
+    destinations:
+      - namespace: 'kube-system'

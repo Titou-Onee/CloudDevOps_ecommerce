@@ -21,7 +21,6 @@
     name: aws-ebs-csi-driver
     repo_url: https://kubernetes-sigs.github.io/aws-ebs-csi-driver
     state: present
-  when: csi_driver_check.resources | length == 0
 
 - name: Installer/Mettre à jour le driver EBS CSI
   kubernetes.core.helm:
@@ -37,13 +36,12 @@
           create: true
           name: ebs-csi-controller-sa
           annotations:
-            eks.amazonaws.com/role-arn: "{{ ebs_csi_role_arn }}"
+            eks.amazonaws.com/role-arn: "{{ ebs_csi_role_arn | trim }}"
         region: "{{ aws_region | default(omit) }}"
       node:
         serviceAccount:
           create: true
-          name: ebs-csi-node-sa      
-  when: csi_driver_check.resources | length == 0
+          name: ebs-csi-node-sa
 
 - name: Attendre que le driver CSI soit prêt
   kubernetes.core.k8s_info:

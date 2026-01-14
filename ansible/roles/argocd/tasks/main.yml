@@ -47,17 +47,29 @@
       global:
         image:
           tag: "{{ argocd.version }}"
+        podSecurityContext:
+          runAsNonRoot: true
+          runAsUser: 999
+          fsGroup: 999
       config:
         secret:
           argocd_serv_admin_pass: "{{ argocd.admin_password[:72] | password_hash('sha512_crypt') }}"
 
       controller:
+        containerSecurityContext:
+          runAsNonRoot: true
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop: ["ALL"]
         metrics:
           enabled: true
           serviceMonitor:
             enabled: true
             namespace: "{{ applications.monitoring.prometheus.namespace }}"
-      serv:
+      server:
+        containerSecurityContext:
+          runAsNonRoot: true
+          allowPrivilegeEscalation: false
         metrics:
           enabled: true
           serviceMonitor:
@@ -65,12 +77,22 @@
             namespace: "{{ applications.monitoring.prometheus.namespace }}"
                        
       repoServer:
+        containerSecurityContext:
+          runAsNonRoot: true
+          allowPrivilegeEscalation: false
         metrics:
           enabled: true
           serviceMonitor:
             enabled: true
             namespace: "{{ applications.monitoring.prometheus.namespace }}"
-
+      
+      redis:
+        podSecurityContext:
+          runAsNonRoot: true
+          runAsUser: 999
+        containerSecurityContext:
+          runAsNonRoot: true
+          allowPrivilegeEscalation: false
       cm:
         application.instanceLabelKey: argocd.argoproj.io/instance 
         exec.enabled: "true"
