@@ -16,5 +16,4 @@ spec:
         kinds: ["Pod"]
     excludedNamespaces:
       - kube-system
-#      - monitoring
-#      - security
+      - monitoring
