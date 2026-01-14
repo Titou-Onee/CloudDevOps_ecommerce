@@ -17,3 +17,4 @@ spec:
     excludedNamespaces:
       - kube-system
       - monitoring
+      - security
