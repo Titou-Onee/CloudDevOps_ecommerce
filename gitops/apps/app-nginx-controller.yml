@@ -3,12 +3,11 @@ kind: Application
 metadata:
   # Nom de l'application Argo CD
   name: ingress-nginx-controller
-  namespace: argocd
+  namespace: kube-system
   finalizers:
   - resources-finalizer.argocd.argoproj.io
 spec:
-  # Projet Argo CD (utilisez 'default' si vous n'en avez pas d'autre)
-  project: default
+  project: ecommerce
   
   # Configuration de la source (le Chart Helm)
   sources:
@@ -29,7 +28,7 @@ spec:
             
   destination:
     server: https://kubernetes.default.svc
-    namespace: ingress-nginx
+    namespace: kube-system
     
   syncPolicy:
     automated:
