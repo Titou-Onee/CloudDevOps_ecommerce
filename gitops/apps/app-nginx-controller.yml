@@ -3,7 +3,7 @@ kind: Application
 metadata:
   # Nom de l'application Argo CD
   name: ingress-nginx-controller
-  namespace: kube-system
+  namespace: argocd
   finalizers:
   - resources-finalizer.argocd.argoproj.io
 spec:
