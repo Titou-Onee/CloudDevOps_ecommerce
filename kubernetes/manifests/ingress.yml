@@ -4,13 +4,11 @@ metadata:
   name: ecommerce-ingress
   namespace: ecommerce
   annotations:
-    alb.ingress.kubernetes.io/scheme: internet-facing 
-    alb.ingress.kubernetes.io/target-type: ip
-    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}]'
+    kubernetes.io/ingress.class: "nginx"
   labels:
     app: ecommerce-app
 spec:
-  ingressClassName: alb 
+  ingressClassName: nginx
   rules:
   - host: api.mon-ecommerce.com
     http:
