@@ -65,6 +65,8 @@ spec:
               drop:
                 - ALL 
                 - NET_RAW
+            seccompProfile:
+              type: RuntimeDefault
 
           ports:
             - containerPort: 5432

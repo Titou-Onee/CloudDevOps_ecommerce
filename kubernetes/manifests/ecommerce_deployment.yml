@@ -43,6 +43,8 @@ spec:
               drop:
                 - NET_RAW
                 - ALL
+            seccompProfile:
+              type: RuntimeDefault
 
           volumeMounts:
             - name: tmp
@@ -68,6 +70,8 @@ spec:
                 drop:
                   - ALL 
                   - NET_RAW
+            seccompProfile:
+              type: RuntimeDefault
           ports:
           - containerPort: 8000
             name: http
