@@ -37,6 +37,8 @@ spec:
                 name: ecommerce-secret
 
           securityContext:
+            runAsNonRoot: true
+            runAsUser: 999
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: true
             capabilities:
