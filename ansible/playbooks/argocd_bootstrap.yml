@@ -1,6 +1,15 @@
 # Main playbook
 # Prepare cluster
 # Install Argocd and apps
+- name: configuration of variables
+  hosts: localhost
+  connection: localhost
+
+  vars_prompt:
+    - name: "ebs_csi_role_arn"
+      prompt: "Enter the ARN of the IAM role (ebs_csi_role_arn)"
+      default: "arn:aws:iam::436567292667:role/eks-cluster-ebs-csi-driver"
+      private: false
 - name: Deploy Argocd and apps
   hosts: kubernetes
   gather_facts: false

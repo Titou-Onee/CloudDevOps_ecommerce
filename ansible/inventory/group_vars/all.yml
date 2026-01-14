@@ -1,6 +1,4 @@
 # Kubernetes configuration
-ebs_csi_iam_role_name: "AmazonEKS_EBS_CSI_DriverRole"
-ebs_csi_role_arn: "arn:aws:iam::436567292667:role/eks-cluster-ebs-csi-driver"
 
 helm_timeout: "5m"
 gp3_iops: "3000"
