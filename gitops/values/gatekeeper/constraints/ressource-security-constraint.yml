@@ -7,12 +7,12 @@ metadata:
     argocd.argoproj.io/sync-wave: "2"
     argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
 spec:
-  enforcementAction : dryrun
+  enforcementAction : warn
   match:
     kinds:
       - apiGroups: [""]
         kinds: ["Pod"]
     excludedNamespaces:
       - kube-system
-#      - monitoring
-#      - security
+      - ingress-nginx
+      - security

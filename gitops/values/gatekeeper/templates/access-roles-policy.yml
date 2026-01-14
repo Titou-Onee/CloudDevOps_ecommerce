@@ -28,9 +28,3 @@ spec:
           rule.resources[_] == "*"
           msg := sprintf("the role %q uses global permissions (*)", [input.review.object.metadata.name])
         }
-
-        violation[{"msg": msg}] {
-          input.review.kind.kind == "Deployment"
-          not input.review.object.metadata.annotations["pdb/enabled"]
-          msg := sprintf("The deploymnet %q must be associated to a PodDisruptionBudget", [input.review.object.metadata.name])
-        }
