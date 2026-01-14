@@ -58,7 +58,9 @@ spec:
                   name: ecommerce-secret
                   key: POSTGRESQL_POSTGRES_PASSWORD
 
-          securityContext:  
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 999
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: false
             capabilities:
