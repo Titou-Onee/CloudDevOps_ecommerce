@@ -30,7 +30,7 @@ persistence:
 
 datasources:
   datasources.yaml:
-    api_version: 1
+    apiVersion: 1
     datasources:
       - name: Prometheus
         type: prometheus
