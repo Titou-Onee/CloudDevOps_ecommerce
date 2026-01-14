@@ -7,7 +7,7 @@ metadata:
   finalizers:
   - resources-finalizer.argocd.argoproj.io
 spec:
-  project: ecommerce
+  project: ingress-nginx
   
   # Configuration de la source (le Chart Helm)
   sources:
