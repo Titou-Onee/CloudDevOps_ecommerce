@@ -8,7 +8,7 @@
 module "network" {
   source               = "./modules/network"
   project_name         = var.project_name
-  cluster_name = var.cluster_name
+  cluster_name         = var.cluster_name
   vpc_cidr             = var.vpc_cidr
   availability_zones   = var.availability_zones
   bastion_key_name     = var.bastion_key_name
@@ -38,10 +38,10 @@ module "eks" {
   cluster_version = var.cluster_version
   vpc_id          = module.network.vpc_id
   subnet_ids      = module.network.private_subnet_ids
-  region = var.region
+  region          = var.region
 
   bastion_security_group_id = module.bastion.bastion_sg_id
-  bastion_iam_role = module.iam.bastion_iam_role
+  bastion_iam_role          = module.iam.bastion_iam_role
 
   node_role_arn    = module.iam.node_role_arn
   cluster_role_arn = module.iam.cluster_role_arn
@@ -51,7 +51,7 @@ module "eks" {
   min_size        = var.min_size
   max_size        = var.max_size
   max_unavailable = var.max_unavailable
-  depends_on = [module.bastion]
+  depends_on      = [module.bastion]
 
 }
 

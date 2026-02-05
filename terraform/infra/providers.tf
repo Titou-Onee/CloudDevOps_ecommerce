@@ -10,18 +10,18 @@ terraform {
       source  = "hashicorp/kubernetes"
       version = "~> 2.26"
     }
-        helm = {
+    helm = {
       source  = "hashicorp/helm"
       version = "~> 2.0"
     }
   }
 
-backend "s3" {
- bucket         = "remotestate18569402"  # need to be created before apply
-  key            = "eks/ecommerce/terraform.tfstate"
-  region         = "eu-west-3"
-  encrypt = true
-  use_lockfile = true
-}
+  backend "s3" {
+    bucket       = "remotestate18569402"
+    key          = "eks/ecommerce/terraform.tfstate"
+    region       = "eu-west-3"
+    encrypt      = true
+    use_lockfile = true
+  }
 }
  
