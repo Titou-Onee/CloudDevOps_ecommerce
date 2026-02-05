@@ -1,4 +1,5 @@
 # CloudFormation Template for S3 backend
+# aws cloudformation deploy --template-file .\s3_backend.yml --stack-name devsecops --parameter-overrides GitHubRepoName=Titou-Onee/CloudDevOps_ecommerce TerraformStateBucketName=remotestate18569402 --capabilities CAPABILITY_NAMED_IAM
 AWSTemplateFormatVersion: "2010-09-09"
 Description: Terraform Backend and GitHub OIDC
 
