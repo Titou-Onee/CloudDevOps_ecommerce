@@ -34,12 +34,6 @@ jobs:
         with:
             terraform_version: 1.13.1
 
-      - name: Terraform init
-        run: terraform init
-        working-directory: terraform/infra
-        env:
-            TF_VAR_aws_region: eu-west-3
-
       - name: Terraform format
         run: terraform fmt --check -recursive
         working-directory: terraform/infra
