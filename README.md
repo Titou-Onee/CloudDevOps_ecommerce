@@ -108,6 +108,37 @@ App of Apps manifest use the GitOps repository to get the application manifest a
 └── README.md              # Main documentation file
 ```
 
+## Project iteration
+1. App fork and dockerization
+- Finding ecommerce app to fork
+- Dockerfile of the app
+2. Github Action application workflow
+- main workflow : code quality, security tests, release on DockerHub
+3. terraform public cluster
+- Simple public network and eks cluster creation
+4. app deployment through kubernetes
+- manifests for ecommerce application deployment
+5. ansible argocd installation and configuration
+- playbook for ArgoCD in the cluster
+6. Github Action rework
+- updated main with workflow calls, artifacts and cosign
+- Added terraform.yml and kubernetes.yml
+7. Kubernetes manifests securisation
+- Checkov scan recommandations
+- Added roles, service accounts and network policies
+- Added SealedSecret for k8s secrets
+6. ansible security tools installation and configuration
+- use of an app-of-apps in argocd using "gitops/"
+- Added opa gatekeeper, pss, falco helm charts installation in "gitops/apps"
+- configuration of opa constraints, pss namespace policy and falco alerts in "gitops/values"
+7. ansible monitoring tools installation and configuration
+- updated gitops/ for prometheus and grafana
+- Added prometheus and grafana helm charts installation in "gitops/apps"
+- configuration of prometheus scrapping and grafana dashboards in "gitops/values"
+9. terraform secure cluster with bastion and alb
+- Updated modules "eks", "network" for security roles and private subnets 
+- added modules "iam", "alb", "bastion"
+
 ## prerequises :
 - AWS account
 - optional : S3 bucket for remote terraform state (encryption, versioning and no public access)
