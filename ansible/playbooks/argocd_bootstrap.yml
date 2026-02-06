@@ -6,14 +6,16 @@
   connection: localhost
 
   vars_prompt:
-    - name: "ebs_csi_role_arn"
+    - name: "ebs_csi_role_arn_input"
       prompt: "Enter the ARN of the IAM (ebs_csi_role_arn)"
-      default: "arn:aws:iam::436567292667:role/eks-cluster-ebs-csi-driver"
+      default: ""
       private: false
+
   tasks:
-    - name: variable setting
+    - name: Fixer la variable pour tout le cycle de vie
       set_fact:
         ebs_csi_role_arn: "{{ ebs_csi_role_arn_input }}"
+        
 - name: Deploy Argocd and apps
   hosts: kubernetes
   gather_facts: false
