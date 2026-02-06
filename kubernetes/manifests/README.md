@@ -13,8 +13,3 @@ kubernetes
 ```
 (not-secure-secret exists for a learning purpose)
 
-2 types of pods : 
-- ecommerce-app using validated image on DockerHub
-- postgresql database using bitnami/postgresql image
-
-
