@@ -21,6 +21,7 @@ Modules used :
 ---
 
 ## Argocd apps and ecommerce manifests pipeline : kubernetes.yml
+On manifests updates :
 - checkout
 - scan of the ecommerce app manifests with checkov
 - scan of the Argocd apps manifests with checkov
@@ -28,6 +29,7 @@ Modules used :
 ---
 
 ## Terraform pipeline : terraform.yml
+On .tf file updates :
 - Checkout / configure AWS credentials / setup terraform
 - run terraform init/format/validate
 - Setup TFlint / run TFlint
