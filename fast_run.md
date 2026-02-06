@@ -1,5 +1,6 @@
 ## prerequises :
 - AWS account with IAM and EKS admin rights
+- 1 SSH aws key for the bastion named "bastion-key"
 - Terraform
 - (optional) Git secrets (Github Actions part only): 
     - DOCKERHUB_USERNAME
@@ -44,7 +45,7 @@ terraform init
 terraform apply
 ```
 
-- Connect to the Bastion with the "ssh_bastion" output command line
+- From the repo with aws ssh key, connect to the Bastion with the "ssh_bastion" output command line
 - On the EC2 bastion, update kubeconfig with the "kubectl_config_command" output command line
 
 Install ArgoCD and managed apps

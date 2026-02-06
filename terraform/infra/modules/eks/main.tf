@@ -4,7 +4,7 @@
 resource "aws_security_group" "eks_control_plane" {
   name   = "${var.project_name}-eks-control-plane-sg"
   vpc_id = var.vpc_id
-
+  description = "Security  Group for the eks Controle Plane"
   egress {
     from_port   = 0
     to_port     = 0
@@ -33,18 +33,21 @@ resource "aws_eks_cluster" "main" {
       endpoint_public_access = false
       security_group_ids = [aws_security_group.eks_control_plane.id]
     }
+
+    enabled_cluster_log_types = ["api", "audit", "authenticator", "controllerManager", "scheduler"]
 }
 
 # EKS nodes security group
 resource "aws_security_group" "eks_nodes" {
   name   = "${var.project_name}-eks-nodes-sg"
   vpc_id = var.vpc_id
-
+  description = "Security Group for the eks nodes"
   ingress {
     from_port       = 0
     to_port         = 65535
     protocol        = "tcp"
     security_groups = [var.bastion_security_group_id]
+    description = "Allow connection to control plane"
   }
 
   ingress {
@@ -52,6 +55,7 @@ resource "aws_security_group" "eks_nodes" {
     to_port     = 0
     protocol    = "-1"
     self        = true
+    description = "Allow all"
   }
 
   egress {
@@ -59,6 +63,7 @@ resource "aws_security_group" "eks_nodes" {
     to_port     = 0
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
+    description = "Allow all"
   }
 
   tags = {

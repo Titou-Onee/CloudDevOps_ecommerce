@@ -20,18 +20,20 @@ data "aws_ami" "amazon_linux_2023" {
 resource "aws_security_group" "bastion" {
   name = "${var.project_name}-bastion-sg"
   vpc_id = var.vpc_id
-
+  description = "Security Group for the EC2 bastion"
   ingress {
     from_port = 22
     to_port = 22
     protocol = "tcp"
     cidr_blocks = var.allowed_bastion_cidr
+    description = "allow ssh connection to the bastion"
   }
   egress {
     from_port = 0
     to_port = 0
     protocol = "-1"
     cidr_blocks = ["0.0.0.0/0"]
+    description = "Allow all"
   }
 
   tags = {Name = "${var.project_name}-bastion-sg"}
@@ -80,8 +82,14 @@ resource "aws_instance" "bastion" {
                   dnf clean all
 
                   EOF
-
+  root_block_device {
+    encrypted = true
+  }
   tags = {
     Name = "${var.project_name}-ec2-bastion"
+  }
+  metadata_options {
+    http_endpoint               = "enabled"
+    http_tokens                 = "required"
   }
 }

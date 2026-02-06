@@ -10,8 +10,9 @@ output "cluster_name" {
 
 output "cluster_endpoint" {
   description = "Endpoint du cluster EKS"
-  value       = aws_eks_cluster.main.endpoint
+  value       = replace(aws_eks_cluster.main.endpoint, "https://", "")
 }
+
 
 output "cluster_certificate_authority_data" {
   description = "Certificat du cluster EKS"
