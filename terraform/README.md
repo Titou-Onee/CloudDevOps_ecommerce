@@ -16,6 +16,16 @@ terraform
     ├── providers.tf                       # providers and backend definition
     └── bastion-key.pem                    # Bastion ssh connection key (for learning purpose, this key is not used anymore)
 ```
+Variables on terraform.tfvars :
+- project_name
+- bastion_key_name
+- eks : 
+    - cluster_name
+    - cluster_version
+    - instance_types
+    - min_size
+    - max_size
+    - max_unavailable
 
 ## AWS infrastructure
 
