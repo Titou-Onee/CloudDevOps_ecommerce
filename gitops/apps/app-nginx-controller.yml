@@ -1,7 +1,6 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  # Nom de l'application Argo CD
   name: ingress-nginx-controller
   namespace: argocd
   finalizers:
@@ -9,7 +8,6 @@ metadata:
 spec:
   project: ingress-nginx
   
-  # Configuration de la source (le Chart Helm)
   sources:
 
     - repoURL: https://kubernetes.github.io/ingress-nginx

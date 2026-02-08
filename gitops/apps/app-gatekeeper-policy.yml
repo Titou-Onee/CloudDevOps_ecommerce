@@ -11,13 +11,11 @@ metadata:
     app.kubernetes.io/name: gatekeeper-policies
 spec:
   project: security-project
-  
   source:
     repoURL: https://github.com/Titou-Onee/CloudDevOps_ecommerce.git
     targetRevision: master 
     path: gitops/values/gatekeeper
     
-
   destination:
     server: https://kubernetes.default.svc
     namespace: security
