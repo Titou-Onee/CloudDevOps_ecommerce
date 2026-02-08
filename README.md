@@ -15,7 +15,8 @@ To run the project please read **fast_run.md**
 ---
 # Project Architecture
 
-![ecommerce_architecture](https://github.com/user-attachments/assets/ec77b73f-411f-42a8-a195-d24d5eddc8a1)
+
+![Architecture](https://github.com/user-attachments/assets/13d09b84-8c4f-4292-b12d-17a6ddf8b35d)
 
 ---
 ## Project Structure 
