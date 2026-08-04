@@ -10,10 +10,12 @@
       prompt: "Enter the ARN of the IAM (ebs_csi_role_arn)"
       default: ""
       private: false
+
   tasks:
-    - name: variable setting
+    - name: Fixer la variable pour tout le cycle de vie
       set_fact:
         ebs_csi_role_arn: "{{ ebs_csi_role_arn_input }}"
+        
 - name: Deploy Argocd and apps
   hosts: kubernetes
   gather_facts: false

@@ -18,6 +18,7 @@ ansible
 
 **calling roles** : 
 - prepare-cluster
+- prepare-argocd-projects
 - argocd
 
 ## Prepare-cluster : 

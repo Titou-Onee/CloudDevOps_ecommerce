@@ -9,13 +9,30 @@ This project leverages :
 
 **Community note** : This project was designed as an intensive learning experience, aiming to explore and experiment as many automation and security functionalities as possible. Feel free to fork this project to contribute and enhance its capabilities !
 
+To run the project please read **fast_run.md**
+
 [![Plumber Score](https://score.getplumber.io/github.com/OWNER/REPO.svg)](https://score.getplumber.io/github.com/Titou-Onee/CloudDevOps_ecommerce)
 
 ---
 # Project Architecture
 
-![ecommerce_architecture](https://github.com/user-attachments/assets/ec77b73f-411f-42a8-a195-d24d5eddc8a1)
 
+![Architecture](https://github.com/user-attachments/assets/13d09b84-8c4f-4292-b12d-17a6ddf8b35d)
+
+---
+## Project Structure 
+
+```bash
+.
+├── .github/workflows/     # GitHub Actions Workflows
+├── ansible/               # Ansible inventory playbooks and roles
+├── Docker/                # Dockerfile and app source code
+├── terraform/             # Terraform modules and scripts
+├── kubernetes/            # Kubernetes deployment and service manifests
+├── gitOps/                # ArgoCD managed applications manifests and configurations
+├── deploy.sh              # Script for Ansible deployment
+└── README.md              # Main documentation file
+```
 ---
 ## Architecture Overview
 
@@ -51,7 +68,7 @@ This project leverages :
     - Service account
     - Role
 
-### 4. AWS Infrastructure provisioning usign Terraform
+### 4. AWS Infrastructure provisioning using Terraform
 - **1 VPC**
 - **Private Subnets** :
   - EKS module :
@@ -60,9 +77,9 @@ This project leverages :
     - network security group
 - **Public Subnets** :
      - Ec2 Bastion for cluster administration access via ssh
-     - alb for application access
-- **Remote state**
-    - S3 bucket on AWS
+     - ingress for application access
+- **Remote state via CloudFormation template**
+    - S3 bucket on AWS 
 
 ### 5. Configuration Management using Ansible
 - **Preparation of the cluster** :
@@ -95,56 +112,44 @@ App of Apps manifest use the GitOps repository to get the application manifest a
 
 ---
 
-## Project Structure 
 
-```bash
-.
-├── .github/workflows/     # GitHub Actions Workflows
-├── ansible/               # Ansible inventory playbooks and roles
-├── Docker/                # Dockerfile and app source code
-├── terraform/             # Terraform modules and scripts
-├── kubernetes/            # Kubernetes deployment and service manifests
-├── gitOps/                # ArgoCD managed applications manifests and configurations
-├── deploy.sh              # Script for Ansible deployment
-└── README.md              # Main documentation file
-```
 
-## prerequises :
-- AWS account
-- optional : S3 bucket for remote terraform state (encryption, versioning and no public access)
-- linux environment or wsl (for ansible playbook)
-- Terraform, Ansible, SealedSecret (optional)
-- Git secrets (GitActions part): 
-    - DOCKERHUB_USERNAME
-    - DOCKERHUB_TOKEN
-    - SONAR_TOKEN (for sonar scan)
-    - INFRACOST_API_KEY (for infracost scan)
-    - AWS_KEY (for infracost scan)
-    - AWS_SECRET_KEY (for infracost scan)
-    - COSIGN_PRIVATE_KEY (for integrity scan of docker image)
-    - COSIGN_PASSWORD (for integrity scan of docker image)
-    - COSIGN_PUBLIC_KEY (for integrity scan of docker image)
-
-## Fast Run
-Clone the repository :
-```bash
-git clone https://github.com/Titou-Onee/CloudDevOps_ecommerce.git
-```
-
-Create the infrastructure :
-```bash
-cd terraform/infra
-terraform init
-terraform apply
-```
-
-Install ArgoCD and managed apps
-```bash
-cd ../..
-chmod +x deploy.sh
-./deploy.sh
-```
-
+## Project iteration
+- App fork and dockerization
+    - Finnd ecommerce base app on GitHub
+    - Rework the Dockerfile of the app
+- Github Action application workflow
+    - Create Main workflow : code quality, security tests, release on DockerHub
+- Terraform simple public cluster
+    - Simple public network and eks cluster creation
+- App deployment through EKS
+    - Create manifests for ecommerce application deployment
+- Ansible argocd installation and configuration
+    - Create Playbook for ArgoCD in the cluster
+- Github Action rework
+    - Updated main with workflow calls, artifacts and cosign
+    - Added terraform.yml and kubernetes.yml
+- Kubernetes manifests securisation
+    - Checkov scan recommandations
+    - Added roles, service accounts and network policies
+    - Added SealedSecret for k8s secrets
+- Ansible security tools installation and configuration
+    - Use of an app-of-apps in argocd using "gitops/"
+    - Added opa gatekeeper, pss, falco helm charts installation in "gitops/apps"
+    - configuration of opa constraints, pss namespace policy and falco alerts in "gitops/values"
+- Ansible monitoring tools installation and configuration
+    - Updated "gitops/" for prometheus and grafana
+    - Added prometheus and grafana helm charts installation in "gitops/apps"
+    - configuration of prometheus scrapping and grafana dashboards in "gitops/values"
+- AWS infrastructure rework with secure cluster, bastion and ingress
+    - Updated terraform modules "eks", "network" for security roles and private subnets 
+    - Added modules "iam", "alb", "bastion"
+- Securization of Terraform with TFsec
+    - Add description
+    - Secure configurations
+- Documentation of the project
+    - Update of the README
+    - Creation of the fast_run.md
 
   
 ## Author

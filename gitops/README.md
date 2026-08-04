@@ -43,7 +43,7 @@ app-of-apps : deploy manifests in /apps that use values in /values
 - argocd-application-policy : use of default project / unapproved source
 - image-security-policy : use of non-certified registry
 - namespace-label-policy : use of label name and component
-- pod-security-policy : use of privileged mode / runAsRoot / host network / host PID / host IPC / host path / ReadOnlyFileSystem / AllowPrivilegeEscalation
+- pod-security-policy : use of privileged mode / runAsRoot / host network / host PID / host IPC / host path / AllowPrivilegeEscalation
 - ressource-security-policy : use of resource.request / resource.limits
 ## Falco alerts :
 - File created in /etc
