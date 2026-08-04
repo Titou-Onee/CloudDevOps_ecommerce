@@ -58,7 +58,7 @@ jobs:
         run: mkdir -p terraform/infra/reports
 
       - name: Setup Infracost
-        uses: infracost/actions/setup@v3
+        uses: infracost/actions/setup@fb736a8f219195d6efdca58682069b16fe1bc280
         with: 
           api-key: ${{ secrets.INFRACOST_API_KEY }}
 

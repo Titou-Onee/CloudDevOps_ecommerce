@@ -61,7 +61,7 @@ jobs:
     uses: titou-onee/clouddevops_ecommerce/.github/workflows/deploy.yml@master
     permissions:
       actions: read
-      contents: read
+      contents: write
     with: 
       DEPLOY_TAG: ${{ github.sha }}
       DOCKER_IMAGE: titouonee/clouddevops_ecommerce
