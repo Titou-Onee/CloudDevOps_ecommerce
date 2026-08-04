@@ -49,8 +49,8 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}   
         with:
           args:
-            -Dsonar.organization="titou-onee"
-            -Dsonar.projectKey="Titou-Onee_CloudDevOps_ecommerce"
+            -Dsonar.organization=titou-onee
+            -Dsonar.projectKey=Titou-Onee_CloudDevOps_ecommerce
           projectBaseDir: .
           
       - name: Run Trivy filesystem scan
