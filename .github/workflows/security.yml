@@ -50,7 +50,7 @@ jobs:
         with:
           args:
             -Dsonar.projectKey="Titou-Onee_CloudDevOps_ecommerce"
-            -Dsonar.organization="titou-onee"
+            -Dsonar.organization="titou-one"
           projectBaseDir: .
           
       - name: Run Trivy filesystem scan
