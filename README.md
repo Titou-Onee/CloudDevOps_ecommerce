@@ -10,7 +10,8 @@ This project leverages :
 **Community note** : This project was designed as an intensive learning experience, aiming to explore and experiment as many automation and security functionalities as possible. Feel free to fork this project to contribute and enhance its capabilities !
 
 To run the project please read **fast_run.md**
-CI :
+
+
 [![Plumber Score](https://score.getplumber.io/github.com/OWNER/REPO.svg)](https://score.getplumber.io/github.com/Titou-Onee/CloudDevOps_ecommerce)
 
 ---
