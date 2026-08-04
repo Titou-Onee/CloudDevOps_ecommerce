@@ -4,6 +4,9 @@ name: Format Lint Code
 on:
   workflow_call:
 
+permissions:
+  contents: read
+
 jobs:
   code_quality:
 
