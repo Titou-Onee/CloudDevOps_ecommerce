@@ -1,6 +1,11 @@
 # Values for Prometheus configuration
 prometheus:
   prometheusSpec:
+    securityContext:
+     runAsNonRoot: true
+     runAsUser: 45534
+     fsGroup: 2000
+    containers:
     retention: 15d
     scrapeInterval: 30s
     evaluationInterval: 30s

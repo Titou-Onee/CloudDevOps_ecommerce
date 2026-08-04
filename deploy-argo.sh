@@ -35,7 +35,7 @@ bootstrap_gitops() {
 # Apply key for SealedSecret
 sealedSecret_key(){
     log_info "upload of the kubeseal Key"
-    kubectl apply -f not-secure-private-key.yml
+    kubectl apply -f not-secure-private-key.yml --kubeconfig="/home/ec2-user/.kube/config"
     log_success "Key uploaded" 
 
 }
