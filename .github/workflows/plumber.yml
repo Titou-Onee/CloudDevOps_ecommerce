@@ -1,0 +1,20 @@
+name: Format Lint Code
+on:  
+    push:
+        branches:
+            - dev
+            - master
+permissions:
+  contents: read
+  security-events: write
+  id-token: write
+
+jobs:
+  plumber:
+    name: plumber-ci
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v6
+      - uses: getplumber/plumber@40bd6b5bb8ff4f0944feacaeb41dea6bce08d62d # pinned plumber version: v0.4.28
+        with:
+          score-push: true
