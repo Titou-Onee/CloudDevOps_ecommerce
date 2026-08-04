@@ -18,6 +18,7 @@ This is an Ecommerce store based on `Django 2.2` and `python 3.6`
 ![checkout](screenshots/checkout.png)
 
 ## Installation
+
 1. Clone the repository and navigate to the directory:
 
     ```
