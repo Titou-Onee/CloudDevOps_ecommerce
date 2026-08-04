@@ -1,6 +1,9 @@
 name: Format Lint Code
-on:
-  workflow_call:
+on:  
+    push:
+        branches:
+            - dev
+            - master
 permissions:
   contents: read
   security-events: write
