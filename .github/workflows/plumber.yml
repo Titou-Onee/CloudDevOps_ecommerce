@@ -1,4 +1,4 @@
-name: Format Lint Code
+name: Plumber-ci
 on:  
     push:
         branches:
