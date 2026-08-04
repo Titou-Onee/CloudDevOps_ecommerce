@@ -2,7 +2,8 @@
 This is an Ecommerce store based on `Django 2.2` and `python 3.6`
 
 
-## Features
+## Features  
+
 * Categorizing products by adding categories and subcategories
 * Adding Products with details and pictures
 * OAuth including Google
