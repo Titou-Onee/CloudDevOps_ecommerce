@@ -18,12 +18,12 @@ on:
 jobs:
   # Black formatting and flake8 linting
   code_quality:
-    uses: titou-onee/clouddevops_ecommerce/.github/workflows/code-quality.yml@master
+    uses: titou-onee/clouddevops_ecommerce/.github/workflows/code-quality.yml@7d38eb04a0aa18af5a38692fde6cfdecbbc4fb24
 
   # Sonarqube and trivy fs scan ; trivy manifest scan ; build of the docker image, scan with trivy image and upload as an artifact with cosign
   call_security_checks:
     needs: code_quality
-    uses: titou-onee/clouddevops_ecommerce/.github/workflows/security.yml@master
+    uses: titou-onee/clouddevops_ecommerce/.github/workflows/security.yml@7d38eb04a0aa18af5a38692fde6cfdecbbc4fb24
     with:
       DOCKER_IMAGE: titouonee/clouddevops_ecommerce
     secrets:
@@ -34,7 +34,7 @@ jobs:
   # Verify signed image artifact, tag and push on DockerHub
   call_release:
     needs: call_security_checks
-    uses: titou-onee/clouddevops_ecommerce/.github/workflows/release.yml@master
+    uses: titou-onee/clouddevops_ecommerce/.github/workflows/release.yml@7d38eb04a0aa18af5a38692fde6cfdecbbc4fb24
     with:
       RELEASE_TAG: latest
       DEFAULT_SHA:  ${{ github.sha }}
@@ -48,7 +48,7 @@ jobs:
   # Kustomize the kubernetes manifests to trigger ArgoCD
   call_deploy:
     needs: call_release
-    uses: titou-onee/clouddevops_ecommerce/.github/workflows/deploy.yml@master
+    uses: titou-onee/clouddevops_ecommerce/.github/workflows/deploy.yml@7d38eb04a0aa18af5a38692fde6cfdecbbc4fb24
     with: 
       DEPLOY_TAG: ${{ github.sha }}
       DOCKER_IMAGE: titouonee/clouddevops_ecommerce

@@ -23,14 +23,14 @@ jobs:
         uses: actions/checkout@v4
       
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
+        uses: aws-actions/configure-aws-credentials@e6de054238d6b7531b4efff3b6587d9aade6a06c
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
           aws-region: eu-west-3
 
       - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v3
+        uses: hashicorp/setup-terraform@dfe3c3f87815947d99a8997f908cb6525fc44e9e
         with:
             terraform_version: 1.13.1
 
@@ -45,7 +45,7 @@ jobs:
         continue-on-error: true
       
       - name: Setup TFlint
-        uses: terraform-linters/setup-tflint@v3
+        uses: terraform-linters/setup-tflint@6e1e0642c0289bd619021bf6b34e3c08ed1e005a
         with:
           tflint_version: v0.60.0
 
@@ -75,7 +75,7 @@ jobs:
                               --out-file=terraform/infra/reports/infracost-report.txt
 
       - name: TFsec scan
-        uses: aquasecurity/tfsec-action@v1.0.0
+        uses: aquasecurity/tfsec-action@b466648d6e39e7c75324f25d83891162a721f2d6
         with:
           working_directory: terraform/infra 
           additional_args: >
@@ -85,7 +85,7 @@ jobs:
         continue-on-error: true
 
       - name: Setup Python for Checkov
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
         with:
           python-version: '3.x'
 

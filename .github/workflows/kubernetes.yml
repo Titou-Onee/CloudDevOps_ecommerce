@@ -20,7 +20,7 @@ jobs:
       uses: actions/checkout@v4
       
     - name: Scan Kubernetes manifests with Checkov
-      uses: bridgecrewio/checkov-action@v12
+      uses: bridgecrewio/checkov-action@99bb2caf247dfd9f03cf984373bc6043d4e32ebf
       with:
         directory: |
           kubernetes/manifests
@@ -32,7 +32,7 @@ jobs:
 
     - name: Checkov Scan - Kubernetes Manifests
       id: k8s_scan
-      uses: bridgecrewio/checkov-action@v12
+      uses: bridgecrewio/checkov-action@99bb2caf247dfd9f03cf984373bc6043d4e32ebf
       with:
         directory: gitops
         framework: kubernetes
