@@ -9,7 +9,8 @@ on:
     paths:
         - 'gitops/**'
         - 'kubernetes/**'
-
+permissions:
+  contents: read
 
 jobs:
   k8s_security:
