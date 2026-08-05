@@ -91,7 +91,7 @@ jobs:
 
       - name: Sign with Cosign
         run: |
-          cosign sign-blob --yes --key env://COSIGN_PRIVATE_KEY image.tar > image.tar.sig
+          cosign sign-blob --yes --key env://COSIGN_PRIVATE_KEY --output-signature image.tar.sig --output-certificate image.tar.pem --bundle image.tar.bundle image.tar 
         env:
           COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
           COSIGN_PRIVATE_KEY: ${{ secrets.COSIGN_PRIVATE_KEY }}
@@ -105,6 +105,7 @@ jobs:
           path: |
             image.tar
             image.tar.sig
+            image.tar.bundle
           retention-days: 1
 
       - name: Upload report

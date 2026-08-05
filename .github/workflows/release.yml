@@ -50,7 +50,7 @@ jobs:
         uses: sigstore/cosign-installer@6f9f17788090df1f26f669e9d70d6ae9567deba6
 
       - name: Verify image integrity
-        run: cosign verify-blob --key env://COSIGN_PUBLIC_KEY image.tar --signature image.tar.sig
+        run: cosign verify-blob --key env://COSIGN_PUBLIC_KEY --bundle image.tar.bundle image.tar
         env:
           COSIGN_PUBLIC_KEY: ${{ secrets.COSIGN_PUBLIC_KEY }}
       
