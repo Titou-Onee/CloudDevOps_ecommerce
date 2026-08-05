@@ -4,6 +4,7 @@
 # Code security scan
 # Code containerisation and upload
 # Code deployment with kustomize
+
 name: Main workflow
 on:
   push:
@@ -19,7 +20,7 @@ on:
 jobs:
   # Black formatting and flake8 linting
   code_quality:
-    uses: titou-onee/clouddevops_ecommerce/.github/workflows/code-quality.yml@master
+    uses: titou-onee/clouddevops_ecommerce/.github/workflows/code-quality.yml@f2e142070d203b0419f33ed81d57c3ad5a883863
     permissions:
       actions: read
       contents: read
@@ -27,7 +28,7 @@ jobs:
   # Sonarqube and trivy fs scan ; trivy manifest scan ; build of the docker image, scan with trivy image and upload as an artifact with cosign
   call_security_checks:
     needs: code_quality
-    uses: titou-onee/clouddevops_ecommerce/.github/workflows/security.yml@master
+    uses: titou-onee/clouddevops_ecommerce/.github/workflows/security.yml@f2e142070d203b0419f33ed81d57c3ad5a883863
     permissions:
       actions: read
       contents: read
@@ -41,7 +42,7 @@ jobs:
   # Verify signed image artifact, tag and push on DockerHub
   call_release:
     needs: call_security_checks
-    uses: titou-onee/clouddevops_ecommerce/.github/workflows/release.yml@master
+    uses: titou-onee/clouddevops_ecommerce/.github/workflows/release.yml@f2e142070d203b0419f33ed81d57c3ad5a883863
     permissions:
       actions: read
       contents: read
@@ -58,7 +59,7 @@ jobs:
   # Kustomize the kubernetes manifests to trigger ArgoCD
   call_deploy:
     needs: call_release
-    uses: titou-onee/clouddevops_ecommerce/.github/workflows/deploy.yml@master
+    uses: titou-onee/clouddevops_ecommerce/.github/workflows/deploy.yml@f2e142070d203b0419f33ed81d57c3ad5a883863
     permissions:
       actions: read
       contents: write
