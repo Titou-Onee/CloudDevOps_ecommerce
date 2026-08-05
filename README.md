@@ -12,7 +12,7 @@ This project leverages :
 To run the project please read **fast_run.md**
 
 
-[![Plumber Score](https://score.getplumber.io/github.com/OWNER/REPO.svg)](https://score.getplumber.io/github.com/Titou-Onee/CloudDevOps_ecommerce)
+[![Plumber Score](https://score.getplumber.io/github.com/Titou-Onee/CloudDevOps_ecommerce.svg)](https://score.getplumber.io/github.com/Titou-Onee/CloudDevOps_ecommerce)
 
 ---
 # Project Architecture
