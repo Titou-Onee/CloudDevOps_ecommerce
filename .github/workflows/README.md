@@ -19,7 +19,9 @@ Modules used :
 - deploy.yml
     - checkout / update image tag in kustomize.yml / commit and push
 ---
-
+## Plumber
+Plumber audit on each pipeline update
+---
 ## Argocd apps and ecommerce manifests pipeline : kubernetes.yml
 On manifests updates :
 - checkout
