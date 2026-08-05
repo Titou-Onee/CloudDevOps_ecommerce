@@ -49,3 +49,4 @@ On .tf file updates :
 - COSIGN_PRIVATE_KEY (for integrity scan of docker image)
 - COSIGN_PASSWORD (for integrity scan of docker image)
 - COSIGN_PUBLIC_KEY (for integrity scan of docker image)
+- PLUMBER_TOKEN (github token with administration read-only for plumber audit)
