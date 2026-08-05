@@ -10,7 +10,7 @@ permissions:
   contents: read
   security-events: write
   id-token: write
-
+# Plumber control
 jobs:
   plumber:
     name: plumber-ci
