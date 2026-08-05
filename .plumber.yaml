@@ -208,10 +208,7 @@ github:
         - library/* # = docker.io/library/* (bare ref, unresolved-$VAR case)
         - redhat/* # = docker.io/redhat/* (bare ref, unresolved-$VAR case)
         - opensuse/* # = docker.io/opensuse/* (bare ref, unresolved-$VAR case)
-        # Terraform linting
-        - terraform-linters/*
-        # Infracost
-        - infracost/*
+
     # ===========================================
     # Branch must be protected
     # ===========================================
@@ -772,6 +769,10 @@ github:
         - embarkstudios/* # = EmbarkStudios/*
         - pyo3/* # = PyO3/*
         - homebrew/* # = Homebrew/*
+        # Terraform linting
+        - terraform-linters/*
+        # Infracost
+        - infracost/*
 
     # ===========================================
     # Container images must not use forbidden tags
