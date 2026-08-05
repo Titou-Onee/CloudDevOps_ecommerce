@@ -209,9 +209,9 @@ github:
         - redhat/* # = docker.io/redhat/* (bare ref, unresolved-$VAR case)
         - opensuse/* # = docker.io/opensuse/* (bare ref, unresolved-$VAR case)
         # Terraform linting
-        - ghcr.io/terraform-linters/*
+        - terraform-linters/*
         # Infracost
-        - Infracost/*
+        - infracost/*
     # ===========================================
     # Branch must be protected
     # ===========================================
