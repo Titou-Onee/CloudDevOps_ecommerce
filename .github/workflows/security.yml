@@ -4,6 +4,7 @@
 # Trivy image scan
 # Upload of the image as an artifact with cosign
 # Set runID
+
 name: Security checks
 on:
   workflow_call:

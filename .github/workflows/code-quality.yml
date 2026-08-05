@@ -1,5 +1,6 @@
 # Code quality check for application 
 # Black formatting and flake8 linting
+
 name: Format Lint Code
 on:
   workflow_call:
