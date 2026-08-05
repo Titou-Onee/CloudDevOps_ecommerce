@@ -20,3 +20,4 @@ jobs:
       - uses: getplumber/plumber@40bd6b5bb8ff4f0944feacaeb41dea6bce08d62d # pinned plumber version: v0.4.28
         with:
           score-push: true
+          github-token: ${ secret.PLUMBER_TOKEN }
