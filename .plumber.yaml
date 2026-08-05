@@ -1,0 +1,11 @@
+github:
+  controls:
+    githubActionMustComeFromAuthorizedSources:
+      enabled: true
+      trustGithubOfficialActions: true
+      trustSameOrgActions: true
+      # Seuil d'étoiles minimal (0 = désactivé, nécessite l'API GitHub)
+      minimumStars: 0
+      trustedGithubActions:
+        - terraform-linters/qetup-tflint
+        - infracost/actions/setup
