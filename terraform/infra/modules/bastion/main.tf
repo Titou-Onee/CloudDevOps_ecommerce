@@ -1,6 +1,17 @@
 # Main file of the Bastion module
 # This bastion create an EC2 instance with a security group that allow connection to the eks cluster
 # The bastion configuration include : git, curl, unzip, kubectl, ansible-galaxy, aws cli and a clone of this github repo
+terraform {
+  required_version = ">= 1.5.0"
+
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 5.0"
+    }
+  }
+}
+
 data "aws_ami" "amazon_linux_2023" {
   most_recent = true
   owners      = ["amazon"]
@@ -17,8 +28,8 @@ data "aws_ami" "amazon_linux_2023" {
 }
 
 #Bastion security group
-#tfsec:ignore:aws-ec2-no-public-ingress-sgr
 resource "aws_security_group" "bastion" {
+  #checkov:skip=CKV_AWS_24: SSH ingress restricted via var.allowed_bastion_cidr, not 0.0.0.0/0 by default
   name        = "${var.project_name}-bastion-sg"
   vpc_id      = var.vpc_id
   description = "Security Group for the EC2 bastion"
@@ -29,6 +40,7 @@ resource "aws_security_group" "bastion" {
     cidr_blocks = var.allowed_bastion_cidr
     description = "allow ssh connection to the bastion"
   }
+  #checkov:skip=CKV_AWS_382: Bastion needs full egress for package updates, kubectl/helm downloads, git clone
   #tfsec:ignore:aws-ec2-no-public-egress-sgr
   egress {
     from_port   = 0

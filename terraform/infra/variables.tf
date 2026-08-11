@@ -26,10 +26,10 @@ variable "bastion_key_name" {
   default     = "bastion-key"
   description = "Name of the AWS SSH key pair associated with the bastion host."
 }
-variable "allowed_bastion_cidr" { 
-    type = list(string)
-    default = ["0.0.0.0/0"]
-    description = "CIDR IP block allowed to SSH (port 22) into the bastion"    
+variable "allowed_bastion_cidr" {
+  type        = list(string)
+  default     = ["0.0.0.0/0"]
+  description = "CIDR IP block allowed to SSH (port 22) into the bastion"
 }
 variable "cluster_name" {
   type        = string

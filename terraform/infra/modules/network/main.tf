@@ -1,9 +1,19 @@
 # Main file of the network module
 # Create a VPC, gateway, nat, eip, route table
 # Create private subnets for eks and public subnets for bastion and alb
+terraform {
+  required_version = ">= 1.5.0"
 
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 5.0"
+    }
+  }
+}
 # Main VPC
 #tfsec:ignore:aws-ec2-require-vpc-flow-logs-for-all-vpcs
+#checkov:skip=CKV2_AWS_11: Flow logs not required for this environment, cost tradeoff
 resource "aws_vpc" "main" {
   cidr_block           = var.vpc_cidr
   enable_dns_support   = true
@@ -27,12 +37,13 @@ resource "aws_internet_gateway" "internet_gw" {
 }
 
 # Public subnet for alb
-#tfsec:ignore:aws-ec2-no-public-ip-subnet
 resource "aws_subnet" "public" {
-  count                   = length(var.availability_zones)
-  vpc_id                  = aws_vpc.main.id
-  cidr_block              = cidrsubnet(var.vpc_cidr, 8, count.index + length(var.availability_zones) - 1)
-  availability_zone       = var.availability_zones[count.index]
+  #checkov:skip=CKV_AWS_130: Public subnet dedicated to ALB/NAT, public IP required by design
+  count             = length(var.availability_zones)
+  vpc_id            = aws_vpc.main.id
+  cidr_block        = cidrsubnet(var.vpc_cidr, 8, count.index + length(var.availability_zones) - 1)
+  availability_zone = var.availability_zones[count.index]
+  #tfsec:ignore:aws-ec2-no-public-ip-subnet
   map_public_ip_on_launch = true
 
   tags = {

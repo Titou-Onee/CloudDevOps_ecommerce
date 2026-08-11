@@ -1,5 +1,5 @@
 variable "project_name" {
-  type = string
+  type        = string
   description = "Name of the project used as a prefix for resource naming"
 }
 
@@ -14,13 +14,13 @@ variable "bastion_subnet_id" {
 }
 
 variable "bastion_instance_type" {
-  type    = string
-  default = "t3.micro"
+  type        = string
+  default     = "t3.micro"
   description = "EC2 instance type used for the bastion server"
 }
 
 variable "bastion_key_name" {
-  type = string
+  type        = string
   description = "Name of the AWS SSH key pair for administrative access to the bastion"
 }
 

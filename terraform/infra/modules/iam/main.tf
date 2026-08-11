@@ -1,5 +1,15 @@
 # Main file of the iam module
 # Define role for eks cluster, nodes and ec2 bastion
+terraform {
+  required_version = ">= 1.5.0"
+
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 5.0"
+    }
+  }
+}
 resource "aws_iam_role" "eks_cluster_role" {
   name = "${var.project_name}-eks-cluster-role"
 

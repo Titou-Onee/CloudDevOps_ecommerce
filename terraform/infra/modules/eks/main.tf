@@ -1,6 +1,20 @@
 # Main file of the EKS module
 # Create a node group within a eks cluster
 # define security group for nodes and cluster that allow intern traffic and a bastion connection
+terraform {
+  required_version = ">= 1.5.0"
+
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 5.0"
+    }
+    tls = {
+      source  = "hashicorp/tls"
+      version = "~> 4.0"
+    }
+  }
+}
 resource "aws_security_group" "eks_control_plane" {
   name        = "${var.project_name}-eks-control-plane-sg"
   vpc_id      = var.vpc_id
@@ -25,6 +39,18 @@ resource "aws_kms_key" "eks" {
   description             = "KMS key for EKS envelope encryption"
   deletion_window_in_days = 7
   enable_key_rotation     = true
+  policy                  = data.aws_iam_policy_document.eks_kms.json
+}
+data "aws_iam_policy_document" "eks_kms" {
+  statement {
+    sid       = "EnableRootAccountAccess"
+    actions   = ["kms:*"]
+    resources = ["*"]
+    principals {
+      type        = "AWS"
+      identifiers = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:root"]
+    }
+  }
 }
 # Eks cluster definition
 resource "aws_eks_cluster" "main" {
