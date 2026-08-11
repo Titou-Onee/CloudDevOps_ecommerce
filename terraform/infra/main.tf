@@ -6,11 +6,11 @@
 
 # Creation of the network for eks
 module "network" {
-  source               = "./modules/network"
-  project_name         = var.project_name
-  cluster_name         = var.cluster_name
-  vpc_cidr             = var.vpc_cidr
-  availability_zones   = var.availability_zones
+  source             = "./modules/network"
+  project_name       = var.project_name
+  cluster_name       = var.cluster_name
+  vpc_cidr           = var.vpc_cidr
+  availability_zones = var.availability_zones
 
 }
 module "iam" {
@@ -25,6 +25,7 @@ module "bastion" {
   bastion_subnet_id             = module.network.public_subnet_id[0]
   bastion_key_name              = var.bastion_key_name
   bastion_instance_profile_name = module.iam.bastion_instance_profile
+  allowed_bastion_cidr          = var.allowed_bastion_cidr
 
   depends_on = [module.iam, module.network]
 }
