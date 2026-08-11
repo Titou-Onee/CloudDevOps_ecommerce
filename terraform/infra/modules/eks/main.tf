@@ -5,8 +5,9 @@ resource "aws_security_group" "eks_control_plane" {
   name        = "${var.project_name}-eks-control-plane-sg"
   vpc_id      = var.vpc_id
   description = "Security  Group for the eks Controle Plane"
-  #tfsec:ignore:aws-ec2-no-public-egress-sgr
+
   #checkov:skip=CKV_AWS_382: Control plane requires full egress access for AWS services
+  #tfsec:ignore:aws-ec2-no-public-egress-sgr
   egress {
     from_port   = 0
     to_port     = 0
@@ -71,8 +72,9 @@ resource "aws_security_group" "eks_nodes" {
     self        = true
     description = "Allow all inter-node communication"
   }
-  #tfsec:ignore:aws-ec2-no-public-ingress-sgr
+
   #checkov:skip=CKV_AWS_382: Nodes require internet access for package updates and container registries
+  #tfsec:ignore:aws-ec2-no-public-egress-sgr
   egress {
     from_port   = 0 # Aucune règle ingress/egress n'est définie = tout le trafic est bloqué par défaut
     to_port     = 0

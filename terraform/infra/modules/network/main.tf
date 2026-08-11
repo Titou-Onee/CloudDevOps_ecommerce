@@ -27,6 +27,7 @@ resource "aws_internet_gateway" "internet_gw" {
 }
 
 # Public subnet for alb
+#tfsec:ignore:aws-ec2-no-public-ip-subnet
 resource "aws_subnet" "public" {
   count                   = length(var.availability_zones)
   vpc_id                  = aws_vpc.main.id

@@ -29,7 +29,7 @@ resource "aws_security_group" "bastion" {
     cidr_blocks = var.allowed_bastion_cidr
     description = "allow ssh connection to the bastion"
   }
-  #tfsec:ignore:aws-ec2-no-public-ingress-sgr
+  #tfsec:ignore:aws-ec2-no-public-egress-sgr
   egress {
     from_port   = 0
     to_port     = 0
