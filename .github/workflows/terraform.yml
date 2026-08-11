@@ -43,6 +43,11 @@ jobs:
         working-directory: terraform/infra
         continue-on-error: true
 
+      - name: Terraform init
+        run: terraform init
+        working-directory: terraform/infra
+        continue-on-error: true
+        
       - name: Terraform validation
         run: terraform validate
         working-directory: terraform/infra
