@@ -17,8 +17,3 @@ variable "availability_zones" {
   type        = list(string)
   description = "List of AWS availability zones where subnets will be provisioned."
 }
-variable "allowed_bastion_cidr" {
-  type        = list(string)
-  default     = ["0.0.0.0/0"]
-  description = "List of CIDR IP blocks allowed to connect to the bastion via SSH (port 22)."
-}

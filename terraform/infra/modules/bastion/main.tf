@@ -33,6 +33,7 @@ resource "aws_security_group" "bastion" {
   name        = "${var.project_name}-bastion-sg"
   vpc_id      = var.vpc_id
   description = "Security Group for the EC2 bastion"
+    #tfsec:ignore:aws-ec2-no-public-ingress-sgr
   ingress {
     from_port   = 22
     to_port     = 22

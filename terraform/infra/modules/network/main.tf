@@ -12,8 +12,8 @@ terraform {
   }
 }
 # Main VPC
-#tfsec:ignore:aws-ec2-require-vpc-flow-logs-for-all-vpcs
 #checkov:skip=CKV2_AWS_11: Flow logs not required for this environment, cost tradeoff
+#tfsec:ignore:aws-ec2-require-vpc-flow-logs-for-all-vpcs
 resource "aws_vpc" "main" {
   cidr_block           = var.vpc_cidr
   enable_dns_support   = true

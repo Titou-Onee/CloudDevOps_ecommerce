@@ -43,12 +43,22 @@ resource "aws_kms_key" "eks" {
 }
 data "aws_iam_policy_document" "eks_kms" {
   statement {
-    sid       = "EnableRootAccountAccess"
-    actions   = ["kms:*"]
-    resources = ["*"]
+    sid       = "AllowKeyAdministration"
+    actions   = ["kms:Create*", "kms:Describe*", "kms:Enable*", "kms:List*", "kms:Put*", "kms:Update*", "kms:Revoke*", "kms:Disable*", "kms:Get*", "kms:Delete*", "kms:TagResource", "kms:UntagResource", "kms:ScheduleKeyDeletion", "kms:CancelKeyDeletion"]
+    resources = [aws_kms_key.eks.arn]
     principals {
       type        = "AWS"
       identifiers = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:root"]
+    }
+  }
+
+  statement {
+    sid       = "AllowEKSUsage"
+    actions   = ["kms:Decrypt", "kms:DescribeKey", "kms:GenerateDataKey"]
+    resources = [aws_kms_key.eks.arn]
+    principals {
+      type        = "AWS"
+      identifiers = [var.cluster_role_arn]
     }
   }
 }
