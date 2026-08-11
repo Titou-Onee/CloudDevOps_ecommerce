@@ -1,4 +1,4 @@
 variable "project_name" {
-  description = "Nom du projet"
+  description = "Name of the project used as a prefix for resource naming"
   type        = string
 }

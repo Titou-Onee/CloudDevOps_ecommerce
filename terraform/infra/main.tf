@@ -11,7 +11,6 @@ module "network" {
   cluster_name         = var.cluster_name
   vpc_cidr             = var.vpc_cidr
   availability_zones   = var.availability_zones
-  bastion_key_name     = var.bastion_key_name
   allowed_bastion_cidr = var.allowed_bastion_cidr
 
 }
@@ -38,7 +37,6 @@ module "eks" {
   cluster_version = var.cluster_version
   vpc_id          = module.network.vpc_id
   subnet_ids      = module.network.private_subnet_ids
-  region          = var.region
 
   bastion_security_group_id = module.bastion.bastion_sg_id
   bastion_iam_role          = module.iam.bastion_iam_role

@@ -6,9 +6,6 @@ availability_zones = ["eu-west-3a", "eu-west-3b"]
 
 bastion_key_name = "bastion-key"
 
-ingress_name      = "ecommerce-ingress"
-ingress_namespace = "ecommerce"
-
 cluster_name    = "eks-cluster"
 cluster_version = 1.34
 instance_types  = ["t3.large"]
