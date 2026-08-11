@@ -71,41 +71,7 @@ variable "max_unavailable" {
   default     = 1
   description = "Maximum number of nodes that can be unavailable during node group updates."
 }
-variable "app_port" {
-  type        = number
-  default     = 80
-  description = "Target application port configured on the worker nodes."
-}
 
-variable "ingress_name" {
-  type        = string
-  default     = "ecommerce-ingress"
-  description = "Name of the Kubernetes Ingress resource."
-}
-
-variable "ingress_namespace" {
-  type        = string
-  default     = "ecommerce"
-  description = "Kubernetes namespace where the Ingress resource will be created."
-}
-
-variable "service_name" {
-  type        = string
-  default     = "ecommerce-service"
-  description = "Target Kubernetes service name routed by the Ingress controller."
-}
-
-variable "service_port" {
-  type        = number
-  default     = 80
-  description = "Target service port routed by the Ingress controller."
-}
-
-variable "hostname" {
-  type        = string
-  default     = "api.mon-ecommerce.com"
-  description = "Domain name (FQDN) assigned to the application Ingress rule."
-}
 
 #variable "bucket_name" { default = "terraform-ecommerce-app" }
 
