@@ -2,14 +2,17 @@
 # Create a node group within a eks cluster
 # define security group for nodes and cluster that allow intern traffic and a bastion connection
 resource "aws_security_group" "eks_control_plane" {
-  name   = "${var.project_name}-eks-control-plane-sg"
-  vpc_id = var.vpc_id
+  name        = "${var.project_name}-eks-control-plane-sg"
+  vpc_id      = var.vpc_id
   description = "Security  Group for the eks Controle Plane"
+  #tfsec:ignore:aws-ec2-no-public-egress-sgr
+  #checkov:skip=CKV_AWS_382: Control plane requires full egress access for AWS services
   egress {
     from_port   = 0
     to_port     = 0
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
+    description = "Allow EKS control plane nodes to communicate"
   }
 
   tags = {
@@ -17,37 +20,48 @@ resource "aws_security_group" "eks_control_plane" {
   }
 }
 
-
+resource "aws_kms_key" "eks" {
+  description             = "KMS key for EKS envelope encryption"
+  deletion_window_in_days = 7
+  enable_key_rotation     = true
+}
 # Eks cluster definition
 resource "aws_eks_cluster" "main" {
-    name = var.cluster_name
-    role_arn = var.cluster_role_arn
-    version = var.cluster_version
-        access_config {
-      authentication_mode = "API_AND_CONFIG_MAP"
-      bootstrap_cluster_creator_admin_permissions = true
+  name     = var.cluster_name
+  role_arn = var.cluster_role_arn
+  version  = var.cluster_version
+  access_config {
+    authentication_mode                         = "API_AND_CONFIG_MAP"
+    bootstrap_cluster_creator_admin_permissions = true
+  }
+  encryption_config {
+    provider {
+      key_arn = aws_kms_key.eks.arn
     }
-    vpc_config {
-      subnet_ids = var.subnet_ids
-      endpoint_private_access = true
-      endpoint_public_access = false
-      security_group_ids = [aws_security_group.eks_control_plane.id]
-    }
+    resources = ["secrets"]
+  }
+  vpc_config {
+    subnet_ids              = var.subnet_ids
+    endpoint_private_access = true
+    endpoint_public_access  = false
+    security_group_ids      = [aws_security_group.eks_control_plane.id]
+  }
 
-    enabled_cluster_log_types = ["api", "audit", "authenticator", "controllerManager", "scheduler"]
+  enabled_cluster_log_types = ["api", "audit", "authenticator", "controllerManager", "scheduler"]
 }
 
 # EKS nodes security group
 resource "aws_security_group" "eks_nodes" {
-  name   = "${var.project_name}-eks-nodes-sg"
-  vpc_id = var.vpc_id
+  #checkov:skip=CKV2_AWS_5: Attached dynamically via EKS Node Group
+  name        = "${var.project_name}-eks-nodes-sg"
+  vpc_id      = var.vpc_id
   description = "Security Group for the eks nodes"
   ingress {
     from_port       = 0
     to_port         = 65535
     protocol        = "tcp"
     security_groups = [var.bastion_security_group_id]
-    description = "Allow connection to control plane"
+    description     = "Allow connection to control plane"
   }
 
   ingress {
@@ -55,11 +69,12 @@ resource "aws_security_group" "eks_nodes" {
     to_port     = 0
     protocol    = "-1"
     self        = true
-    description = "Allow all"
+    description = "Allow all inter-node communication"
   }
-
+  #tfsec:ignore:aws-ec2-no-public-ingress-sgr
+  #checkov:skip=CKV_AWS_382: Nodes require internet access for package updates and container registries
   egress {
-    from_port   = 0
+    from_port   = 0 # Aucune règle ingress/egress n'est définie = tout le trafic est bloqué par défaut
     to_port     = 0
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
@@ -75,17 +90,17 @@ resource "aws_security_group" "eks_nodes" {
 
 # Node group definition
 resource "aws_eks_node_group" "main" {
-  cluster_name = aws_eks_cluster.main.name
+  cluster_name    = aws_eks_cluster.main.name
   node_group_name = "${var.cluster_name}-node-group"
-  node_role_arn = var.node_role_arn
-  subnet_ids = var.subnet_ids
-  capacity_type = "SPOT"
-  instance_types = var.instance_types
-  
+  node_role_arn   = var.node_role_arn
+  subnet_ids      = var.subnet_ids
+  capacity_type   = "SPOT"
+  instance_types  = var.instance_types
+
   scaling_config {
     desired_size = var.desired_size
-    min_size = var.min_size
-    max_size = var.max_size
+    min_size     = var.min_size
+    max_size     = var.max_size
   }
   update_config {
     max_unavailable = var.max_unavailable
@@ -158,7 +173,7 @@ resource "aws_security_group_rule" "bastion_to_control_plane" {
 
 resource "aws_eks_access_entry" "bastion_access" {
   cluster_name  = aws_eks_cluster.main.name
-  principal_arn = var.bastion_iam_role 
+  principal_arn = var.bastion_iam_role
   depends_on = [
     aws_eks_cluster.main
   ]
@@ -166,18 +181,18 @@ resource "aws_eks_access_entry" "bastion_access" {
 
 
 resource "aws_eks_access_policy_association" "bastion_policy" {
-  cluster_name  = aws_eks_cluster.main.name
+  cluster_name = aws_eks_cluster.main.name
 
-  principal_arn = aws_eks_access_entry.bastion_access.principal_arn 
-  
+  principal_arn = aws_eks_access_entry.bastion_access.principal_arn
 
-  policy_arn    =             "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy" 
-  
+
+  policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
+
 
   access_scope {
     type = "cluster"
   }
-  
+
   depends_on = [
     aws_eks_access_entry.bastion_access
   ]

@@ -8,7 +8,7 @@ output "node_role_arn" {
 output "bastion_instance_profile" {
   value = aws_iam_instance_profile.bastion_profile.name
 }
-output "bastion_iam_role"{
+output "bastion_iam_role" {
   value = aws_iam_role.bastion_role.arn
 }
 output "nodes_instance_profile" {

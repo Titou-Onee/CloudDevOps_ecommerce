@@ -3,44 +3,44 @@ variable "project_name" {
   type        = string
 }
 variable "cluster_name" {
-  type        = string
+  type = string
 }
 variable "cluster_version" {
-  type        = string
+  type = string
 }
 variable "vpc_id" {
-  type        = string
+  type = string
 }
 variable "subnet_ids" {
-  type        = list(string)
+  type = list(string)
 }
 variable "region" {
-  
+
 }
 variable "bastion_security_group_id" {
-  type        = string
+  type = string
 }
-variable "bastion_iam_role"{}
+variable "bastion_iam_role" {}
 
 variable "node_role_arn" {
-  
+
 }
 variable "cluster_role_arn" {
-  
+
 }
 
 variable "instance_types" {
-  type        = list(string)
+  type = list(string)
 }
 variable "desired_size" {
-  type        = number
+  type = number
 }
 variable "min_size" {
-  type        = number
+  type = number
 }
 variable "max_size" {
-  type        = number
+  type = number
 }
 variable "max_unavailable" {
-  type        = number
+  type = number
 }

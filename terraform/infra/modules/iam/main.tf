@@ -84,7 +84,7 @@ resource "aws_iam_role_policy_attachment" "ssm" {
 }
 resource "aws_iam_role_policy_attachment" "eks_cluster_access" {
   role       = aws_iam_role.bastion_role.name
-  policy_arn = "arn:aws:iam::aws:policy/AmazonEKSClusterPolicy" 
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEKSClusterPolicy"
 }
 
 resource "aws_iam_role_policy_attachment" "eks_read" {

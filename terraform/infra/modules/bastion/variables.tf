@@ -27,5 +27,5 @@ variable "allowed_bastion_cidr" {
   default     = ["0.0.0.0/0"]
 }
 variable "bastion_instance_profile_name" {
-  
+
 }

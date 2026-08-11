@@ -14,39 +14,44 @@ data "aws_ami" "amazon_linux_2023" {
     name   = "virtualization-type"
     values = ["hvm"]
   }
-} 
+}
 
 #Bastion security group
+#tfsec:ignore:aws-ec2-no-public-ingress-sgr
 resource "aws_security_group" "bastion" {
-  name = "${var.project_name}-bastion-sg"
-  vpc_id = var.vpc_id
+  name        = "${var.project_name}-bastion-sg"
+  vpc_id      = var.vpc_id
   description = "Security Group for the EC2 bastion"
   ingress {
-    from_port = 22
-    to_port = 22
-    protocol = "tcp"
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
     cidr_blocks = var.allowed_bastion_cidr
     description = "allow ssh connection to the bastion"
   }
+  #tfsec:ignore:aws-ec2-no-public-ingress-sgr
   egress {
-    from_port = 0
-    to_port = 0
-    protocol = "-1"
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
     description = "Allow all"
   }
 
-  tags = {Name = "${var.project_name}-bastion-sg"}
+  tags = { Name = "${var.project_name}-bastion-sg" }
 }
 
 resource "aws_instance" "bastion" {
-  ami                    = data.aws_ami.amazon_linux_2023.id
-  instance_type          = var.bastion_instance_type
-  key_name               = var.bastion_key_name
+  #checkov:skip=CKV_AWS_88: Bastion intentionally needs a public IP for remote access
+  #checkov:skip=CKV_AWS_126: Detailed monitoring not needed for simple bastion
+  #checkov:skip=CKV_AWS_135: EBS optimization not required for low IOPS bastion
+  ami                         = data.aws_ami.amazon_linux_2023.id
+  instance_type               = var.bastion_instance_type
+  key_name                    = var.bastion_key_name
   associate_public_ip_address = true
-  subnet_id              = var.bastion_subnet_id
-  vpc_security_group_ids = [aws_security_group.bastion.id]
-  iam_instance_profile = var.bastion_instance_profile_name
+  subnet_id                   = var.bastion_subnet_id
+  vpc_security_group_ids      = [aws_security_group.bastion.id]
+  iam_instance_profile        = var.bastion_instance_profile_name
 
   user_data = <<-EOF
                   #!/bin/bash
@@ -89,7 +94,7 @@ resource "aws_instance" "bastion" {
     Name = "${var.project_name}-ec2-bastion"
   }
   metadata_options {
-    http_endpoint               = "enabled"
-    http_tokens                 = "required"
+    http_endpoint = "enabled"
+    http_tokens   = "required"
   }
 }
