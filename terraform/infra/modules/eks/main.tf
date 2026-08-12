@@ -34,13 +34,16 @@ resource "aws_security_group" "eks_control_plane" {
     Name = "${var.project_name}-eks-control-plane-sg"
   }
 }
-
+data "aws_caller_identity" "current" {}
 resource "aws_kms_key" "eks" {
   description             = "KMS key for EKS envelope encryption"
   deletion_window_in_days = 7
   enable_key_rotation     = true
   policy                  = data.aws_iam_policy_document.eks_kms.json
 }
+#checkov:skip=CKV_AWS_111:Resource "*" is scoped to this KMS key only (key policy), not a wildcard IAM policy - AWS documented pattern
+#checkov:skip=CKV_AWS_356:Resource "*" in a KMS key policy refers implicitly to the key itself, per AWS best practices for key policies
+#checkov:skip=CKV_AWS_109:Same as above - key policy resource scope is inherently limited to the key, no cross-resource exposure
 data "aws_iam_policy_document" "eks_kms" {
   statement {
     sid       = "AllowKeyAdministration"
