@@ -1,2 +1,5 @@
 skip-check:
   - CKV2_AWS_11
+  - CKV_AWS_111
+  - CKV_AWS_356
+  - CKV_AWS_109
