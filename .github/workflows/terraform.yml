@@ -44,7 +44,7 @@ jobs:
         continue-on-error: true
 
       - name: Terraform init
-        run: terraform init
+        run: terraform init -backend=false
         working-directory: terraform/infra
         continue-on-error: true
         
