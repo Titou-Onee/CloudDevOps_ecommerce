@@ -36,4 +36,4 @@ Variables on terraform.tfvars :
 
 ## Security Exceptions 
 
-See .checkov.yml and .tflint.hcl
+See .checkov.yml and .tflint.hcl 
