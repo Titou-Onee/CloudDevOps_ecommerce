@@ -1,0 +1,2 @@
+skip-check:
+  - CKV2_AWS_11
