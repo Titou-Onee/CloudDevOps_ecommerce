@@ -33,3 +33,7 @@ Variables on terraform.tfvars :
 - 1 private network for EKS
 - 1 public network for the EC2 bastion and ingress deployment
 - Iam, security group for security
+
+## Security Exceptions 
+
+See .checkov.yml and .tflint.hcl
