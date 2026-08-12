@@ -41,17 +41,17 @@ jobs:
       - name: Terraform format
         run: terraform fmt --check -recursive
         working-directory: terraform/infra
-        continue-on-error: true
+        continue-on-error: false
 
       - name: Terraform init
         run: terraform init -backend=false
         working-directory: terraform/infra
-        continue-on-error: true
+        continue-on-error: false
         
       - name: Terraform validation
         run: terraform validate
         working-directory: terraform/infra
-        continue-on-error: true
+        continue-on-error: false
       
       - name: Setup TFlint
         uses: terraform-linters/setup-tflint@6e1e0642c0289bd619021bf6b34e3c08ed1e005a
@@ -61,7 +61,7 @@ jobs:
       - name: Run TFlint
         run: tflint --recursive
         working-directory: terraform/infra
-        continue-on-error: true
+        continue-on-error: false
       
       - name: Create reports directory
         run: mkdir -p terraform/infra/reports
@@ -91,7 +91,7 @@ jobs:
             --format text
             --concise-output
             --out terraform/infra/reports/tfsec-report.txt
-        continue-on-error: true
+        continue-on-error: false
 
       - name: Setup Python for Checkov
         uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
@@ -109,7 +109,7 @@ jobs:
                   --output-file-path terraform/infra/reports/checkov-report.txt \
                   --quiet \
                   --compact
-        continue-on-error: true
+        continue-on-error: false
 
       - name: Upload reports
         uses: actions/upload-artifact@v4
